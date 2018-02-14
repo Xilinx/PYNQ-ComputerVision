@@ -63,7 +63,7 @@ def fill_notebooks():
     print("Filling notebooks done ...")
 
 # Overlay delivery
-def update_overlays():
+def fill_overlays():
     src_ov = GIT_DIR + '/overlays'
     dst_ov_dir = '/home/xilinx/pynq/overlays/bare_hdmi'
     if os.path.exists(dst_ov_dir):
