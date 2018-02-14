@@ -53,7 +53,7 @@ def install_packages():
 
 # Notebook delivery
 def fill_notebooks():
-    src_nb = GIT_DIR + '/notebooks'
+    src_nb = GIT_DIR + '/notebooks/computer_vision'
     dst_nb_dir = '/home/xilinx/jupyter_notebooks/computer_vision'
     if os.path.exists(dst_nb_dir):
         shutil.rmtree(dst_nb_dir)
@@ -64,7 +64,7 @@ def fill_notebooks():
 
 # Overlay delivery
 def fill_overlays():
-    src_ov = GIT_DIR + '/overlays'
+    src_ov = GIT_DIR + '/overlays/bare_hdmi'
     dst_ov_dir = '/home/xilinx/pynq/overlays/bare_hdmi'
     if os.path.exists(dst_ov_dir):
         shutil.rmtree(dst_ov_dir)
