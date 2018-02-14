@@ -1,20 +1,21 @@
-# PYNQ-ComputerVision
-PYNQ computer vision overlay enables networking capabilities from PL on the board.
+# Pynq-Computer Vision
 
-## Getting Started
-*Note: If you will need to be running Ubuntu 16.04.*
+The all Pynq releases ship with the popular [OpenCV](https://opencv.org/) library pre-installed. The Pynq computer vision overlays enable accelerating OpenCV components in Programmable Logic (PL). These overlays expose a subset Xilinx' [xfOpenCV](https://github.com/Xilinx/xfopencv) library (a part of Xilinx' [reVISION solution](https://www.xilinx.com/products/design-tools/embedded-vision-zone.html)) at the Python level, combined with the support for HDMI input/output. Note that webcam, stream or file based input/output remains available through the pre-installed SW OpenCV.  
 
-To try this project, use the following command in a terminal.
+![](./cvOverlayBlockDiagram.png)
 
-```
-sudo pip3.6 install --upgrade git+https://github.com/Xilinx/PYNQ-ComputerVision.git
-sudo reboot
-```
+Currently, two overlays are available for the Pynq-Z1 board:
+  + filter2ddilate: accelerated 3x3 filter2D and 3x3 dilate. Open the filter2DDilate notebook for demo and more details.
+  + filter2dremap: accelerated 3x3 filter2D and remap. Open the filter2Dremap notebook for demo and more details. 
 
-After the setup, the notebook folder will be populated, and users can try
-the demo there. Users do not have to run any additional steps.
 
-*Note: For completeness, the following few sections introduce what have been done
-starting from a PYNQ image V2.1 SD card. These steps do not need to be performed
-by users, since they will be taken care of when this package is being installed.*
+## Quick Start
 
+To install the computer vision overlay example on your Pynq board, open a terminal and run:
+
+   ```bash
+   $ sudo pip3.6 install --upgrade git+https://github.com/Xilinx/PYNQ-ComputerVision.git
+   $ sudo reboot now
+   ```
+   
+After the setup, new Jupyter notebooks will be added under the computer_vision folder, ready to try out, no additional steps are needed. 
