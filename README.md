@@ -14,7 +14,7 @@ Currently, two overlays are available for the Pynq-Z1 board:
 To install the computer vision overlay example on your Pynq board, open a terminal and run:
 
    ```bash
-   $ sudo pip3.6 install --upgrade git+https://github.com/Xilinx/PYNQ-ComputerVision.git
+   $ sudo -H pip3.6 install --upgrade git+https://github.com/Xilinx/PYNQ-ComputerVision.git
    $ sudo reboot now
    ```
    
