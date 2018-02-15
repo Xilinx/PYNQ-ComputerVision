@@ -98,7 +98,7 @@ extra_files = package_files('pynq_computervision')
 
 
 setup(name='pynq_computervision',
-      version='2.0',
+      version='2.1',
       description='PYNQ computer vision package',
       author='Xilinx computer vision group',
       author_email='jackl@xilinx.com',
