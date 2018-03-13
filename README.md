@@ -15,7 +15,6 @@ To install the computer vision overlay example on your Pynq-Z1 board (with the l
 
    ```bash
    $ sudo -H pip3.6 install --upgrade git+https://github.com/Xilinx/PYNQ-ComputerVision.git
-   $ sudo reboot now
    ```
    
 After the setup, new Jupyter notebooks will be added under the computer_vision folder, ready to try out, no additional steps are needed. 
