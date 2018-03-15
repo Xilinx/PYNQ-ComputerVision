@@ -61,29 +61,10 @@ def fill_notebooks():
 
     print("Filling notebooks done ...")
 
-# Overlay delivery
-def fill_overlays():
-    src_ov = GIT_DIR + '/overlays/bare_hdmi'
-    dst_ov_dir = '/home/xilinx/pynq/overlays/bare_hdmi'
-    if os.path.exists(dst_ov_dir):
-        shutil.rmtree(dst_ov_dir)
-    shutil.copytree(src_ov, dst_ov_dir)
-
-    print("Filling overlays bare_hdmi done ...")
-
-    src_ov = GIT_DIR + '/overlays/computer_vision'
-    dst_ov_dir = '/home/xilinx/pynq/overlays/computer_vision'
-    if os.path.exists(dst_ov_dir):
-        shutil.rmtree(dst_ov_dir)
-    shutil.copytree(src_ov, dst_ov_dir)
-
-    print("Filling overlays computer_vision done ...")
-
 
 if len(sys.argv) > 1 and sys.argv[1] == 'install':
     install_packages()
     fill_notebooks()
-    fill_overlays()
 
 
 def package_files(directory):
