@@ -18,3 +18,7 @@ To install the computer vision overlay example on your Pynq-Z1 board (with the l
    ```
    
 After the setup, new Jupyter notebooks will be added under the computer_vision folder, ready to try out, no additional steps are needed. 
+
+## License
+
+The source for this project is licensed under the [3-Clause BSD License](LICENSE)
