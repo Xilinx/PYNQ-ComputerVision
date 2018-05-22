@@ -19,6 +19,12 @@ To install the computer vision overlay example on your Pynq-Z1 board (with the l
    
 After the setup, new Jupyter notebooks will be added under the computer_vision folder, ready to try out, no additional steps are needed. 
 
+## Building Your Own Overlay
+
+When after profiling, the critical OpenCV modules in an application are identified, the generation of a tailored overlay is easily done by specifying those modules as a list in a CMake project file. After that, building the tailored overlay only requires running cmake to generate the Makefiles followed by make to build the overlay.
+
+For detailed instructions:  [Building xfOpenCV Overlays for Pynq: CMake based sds++ cross-compilation](overlays/README.md).
+
 ## License
 
 The source for this project is licensed under the [3-Clause BSD License](LICENSE)
