@@ -2,7 +2,7 @@
 
 ## Setup Environment on Host
 
-  + clone [Pynq-ComputerVision repository](https://github.com/Xilinx/PYNQ-ComputerVision)
+  + clone [Pynq-ComputerVision](https://github.com/Xilinx/PYNQ-ComputerVision)  repository:
     ```commandline
     $ git clone https://github.com/Xilinx/PYNQ-ComputerVision.git /your_pynqCV_folder
     ``` 
