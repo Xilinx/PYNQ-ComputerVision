@@ -1,0 +1,116 @@
+/******************************************************************************
+ *  Copyright (c) 2018, Xilinx, Inc.
+ *  All rights reserved.
+ * 
+ *  Redistribution and use in source and binary forms, with or without 
+ *  modification, are permitted provided that the following conditions are met:
+ *
+ *  1.  Redistributions of source code must retain the above copyright notice, 
+ *     this list of conditions and the following disclaimer.
+ *
+ *  2.  Redistributions in binary form must reproduce the above copyright 
+ *      notice, this list of conditions and the following disclaimer in the 
+ *      documentation and/or other materials provided with the distribution.
+ *
+ *  3.  Neither the name of the copyright holder nor the names of its 
+ *      contributors may be used to endorse or promote products derived from 
+ *      this software without specific prior written permission.
+ *
+ *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ *  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, 
+ *  THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR 
+ *  PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR 
+ *  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, 
+ *  EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, 
+ *  PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+ *  OR BUSINESS INTERRUPTION). HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
+ *  WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR 
+ *  OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
+ *  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ *****************************************************************************/
+ 
+/*****************************************************************************
+*
+*     Author: Kristof Denolf <kristof@xilinx.com>
+*     Date:   2017/12/05
+*
+*****************************************************************************/
+
+///SDx temporal fix for Clang issue
+#ifdef __SDSCC__
+#undef __ARM_NEON__
+#undef __ARM_NEON
+#include <opencv2/core/core.hpp>
+#define __ARM_NEON__
+#define __ARM_NEON
+#else
+#include <opencv2/core/core.hpp>
+#endif
+//#include <opencv2/core/core.hpp>
+
+#include "common/xf_common.h"
+
+
+#include <hls_video.h>
+#include "imgproc/xf_custom_convolution.hpp"
+
+#include <Utils/inc/UtilsForXfOpenCV.h>
+
+#include "xfSDxFilter2D.h"
+
+//PL instatiation parameters
+#define XFSHIFT		${XSHIFTCMakeParam}
+typedef short xfkernelType; //xfOpenCV forces coefficients as XF_16SP
+
+void xF_filter2D(cv::Mat &src, cv::Mat &dst, int ddepth, cv::Mat &kernel, cv::Point anchor, double delta, int borderType)
+{
+	
+	const int borderTypeTP = ${borderTypeCMakeParam};
+	const int kernelRowsTP = ${kernelSizeCMakeParam};
+	const int kernelColsTP = ${kernelSizeCMakeParam};
+	const int maxWidthTP = ${maxWidthCMakeParam};
+	const int maxHeightTP = ${maxHeightCMakeParam};
+	const int srcTypeTP = ${srcTypeCMakeParam};
+	const int dstTypeTP = ${dstTypeCMakeParam};
+	const int NPCTP = ${NPCCMakeParam};
+	
+	//check for limitations of xfOpenCV module
+	assert(src.channels() == 1);
+	assert(dst.channels() == 1);
+	assert(borderTypeTP == XF_BORDER_CONSTANT); //XF only supports border constant
+	assert(borderType == borderTypeTP);
+	
+	//std::cout << "Calling cmake specialized function" << std::endl;
+	
+	xf::Mat<srcTypeTP, maxHeightTP, maxWidthTP, NPCTP>* imgInput;
+	xf::Mat<dstTypeTP, maxHeightTP, maxWidthTP, NPCTP>* imgOutput;
+
+	// perform some checks on the src type
+	cvToXfSource(src,imgInput);
+	
+	// perform some checks on the dst type
+	bool dstPostConversion = cvToXfDestination(dst, imgOutput, src, ddepth);
+
+	//prepare kernel coefficients as array with kernelType fixed to XF_16SP
+	
+	xfkernelType kernelWindow[kernelRowsTP*kernelColsTP];
+	for(int i=0; i<kernelRowsTP; i++)
+		for(int j=0; j<kernelColsTP; j++)
+		{
+			kernelWindow[i*kernelRowsTP+j] = (xfkernelType) (kernel.at<float>(i,j) * (float)(1 << XFSHIFT));
+		}
+
+	// call xf::filter2D 
+	xf::filter2D<${borderTypeCMakeParam},${kernelSizeCMakeParam},${kernelSizeCMakeParam},${srcTypeCMakeParam},${dstTypeCMakeParam},${maxHeightCMakeParam}, ${maxWidthCMakeParam},${NPCCMakeParam}>(*imgInput,*imgOutput,kernelWindow,XFSHIFT);
+
+	//perform checks on the dst type
+	if (dstPostConversion) {
+		xfMatDepthPostConversion(dst,imgOutput);
+	}
+	
+	delete imgInput;
+	delete imgOutput;
+	
+	return;
+}

@@ -1,0 +1,255 @@
+/******************************************************************************
+ *  Copyright (c) 2018, Xilinx, Inc.
+ *  All rights reserved.
+ * 
+ *  Redistribution and use in source and binary forms, with or without 
+ *  modification, are permitted provided that the following conditions are met:
+ *
+ *  1.  Redistributions of source code must retain the above copyright notice, 
+ *     this list of conditions and the following disclaimer.
+ *
+ *  2.  Redistributions in binary form must reproduce the above copyright 
+ *      notice, this list of conditions and the following disclaimer in the 
+ *      documentation and/or other materials provided with the distribution.
+ *
+ *  3.  Neither the name of the copyright holder nor the names of its 
+ *      contributors may be used to endorse or promote products derived from 
+ *      this software without specific prior written permission.
+ *
+ *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ *  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, 
+ *  THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR 
+ *  PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR 
+ *  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, 
+ *  EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, 
+ *  PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+ *  OR BUSINESS INTERRUPTION). HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
+ *  WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR 
+ *  OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
+ *  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ *****************************************************************************/
+ 
+/*****************************************************************************
+*
+*     Author: Kristof Denolf <kristof@xilinx.com>
+*     Date:   2018/01/30
+*
+*****************************************************************************/
+
+///SDx temporal fix for Clang issue
+#ifdef __SDSCC__
+#undef __ARM_NEON__
+#undef __ARM_NEON
+#include <opencv2/core/core.hpp>
+#define __ARM_NEON__
+#define __ARM_NEON
+#else
+#include <opencv2/core/core.hpp>
+#endif
+//#include <opencv2/core/core.hpp>
+
+#include "common/xf_common.h"
+
+
+#include <hls_video.h>
+#include "imgproc/xf_stereoBM.hpp" 
+
+#include <Utils/inc/UtilsForXfOpenCV.h>
+
+#include "xfSDxStereoBM.h"
+
+void xF_stereoBMCompute(cv::Mat &left, cv::Mat &right, cv::Mat &disparity, xf::xFSBMState<${blockSizeCMakeParam},${numberOfDisparitiesCMakeParam},${numberOfDisparityUnitsCMakeParam}> xfsbmstate)
+{
+	const int blockSizeTP = ${blockSizeCMakeParam};
+	const int numberOfDisparitiesTP = ${numberOfDisparitiesCMakeParam};
+	const int numberOfDisparityUnitsTP = ${numberOfDisparityUnitsCMakeParam};
+	const int maxWidthTP = ${maxWidthCMakeParam};
+	const int maxHeightTP = ${maxHeightCMakeParam};
+	const int srcTypeTP = ${srcTypeCMakeParam};
+	const int disparityTypeTP = ${disparityTypeCMakeParam};
+	const int NPCTP = ${NPCCMakeParam};
+
+	//check for limitations of xfOpenCV module
+	assert(left.channels() == 1);
+	assert(right.channels() == 1);
+	assert(disparity.channels() == 1);
+	
+	assert(disparityTypeTP == XF_16UC1); //xfOpenCV only supports 16UC1 as a 12.4 fixed precision format
+	assert(srcTypeTP == XF_8UC1); //xfOpenCV only supports 8UC1
+	assert(NPCTP == XF_NPPC1); //xfOpenCV only supports 1 pixel per clock
+		
+	xf::Mat<srcTypeTP, maxHeightTP, maxWidthTP, NPCTP>* leftMat;
+	xf::Mat<srcTypeTP, maxHeightTP, maxWidthTP, NPCTP>* rightMat;
+	xf::Mat<disparityTypeTP, maxHeightTP, maxWidthTP, NPCTP>* disparityMat;
+
+	// perform some checks on the left and right type
+	cvToXfSource(left,leftMat);
+	cvToXfSource(right,rightMat);
+	
+	// perform some checks on the disparity type
+	bool dstPostConversion = cvToXfDisparity(disparity,disparityMat,left);
+		
+	// call xf::StereoBM
+	xf::StereoBM<blockSizeTP,numberOfDisparitiesTP,numberOfDisparityUnitsTP,srcTypeTP,disparityTypeTP,maxHeightTP,maxWidthTP,NPCTP>(*leftMat, *rightMat, *disparityMat, xfsbmstate);
+
+	//perform checks on the dst type
+	if (dstPostConversion) { // TBD: need to implement proper Q12.4 to floating point conversion
+		xfMatDepthPostConversion(disparity,disparityMat);
+	}
+	
+	delete leftMat;
+	delete rightMat;
+	delete disparityMat;
+	
+	return;
+}
+
+class xF_StereoBMImpl : public xF_StereoBM
+{
+private:
+	xf::xFSBMState<${blockSizeCMakeParam},${numberOfDisparitiesCMakeParam},${numberOfDisparityUnitsCMakeParam}> xfsbmstate;
+	
+public:
+	xF_StereoBMImpl() {};
+	
+	xF_StereoBMImpl(int numDisparities, int blockSize)
+	{
+		const int blockSizeTP = ${blockSizeCMakeParam};
+		const int numberOfDisparitiesTP = ${numberOfDisparitiesCMakeParam};
+	
+		assert(blockSize == blockSizeTP);
+		assert(numDisparities == numberOfDisparitiesTP);
+		
+		
+	}
+	
+	void setMinDisparity(int minDisparity)
+	{	xfsbmstate.minDisparity = minDisparity;
+		return;
+	}
+	
+	void setTextureThreshold(int textureThreshold)
+	{
+		xfsbmstate.textureThreshold = textureThreshold;
+	}
+
+	void setUniquenessRatio (int uniquenessRatio)
+	{
+		xfsbmstate.uniquenessRatio = uniquenessRatio;
+	}
+
+	void setPreFilterCap (int preFilterCap)
+	{
+		xfsbmstate.preFilterCap=preFilterCap;
+	}
+
+	void compute(cv::Mat &left, cv::Mat &right, cv::Mat &disparity)
+	{
+		xF_stereoBMCompute(left,right,disparity,xfsbmstate);
+		/*
+		const int blockSizeTP = ${blockSizeCMakeParam};
+		const int numberOfDisparitiesTP = ${numberOfDisparitiesCMakeParam};
+		const int numberOfDisparityUnitsTP = ${numberOfDisparityUnitsCMakeParam};
+		const int maxWidthTP = ${maxWidthCMakeParam};
+		const int maxHeightTP = ${maxHeightCMakeParam};
+		const int srcTypeTP = ${srcTypeCMakeParam};
+		const int disparityTypeTP = ${disparityTypeCMakeParam};
+		const int NPCTP = ${NPCCMakeParam};
+	
+		assert(left.channels() == 1);
+		assert(right.channels() == 1);
+		assert(disparity.channels() == 1);
+		
+		assert(disparityTypeTP == XF_16UC1); //xfOpenCV only supports 16UC1 as a 12.4 fixed precision format
+		assert(srcTypeTP == XF_8UC1); //xfOpenCV only supports 8UC1
+		assert(NPCTP == XF_NPPC1); //xfOpenCV only supports 1 pixel per clock
+		
+		cv::Mat leftHLS, rightHLS, disparityHLS;
+		
+		const int scrDepthTP = XF_DEPTH(srcTypeTP,NPCTP);
+		const int disparityDepthTP = XF_DEPTH(disparityTypeTP,NPCTP);
+		
+		xf::Mat<srcTypeTP, maxHeightTP, maxWidthTP, NPCTP>* leftMat;
+		xf::Mat<srcTypeTP, maxHeightTP, maxWidthTP, NPCTP>* rightMat;
+		xf::Mat<disparityTypeTP, maxHeightTP, maxWidthTP, NPCTP>* disparityMat;
+
+		// perform some checks on the left type
+		if (left.depth() == XF_XFDEPTH2CVDEPTH(scrDepthTP)) { // no conversion needed if types match and are native C types
+			std::cout << "provided left type matches instantiated core type" << std::endl;
+			leftMat =  new xf::Mat<srcTypeTP, maxHeightTP, maxWidthTP, NPCTP>(left.rows,left.cols,(void *)left.data);
+		}
+		else { // if types do not match, perform SW conversion
+			std::cout << "provided left type does not match instantiated core type, applying SW conversion" << std::endl;
+			cv::Mat tmpMat;
+			left.convertTo(tmpMat, XF_XFDEPTH2CVDEPTH(scrDepthTP));
+			leftMat = new xf::Mat<srcTypeTP, maxHeightTP, maxWidthTP, NPCTP>(left.rows,left.cols);
+			std::cout << "conversion done, memory allocated, copying data" << std::endl;
+			leftMat->copyTo(tmpMat.data);
+			std::cout << "done copying data" << std::endl;
+		}
+		
+		// perform some checks on the right type
+		if (right.depth() == XF_XFDEPTH2CVDEPTH(scrDepthTP)) { // no conversion needed if types match and are native C types
+			std::cout << "provided right type matches instantiated core type" << std::endl;
+			rightMat = new xf::Mat<srcTypeTP, maxHeightTP, maxWidthTP, NPCTP>(right.rows,right.cols,(void *)right.data);
+		}
+		else { // if types do not match, perform SW conversion
+			std::cout << "provided right type does not match instantiated core type, applying SW conversion" << std::endl;
+			cv::Mat tmpMat;
+			right.convertTo(tmpMat, XF_XFDEPTH2CVDEPTH(scrDepthTP));
+			rightMat = new xf::Mat<srcTypeTP, maxHeightTP, maxWidthTP, NPCTP>(right.rows,right.cols);
+			std::cout << "conversion done, memory allocated, copying data" << std::endl;
+			rightMat->copyTo(tmpMat.data);
+			std::cout << "done copying data" << std::endl;
+		}
+		
+		// perform some checks on the disparity type
+		int ddepth = XF_XFDEPTH2CVDEPTH(disparityDepthTP); //preferred disparity depth is disparityDepthTP (then no conversions needed)
+			
+		//check if disparity Mat was already allocated
+		if (disparity.empty())
+		{
+			std::cout << "disparity not yet allocated" << std::endl;
+			disparity = cv::Mat(left.size(),CV_MAKE_TYPE(ddepth,1));		
+		} else if (!(disparity.depth() == CV_16U || disparity.depth() == CV_32F)) { //OpenCV only specifies CV_16U or CV32F
+			std::cout << "disparity allocated does not match OpenCV supported type, reallocating to CV_16U" << std::endl;
+			disparity = cv::Mat(left.size(),CV_MAKE_TYPE(CV_16U,1));
+		} 
+		
+		bool dstPostConversion = false;
+		if (disparity.depth() == XF_XFDEPTH2CVDEPTH(disparityDepthTP)) { // no conversion needed if types match and are native C types
+			std::cout << "provided disparity type matches instantiated core type" << std::endl;
+			disparityMat = new xf::Mat<disparityTypeTP, maxHeightTP, maxWidthTP, NPCTP>(left.rows,left.cols,(void *) disparity.data);
+		}
+		else 
+		{
+			disparityMat = new xf::Mat<disparityTypeTP, maxHeightTP, maxWidthTP, NPCTP>(left.rows,left.cols);
+			std::cout << "provided output does not match, need SW post conversion" << std::endl;
+			dstPostConversion = true;
+		}
+		
+		// call xf::StereoBM
+		xf::StereoBM<blockSizeTP,numberOfDisparitiesTP,numberOfDisparityUnitsTP,srcTypeTP,disparityTypeTP,maxHeightTP,maxWidthTP,NPCTP>(*leftMat, *rightMat, *disparityMat, xfsbmstate);
+
+
+		//perform checks on the dst type
+		if (dstPostConversion) { // TBD: need to implement proper Q12.4 to floating point conversion
+			std::cout << "Disparity type does not match, performing SW conversion to floating point" << std::endl;
+			cv::Mat tmpMat2(left.rows,left.cols,CV_MAKE_TYPE(XF_XFDEPTH2CVDEPTH(disparityDepthTP),1),disparityMat->copyFrom());
+			tmpMat2.convertTo(disparity, disparity.type());
+		}
+		
+		delete leftMat;
+		delete rightMat;
+		delete disparityMat;
+		
+		return;
+		*/
+	}
+};
+
+cv::Ptr<xF_StereoBM> xF_StereoBM::create(int numDisparities, int blockSize)
+{
+	return cv::makePtr<xF_StereoBMImpl>(numDisparities,blockSize);
+}
