@@ -2,9 +2,9 @@
 
 ## Setup Environment on Host
 
-  + clone Pynq-ComputerVision repository (currently [overlays](https://github.com/Xilinx/cvBench/tree/overlays) branch of [cvBench](https://github.com/Xilinx/cvBench))
+  + clone [Pynq-ComputerVision repository](https://github.com/Xilinx/PYNQ-ComputerVision)
     ```commandline
-    $ git clone https://github.com/Xilinx/cvBench.git -b overlays /your_pynqCV_folder
+    $ git clone https://github.com/Xilinx/PYNQ-ComputerVision.git /your_pynqCV_folder
     ``` 
   + clone [xfOpenCV](https://github.com/Xilinx/xfopencv) repository:
     ```commandline
