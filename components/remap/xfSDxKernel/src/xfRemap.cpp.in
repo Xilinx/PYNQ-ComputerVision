@@ -96,7 +96,8 @@ void xF_remap(cv::Mat &src, cv::Mat &dst, cv::Mat &map1, cv::Mat &map2, int inte
 	mapX = new xf::Mat<mapTypeTP, maxHeightTP, maxWidthTP, NPCTP>(map1.rows,map1.cols,(void *) map1.data);
 	mapY = new xf::Mat<mapTypeTP, maxHeightTP, maxWidthTP, NPCTP>(map2.rows,map2.cols,(void *) map2.data);
 	
-	// call xf::remap	xf::remap<${windowRowsCMakeParam},${srcTypeCMakeParam},${mapTypeCMakeParam},${srcTypeCMakeParam},${maxHeightCMakeParam},${maxWidthCMakeParam},${NPCCMakeParam}>(*imgInput,*imgOutput,*mapX,*mapY,interpolation);
+	// call xf::remap	
+	xf::remap<${windowRowsCMakeParam},${srcTypeCMakeParam},${mapTypeCMakeParam},${srcTypeCMakeParam},${maxHeightCMakeParam},${maxWidthCMakeParam},${NPCCMakeParam}>(*imgInput,*imgOutput,*mapX,*mapY,interpolation);
 
 	// If SW post conversion required, we do it here
 	if (dstPostConversion) {
