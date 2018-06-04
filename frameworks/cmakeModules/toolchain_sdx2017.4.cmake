@@ -107,12 +107,18 @@ else (${SDxArch} STREQUAL "arm64") #32 bit toolchain
   SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D__ARM_PCS_VFP")
 endif (${SDxArch} STREQUAL "arm64")
 
-#find sysroot first try the command line argument SDxSysroot, then try to find it as part of the platform  
-find_path(SDxSysroot "usr/include/stdlib.h" PATHS "${SDxSysroot}" "${SDxPlatform}/sw/sysroot" PATH_SUFFIXES "" NO_DEFAULT_PATH)
+
+#find sysroot first try the command line argument SDxSysroot, then try to find it as part of the platform or fall back to SDK for default SDx platforms 
+SET (SDxTestCommandLineSysroot ${SDxSysroot})
+UNSET (SDxSysroot CACHE)
+find_path(SDxSysroot "usr/include/stdlib.h" PATHS ${SDxTestCommandLineSysroot} PATH_SUFFIXES "" NO_DEFAULT_PATH)
+find_path(SDxSysroot "usr/include/stdlib.h" PATHS "${SDxPlatform}/sw/sysroot" PATH_SUFFIXES "" NO_DEFAULT_PATH)
+find_path(SDxSysroot "usr/include/stdlib.h" PATHS "${CMAKE_FIND_ROOT_PATH}/libc" PATH_SUFFIXES "" NO_DEFAULT_PATH)
 MESSAGE (STATUS "SDx sysroot: ${SDxSysroot}")
 #change OpenCV_DIR to cross compiled libraries in sysroot 
 SET (ENV{OpenCV_DIR} ${SDxSysroot}/usr)
 SET (ENV{OPENCV_DIR} ${SDxSysroot}/usr)
+SET (ENV{GSTREAMER_DIR} ${SDxSysroot}/usr)
 
 # set up cross compilation paths
 SET (CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
