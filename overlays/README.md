@@ -4,9 +4,9 @@
 
 | Image Arithmetic      | Filters       |   Geometric Transform | Flow and Depts|   Features    | Input Processing	| Analysis 	|
 | ---------             | ---------     |   ---------           |    ---------  |    ---------  |  ---------  		|--------- 	|
-|                       |   Filter 2D   |         Remap         |   StereoBM    |   Canny       | 					|			|
-|                       |   Erode       |                       |               |               |					|			|
-|                       |   Dilate      |                       |               |               |					|			|
+|                       |   filter2D   	|         remap         |   stereoBM    |   canny       | 					|			|
+|                       |   erode       |                       |               |               |					|			|
+|                       |   dilate      |                       |               |               |					|			|
 ## Setup Environment on Host
 
   + clone [Pynq-ComputerVision](https://github.com/Xilinx/PYNQ-ComputerVision)  repository:
@@ -35,7 +35,7 @@
 
 ### Building your Overlay
   + create an overlay folder in /your_pynqCV_folder/overlays, for instance myFirstOverlay
-  + Copy and adapt the /your_pynqCV_folder/overlays/cvXfUserSpecific/CMakeLists.txt to /your_pynqCV_folder/overlays/myFirstOverlay
+  + Copy and adapt the [/your_pynqCV_folder/overlays/cvXfUserSpecific/CMakeLists.txt](./cvXfUserSpecific/CMakeLists.txt) to /your_pynqCV_folder/overlays/myFirstOverlay
     + line 41, choose your overlay name, for instance xv2MyFirstOverlay
     + line 45, choose the CV components offloaded to PL in your overlay, restricted to a subset of filter2D, remap, dilate, stereoBM and canny
     + lines 47-49: optionally overwrite some of the default instantiation paramaters (defined in the [setDefaultInstantiationParameters CMake macro](../frameworks/cmakeModules/rulesForSDxXfOpenCV.cmake#L37)) by user specific ones 
