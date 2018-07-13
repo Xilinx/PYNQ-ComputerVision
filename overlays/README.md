@@ -43,7 +43,7 @@
     ```commandline
     $ cd /your_pynqCV_folder/overlays/myFirstOverlay
     $ mkdir build; cd build
-    $ cmake .. -DCMAKE_TOOLCHAIN_FILE=../../../frameworks/cmakeModules/toolchain_sdx2017.4.cmake -DSDxPlatform=/your_PynqPlatform_folder -DSDxClockID=1 -DSDxArch=arm32
+    $ cmake .. -DCMAKE_TOOLCHAIN_FILE=../../../frameworks/cmakeModules/toolchain_sdx2017.4.cmake -DSDxPlatform=/your_PynqPlatform_folder/bare_hdmi -DSDxClockID=1 -DSDxArch=arm32
     ```
   + run make for the target with your chosen overlay name
     ```commandline
