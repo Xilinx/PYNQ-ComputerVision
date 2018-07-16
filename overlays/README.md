@@ -9,9 +9,11 @@
 |                       |   dilate      |                       |               |               |					|			|
 ## Setup Environment on Host
 
-  + clone [Pynq-ComputerVision](https://github.com/Xilinx/PYNQ-ComputerVision)  repository:
+  + clone [Pynq-ComputerVision](https://github.com/Xilinx/PYNQ-ComputerVision) repository and checkout the 2017.4 version:
     ```commandline
     $ git clone https://github.com/Xilinx/PYNQ-ComputerVision.git /your_pynqCV_folder
+    $ cd /your_pynqCV_folder
+    $ git checkout 2017.4_release
     ``` 
   + clone [xfOpenCV](https://github.com/Xilinx/xfopencv) repository:
     ```commandline
