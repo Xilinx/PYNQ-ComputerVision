@@ -9,15 +9,15 @@
 |                       |   dilate      |                       |               |               |					|			|
 ## Setup Environment on Host
 
-  + clone [Pynq-ComputerVision](https://github.com/Xilinx/PYNQ-ComputerVision) repository and checkout the 2017.4 version:
+  + clone [Pynq-ComputerVision](https://github.com/Xilinx/PYNQ-ComputerVision) repository:
     ```commandline
     $ git clone https://github.com/Xilinx/PYNQ-ComputerVision.git /your_pynqCV_folder
-    $ cd /your_pynqCV_folder
-    $ git checkout 2017.4_release
     ``` 
-  + clone [xfOpenCV](https://github.com/Xilinx/xfopencv) repository:
+  + clone [xfOpenCV](https://github.com/Xilinx/xfopencv) repository and checkout the 2017.4 version:
     ```commandline
     $ git clone https://github.com/Xilinx/xfopencv.git /your_xfOpenCV_folder
+    $ cd /your_xfOpenCV_folder
+    $ git checkout 2017.4_release
     ``` 
   + Prepare the PYNQ-Z1 Video platform package in /your_PynqPlatform_folder. 
     + download [bare_hdmi.tar.gz](https://www.xilinx.com/member/forms/download/xef.html?filename=bare_hdmi.tar.gz) in /your_PynqPlatform_folder
