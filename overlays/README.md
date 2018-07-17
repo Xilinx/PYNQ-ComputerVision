@@ -4,9 +4,9 @@
 
 | Image Arithmetic      | Filters       |   Geometric Transform | Flow and Depts|   Features    | Input Processing	| Analysis 	|
 | ---------             | ---------     |   ---------           |    ---------  |    ---------  |  ---------  		|--------- 	|
-|                       |   filter2D   	|         remap         |   stereoBM    |   canny       | 					|			|
-|                       |   erode       |                       |               |               |					|			|
-|                       |   dilate      |                       |               |               |					|			|
+| bitwise_and           |   filter2D   	|         remap         |   stereoBM    |   canny       | 					|			|
+| bitwise_or            |   erode       |                       |               |               |					|			|
+| bitwise_xor           |   dilate      |                       |               |               |					|			|
 ## Setup Environment on Host
 
   + clone [Pynq-ComputerVision](https://github.com/Xilinx/PYNQ-ComputerVision) repository:
