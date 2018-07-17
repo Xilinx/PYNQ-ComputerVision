@@ -131,42 +131,5 @@ The [example python script for filter 2D (testXfFilter2D.py)](../applicationCode
     ```
     you should see ~60fps measured result as well as an outline of big bunny pop up on your terminal.
  
- 
-### Detailed Summary of Supported Components 
-
-| Image Arithmetic      | Operating Frequency (MHz) |   		   Utilization Estimate				 | 
-| ---------             |         ---------     	|   LUT  	|     FF	|    DSPs   |  BRAM_18K	 |
-| ---------             |         ---------     	| --------- | --------- | --------- |  --------- |
-| bitwise_and           |   					   	| 			| 			| 			|  			 |
-| bitwise_or            |   					    | 			| 			| 			|  			 |
-| bitwise_xor           |   				        | 			| 			| 			|  			 |
-| threshold             |   						| 			| 			| 			|  			 |
-| subtract              |   					    | 			| 			| 			|  			 |
-
-| Filters			    | Operating Frequency (MHz) |   		   Utilization Estimate				 | 
-| ---------             |         ---------     	|   LUT  	|     FF	|    DSPs   |  BRAM_18K	 |
-| ---------             |         ---------     	| --------- | --------- | --------- |  --------- |
-| filter2D	            |   					   	| 			| 			| 			|  			 |
-| erode		            |   					    | 			| 			| 			|  			 |
-| dilate		        |   				        | 			| 			| 			|  			 |
-| medianBlur            |   						| 			| 			| 			|  			 |
-| boxFilter             |   					    | 			| 			| 			|  			 |
-
-| Geometric Transform   | Operating Frequency (MHz) |   		   Utilization Estimate				 | 
-| ---------             |         ---------     	|   LUT  	|     FF	|    DSPs   |  BRAM_18K	 |
-| ---------             |         ---------     	| --------- | --------- | --------- |  --------- |
-| remap		            |   					   	| 			| 			| 			|  			 |
-| resize		        |   					    | 			| 			| 			|  			 | 
-
-
-| Flow and Depts	    | Operating Frequency (MHz) |   		   Utilization Estimate				 | 
-| ---------             |         ---------     	|   LUT  	|     FF	|    DSPs   |  BRAM_18K	 |
-| ---------             |         ---------     	| --------- | --------- | --------- |  --------- |
-| stereoBM	            |   					   	| 			| 			| 			|  			 | 
-
-| Features			    | Operating Frequency (MHz) |   		   Utilization Estimate				 | 
-| ---------             |         ---------     	|   LUT  	|     FF	|    DSPs   |  BRAM_18K	 |
-| ---------             |         ---------     	| --------- | --------- | --------- |  --------- |
-| canny	            	|   					   	| 			| 			| 			|  			 | 
 
 
