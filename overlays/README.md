@@ -1,12 +1,14 @@
 # Building xfOpenCV Overlays for Pynq: CMake based sds++ cross-compilation
 
-## List of Supported Components:
+## List of Supported Components 
 
 | Image Arithmetic      | Filters       |   Geometric Transform | Flow and Depts|   Features    | Input Processing	| Analysis 	|
 | ---------             | ---------     |   ---------           |    ---------  |    ---------  |  ---------  		|--------- 	|
 | bitwise_and           |   filter2D   	|         remap         |   stereoBM    |   canny       | 					|			|
-| bitwise_or            |   erode       |                       |               |               |					|			|
+| bitwise_or            |   erode       |         resize        |               |               |					|			|
 | bitwise_xor           |   dilate      |                       |               |               |					|			|
+| threshold             |   medianBlur  |                       |               |               |					|			|
+| subtract              |   boxFilter   |                       |               |               |					|			|
 ## Setup Environment on Host
 
   + clone [Pynq-ComputerVision](https://github.com/Xilinx/PYNQ-ComputerVision) repository:
@@ -128,4 +130,43 @@ The [example python script for filter 2D (testXfFilter2D.py)](../applicationCode
     $ sudo ./testXfFilter2D.py 
     ```
     you should see ~60fps measured result as well as an outline of big bunny pop up on your terminal.
-    
+ 
+ 
+### Detailed Summary of Supported Components 
+
+| Image Arithmetic      | Operating Frequency (MHz) |   		   Utilization Estimate				 | 
+| ---------             |         ---------     	|   LUT  	|     FF	|    DSPs   |  BRAM_18K	 |
+| ---------             |         ---------     	| --------- | --------- | --------- |  --------- |
+| bitwise_and           |   					   	| 			| 			| 			|  			 |
+| bitwise_or            |   					    | 			| 			| 			|  			 |
+| bitwise_xor           |   				        | 			| 			| 			|  			 |
+| threshold             |   						| 			| 			| 			|  			 |
+| subtract              |   					    | 			| 			| 			|  			 |
+
+| Filters			    | Operating Frequency (MHz) |   		   Utilization Estimate				 | 
+| ---------             |         ---------     	|   LUT  	|     FF	|    DSPs   |  BRAM_18K	 |
+| ---------             |         ---------     	| --------- | --------- | --------- |  --------- |
+| filter2D	            |   					   	| 			| 			| 			|  			 |
+| erode		            |   					    | 			| 			| 			|  			 |
+| dilate		        |   				        | 			| 			| 			|  			 |
+| medianBlur            |   						| 			| 			| 			|  			 |
+| boxFilter             |   					    | 			| 			| 			|  			 |
+
+| Geometric Transform   | Operating Frequency (MHz) |   		   Utilization Estimate				 | 
+| ---------             |         ---------     	|   LUT  	|     FF	|    DSPs   |  BRAM_18K	 |
+| ---------             |         ---------     	| --------- | --------- | --------- |  --------- |
+| remap		            |   					   	| 			| 			| 			|  			 |
+| resize		        |   					    | 			| 			| 			|  			 | 
+
+
+| Flow and Depts	    | Operating Frequency (MHz) |   		   Utilization Estimate				 | 
+| ---------             |         ---------     	|   LUT  	|     FF	|    DSPs   |  BRAM_18K	 |
+| ---------             |         ---------     	| --------- | --------- | --------- |  --------- |
+| stereoBM	            |   					   	| 			| 			| 			|  			 | 
+
+| Features			    | Operating Frequency (MHz) |   		   Utilization Estimate				 | 
+| ---------             |         ---------     	|   LUT  	|     FF	|    DSPs   |  BRAM_18K	 |
+| ---------             |         ---------     	| --------- | --------- | --------- |  --------- |
+| canny	            	|   					   	| 			| 			| 			|  			 | 
+
+

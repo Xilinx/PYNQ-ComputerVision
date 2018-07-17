@@ -58,6 +58,7 @@ set(XF_8UC4   7)
 set(XF_2UC1   8)
 set(XF_8UC3   9)
 set(XF_16UC3  10)
+
 endmacro()
 
 macro (setDefaultInstantiationParameters)
@@ -65,9 +66,15 @@ setXfOpenCVDefinitions()
 
 #overall defaults
 if(NOT DEFINED borderTypeCMakeParam)
-	set(borderTypeCMakeParam ${XF_BORDER_CONSTANT} CACHE STRING "border type")
+	set(borderTypeCMakeParam ${XF_BORDER_REPLICATE} CACHE STRING "border type") #XF_BORDER_CONSTANT XF_BORDER_REPLICATE
 endif()
 
+if(NOT DEFINED MedianBorderTypeCMakeParam)
+	set(MedianBorderTypeCMakeParam ${XF_BORDER_REPLICATE} CACHE STRING "medianBlur border type")   # only XF_BORDER_REPLICATE is supported
+endif()
+if(NOT DEFINED BoxFilterBorderTypeCMakeParam)
+	set(BoxFilterBorderTypeCMakeParam ${XF_BORDER_CONSTANT} CACHE STRING "boxFilter border type") # only XF_BORDER_CONSTANT is supported
+endif()
 if(NOT DEFINED maxWidthCMakeParam)
 	set(maxWidthCMakeParam 1920 CACHE STRING "maximum width")
 endif()
@@ -156,6 +163,65 @@ if(NOT DEFINED srcIntermedNPCCMakeParam)
 	set(srcIntermedNPCCMakeParam ${XF_NPPC32} CACHE STRING "edge tracing intermediate src number of pixels per clock")
 endif()
 
+
+
+#CornerHarris
+if(NOT DEFINED filterSizeCMakeParam)
+	set(filterSizeCMakeParam 3 CACHE STRING "Filter size (3,5 and 7 supported)")
+endif()
+if(NOT DEFINED blockWidthCMakeParam)
+	set(blockWidthCMakeParam 3 CACHE STRING "Block width (3,5 and 7 supported)")
+endif()
+if(NOT DEFINED NMSRadiusCMakeParam)
+	set(NMSRadiusCMakeParam 1 CACHE STRING "Radius for non-maximum suppression (1 and 2 supported)")
+endif()
+
+#Normalization
+if(NOT DEFINED ID0)
+	set(ID0 0 CACHE STRING "normalization type")
+endif()
+if(NOT DEFINED ID1)
+	set(ID1 1 CACHE STRING "normalization type")
+endif()
+
+# wrapAffine 
+if(NOT DEFINED interpolationTypeCMakeParam)
+	set(interpolationTypeCMakeParam 0 CACHE STRING "interpolation Type") # NN or Bilinear
+endif()
+
+# phase 
+if(NOT DEFINED retTypeCMakeParam)
+	set(retTypeCMakeParam ${XF_RADIANS} CACHE STRING "phase format Type") # XF_RADIANs or XF_DEGREES
+endif()
+
+# boxFilter 
+if(NOT DEFINED boxFilterSizeCMakeParam)
+	set(boxFilterSizeCMakeParam 3 CACHE STRING "box filter size 3,5,7") 
+endif()
+ 
+#Threshold
+set(thresholdTypeCMakeParam 0)
+set(inRangeTypeCMakeParam 1)
+
+#arithmatic ops 
+set(policyTypeCMakeParam 0) # XF_CONVERT_POLICY_SATURATE or XF_CONVERT_POLICY_TRUNCATE
+
+#resize
+if(NOT DEFINED srcWidthCMakeParam)
+	set(srcWidthCMakeParam 1920 CACHE STRING "src maximum width")
+endif()
+
+if(NOT DEFINED srcHeightCMakeParam)
+	set(srcHeightCMakeParam 1080 CACHE STRING "src maximum height")
+endif()
+if(NOT DEFINED dstWidthCMakeParam)
+	set(dstWidthCMakeParam 500 CACHE STRING "dst maximum width")
+endif()
+
+if(NOT DEFINED dstHeightCMakeParam)
+	set(dstHeightCMakeParam 500 CACHE STRING "dst maximum height")
+endif()
+
 endmacro()
 
 function(buildSDxCompilerFlags componentList SDxCompileFlags)
@@ -194,6 +260,21 @@ function(buildSDxCompilerFlags componentList SDxCompileFlags)
 		elseif (${componentNameLocal} STREQUAL "bitwise_not")
 			message(STATUS "generating flags for bitwise_not")
 			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocal}<${srcTypeCMakeParam},${maxHeightCMakeParam},${maxWidthCMakeParam},${NPCCMakeParam}>\" xf${componentNameLocalCap}.cpp -files ${xfOpenCV_INCLUDE_DIRS}/core/xf_arithm.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}")		
+		elseif (${componentNameLocal} STREQUAL "subtract")
+			message(STATUS "generating flags for subtract")
+			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocal}<${policyTypeCMakeParam},${srcTypeCMakeParam},${maxHeightCMakeParam},${maxWidthCMakeParam},${NPCCMakeParam}>\" xf${componentNameLocalCap}.cpp -files ${xfOpenCV_INCLUDE_DIRS}/core/xf_arithm.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}")
+		elseif (${componentNameLocal} STREQUAL "threshold")
+			message(STATUS "generating flags for threshold")
+			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocalCap}<${thresholdTypeCMakeParam},${srcTypeCMakeParam},${maxHeightCMakeParam},${maxWidthCMakeParam},${NPCCMakeParam}>\" xf${componentNameLocalCap}.cpp -files ${xfOpenCV_INCLUDE_DIRS}/imgproc/xf_threshold.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}")		
+		elseif (${componentNameLocal} STREQUAL "medianBlur")
+			message(STATUS "generating flags for medianBlur")
+			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocal}<${filterSizeCMakeParam},${MedianBorderTypeCMakeParam},${srcTypeCMakeParam},${maxHeightCMakeParam},${maxWidthCMakeParam},${NPCCMakeParam}>\" xf${componentNameLocalCap}.cpp -files ${xfOpenCV_INCLUDE_DIRS}/imgproc/xf_median_blur.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}")	
+		elseif (${componentNameLocal} STREQUAL "boxFilter")
+			message(STATUS "generating flags for boxFilter") 
+			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocal}<${BoxFilterBorderTypeCMakeParam},${boxFilterSizeCMakeParam},${srcTypeCMakeParam},${maxHeightCMakeParam},${maxWidthCMakeParam},${NPCCMakeParam}>\" xf${componentNameLocalCap}.cpp -files ${xfOpenCV_INCLUDE_DIRS}/imgproc/xf_box_filter.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}") 		
+		elseif (${componentNameLocal} STREQUAL "resize")
+			message(STATUS "generating flags for resize")  
+			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocal}<${interpolationTypeCMakeParam},${srcTypeCMakeParam},${srcHeightCMakeParam},${srcWidthCMakeParam},${dstHeightCMakeParam},${dstWidthCMakeParam},${NPCCMakeParam}>\" xf${componentNameLocalCap}.cpp -files ${xfOpenCV_INCLUDE_DIRS}/imgproc/xf_resize.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}")
 		
 		
 		else()
@@ -257,6 +338,16 @@ function (createPyOpenCVModulesInOverlayHeaderFile componentList incPath)
  			file(APPEND ${fileName} "\t{\"bitwise_xor\", (PyCFunction)pyopencv_cv_bitwise_xor, METH_VARARGS | METH_KEYWORDS, \"bitwise_xor(src1, src2[, dst[, mask]]) -> dst\"},\n")
  		elseif (${componentNameLocal} STREQUAL "bitwise_not")
  			file(APPEND ${fileName} "\t{\"bitwise_not\", (PyCFunction)pyopencv_cv_bitwise_not, METH_VARARGS | METH_KEYWORDS, \"bitwise_not(src[, dst[, mask]]) -> dst\"},\n")
+ 		elseif (${componentNameLocal} STREQUAL "subtract")
+			file(APPEND ${fileName} "\t{\"subtract\", (PyCFunction)pyopencv_cv_subtract, METH_VARARGS | METH_KEYWORDS, \"subtract(src1, src2[, dst[, mask[, dtype]]]) -> dst\"},\n")
+ 		elseif (${componentNameLocal} STREQUAL "threshold")
+			file(APPEND ${fileName} "\t{\"threshold\", (PyCFunction)pyopencv_cv_threshold, METH_VARARGS | METH_KEYWORDS, \"threshold(src, thresh, maxval, type[, dst]) -> retval\"},\n")
+		elseif (${componentNameLocal} STREQUAL "medianBlur")
+ 			file(APPEND ${fileName} "\t{\"medianBlur\", (PyCFunction)pyopencv_cv_medianBlur, METH_VARARGS | METH_KEYWORDS, \"medianBlur(src, ksize[, dst]) -> dst\"},\n")
+ 		elseif (${componentNameLocal} STREQUAL "boxFilter")
+ 			file(APPEND ${fileName} "\t{\"boxFilter\",(PyCFunction)pyopencv_cv_boxFilter, METH_VARARGS | METH_KEYWORDS, \"boxFilter(src, ddepth, ksize[, dst[, anchor[, normalize[,borderType]]]]) -> dst\"},\n") 
+ 		elseif (${componentNameLocal} STREQUAL "resize")
+ 			file(APPEND ${fileName} "\t{\"resize\",(PyCFunction)pyopencv_cv_resize, METH_VARARGS | METH_KEYWORDS, \"resize(src, dsize[, dst[, fx[, fy[, interpolation]]]]) -> dst\"},\n") 
  		
 		else()
 		endif()
