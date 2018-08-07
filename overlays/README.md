@@ -78,7 +78,7 @@ $ sudo -H pip3.6 install --upgrade git+https://github.com/Xilinx/PYNQ-ComputerVi
 Then to load the overlay, you add the following to your python code:
 
  ```python
-from pynq.overlays.bare_hdmi import BareHDMIOverlay
+from pynq_computervision import BareHDMIOverlay
 base = BareHDMIOverlay("/home/xilinx/proj/test/xv2MyFirstOverlay.bit")
 ```   
 
