@@ -53,7 +53,7 @@
     ```commandline
     $ make xv2MyFirstOverlay
     ```
-  + run make install. This will copy three files (xv2MyFirstOverlay.tcl, xv2MyFirstOverlay.so, xv2MyFirstOverlay.bit) to /your_pynqCV_folder/overlays/myFirstOverlay/build/libarm32 
+  + run make install. This will copy three files (xv2MyFirstOverlay.tcl, xv2MyFirstOverlay.so, xv2MyFirstOverlay.bit) to /your_pynqCV_folder/overlays/myFirstOverlay/libarm32 
     ```commandline
     $ make install
     ```
