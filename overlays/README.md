@@ -1,4 +1,4 @@
-# Building xfOpenCV Overlays for Pynq: CMake based sds++ cross-compilation
+# Building xfOpenCV Overlays for PYNQ: CMake based sds++ cross-compilation
 
 ## List of Supported Components 
 
@@ -13,13 +13,13 @@
 
   + clone [Pynq-ComputerVision](https://github.com/Xilinx/PYNQ-ComputerVision) repository:
     ```commandline
-    $ git clone https://github.com/Xilinx/PYNQ-ComputerVision.git /your_pynqCV_folder
+    $ git clone https://github.com/Xilinx/PYNQ-ComputerVision.git <your_pynqcv_folder>
     ``` 
-  + clone [xfOpenCV](https://github.com/Xilinx/xfopencv) repository and checkout the 2017.4 version:
+  + clone [xfOpenCV](https://github.com/Xilinx/xfopencv) repository and checkout the correct version:
     ```commandline
-    $ git clone https://github.com/Xilinx/xfopencv.git /your_xfOpenCV_folder
-    $ cd /your_xfOpenCV_folder
-    $ git checkout 2017.4_release
+    $ git clone https://github.com/Xilinx/xfopencv.git <your_xfopencv_folder>
+    $ cd <your_xfopencv_folder>
+    $ git checkout <release_number>
     ``` 
   + Prepare the PYNQ-Z1 Video platform package in /your_PynqPlatform_folder. 
     + download [bare_hdmi.tar.gz](https://www.xilinx.com/member/forms/download/xef.html?filename=bare_hdmi.tar.gz) in /your_PynqPlatform_folder
@@ -33,19 +33,19 @@
       $ tar -zxvf sysroot_2018.4.9.tar.gz
       ```
     + Note that you can adapt /your_PynqPlatform_folder to your preference, but the deepest subfolder should match the platform name, in this case 'bare_hdmi'. 
-  + set an environmental variable to xfOpenCV: setenv XFOPENCV_PATH /your_xfOpenCV_folder
+  + set an environmental variable to xfOpenCV: setenv XFOPENCV_PATH <your_xfopencv_folder>
   + set up Xilinx SDx tools, version 2017.4 by running its setup script
 
 
 ### Building your Overlay
-  + create an overlay folder in /your_pynqCV_folder/overlays, for instance myFirstOverlay
-  + Copy and adapt the [/your_pynqCV_folder/overlays/cvXfUserSpecific/CMakeLists.txt](./cvXfUserSpecific/CMakeLists.txt) to /your_pynqCV_folder/overlays/myFirstOverlay
+  + create an overlay folder in /<your_pynqcv_folder>/overlays, for instance myFirstOverlay
+  + Copy and adapt the [/<your_pynqcv_folder>/overlays/cvXfUserSpecific/CMakeLists.txt](./cvXfUserSpecific/CMakeLists.txt) to /<your_pynqcv_folder>/overlays/myFirstOverlay
     + line 41, choose your overlay name, for instance xv2MyFirstOverlay
     + line 45, choose the CV components offloaded to PL in your overlay, restricted to a subset of filter2D, remap, dilate, stereoBM and canny
     + lines 47-49: optionally overwrite some of the default instantiation paramaters (defined in the [setDefaultInstantiationParameters CMake macro](../frameworks/cmakeModules/rulesForSDxXfOpenCV.cmake#L37)) by user specific ones 
-  + create a build folder in /your_pynqCV_folder/overlays/myFirstOverlay run CMake:
+  + create a build folder in /<your_pynqcv_folder>/overlays/myFirstOverlay run CMake:
     ```commandline
-    $ cd /your_pynqCV_folder/overlays/myFirstOverlay
+    $ cd /<your_pynqcv_folder>/overlays/myFirstOverlay
     $ mkdir build; cd build
     $ cmake .. -DCMAKE_TOOLCHAIN_FILE=../../../frameworks/cmakeModules/toolchain_sdx2017.4.cmake -DSDxPlatform=/your_PynqPlatform_folder/bare_hdmi -DSDxClockID=1 -DSDxArch=arm32
     ```
@@ -53,11 +53,11 @@
     ```commandline
     $ make xv2MyFirstOverlay
     ```
-  + run make install. This will copy three files (xv2MyFirstOverlay.tcl, xv2MyFirstOverlay.so, xv2MyFirstOverlay.bit) to /your_pynqCV_folder/overlays/myFirstOverlay/libarm32 
+  + run make install. This will copy three files (xv2MyFirstOverlay.tcl, xv2MyFirstOverlay.so, xv2MyFirstOverlay.bit) to /<your_pynqcv_folder>/overlays/myFirstOverlay/libarm32 
     ```commandline
     $ make install
     ```
-  + copy the content of /your_pynqCV_folder/overlays/myFirstOverlay/build/libarm32 to a test folder (for instance ~/proj/test) on your pynq board:
+  + copy the content of /<your_pynqcv_folder>/overlays/myFirstOverlay/build/libarm32 to a test folder (for instance ~/proj/test) on your pynq board:
     ```commandline
     $  scp xv2MyFirstOverlay.* xilinx@<pynq-board-ip>:/home/xilinx/proj/test
     ```
@@ -115,7 +115,7 @@ xv2.filter2D(xFimgY,-1,kernel,dst=xFdst,borderType=cv2.BORDER_CONSTANT) #filter2
 
 The [example python script for filter 2D (testXfFilter2D.py)](../applicationCode/overlayTests/testPython/testXfFilter2D.py) on the repo assumes your xv2MyFirstOverlay listed filter2D as one of the modules. If necessary, adapt the .bit filename of line 6 and library name on line 14 to the overlay name of your choice (xv2MyFirstOverlay in the steps above). Currently the overlay name is set to xv2Filter2D.
 
-  + To run testXfFilter2D.py (/your_pynqCV_folder/applicationCode/overlayTests/testPython), copy filter2d python test script (with the correct overlay name on lines 6 and 14) to your test folder on the board.
+  + To run testXfFilter2D.py (/<your_pynqcv_folder>/applicationCode/overlayTests/testPython), copy filter2d python test script (with the correct overlay name on lines 6 and 14) to your test folder on the board.
     ```commandline
     $ scp testXfFilter2D.py. xilinx@<pynq-board-ip>:/home/xilinx/proj/test
     ```
