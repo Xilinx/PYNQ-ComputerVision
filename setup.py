@@ -57,7 +57,7 @@ def check_env():
 # copy overlays to python package
 def copy_overlays():
     src_ol_dir = os.path.join(board_folder, 'overlays')
-    dst_ol_dir = os.path.join('pynq-cv', 'overlays')
+    dst_ol_dir = os.path.join('pynq_cv', 'overlays')
     copy_tree(src_ol_dir, dst_ol_dir)
     pynqcv_data_files.extend([os.path.join("..", dst_ol_dir, f)
                               for f in os.listdir(dst_ol_dir)])
@@ -66,7 +66,7 @@ def copy_overlays():
 # copy notebooks to jupyter home
 def copy_notebooks():
     src_nb_dir = os.path.join(board_folder, 'notebooks')
-    dst_nb_dir = os.path.join(notebooks_dir, 'computer_vision')
+    dst_nb_dir = os.path.join(notebooks_dir, 'pynqOpenCV')
     if os.path.exists(dst_nb_dir):
         shutil.rmtree(dst_nb_dir)
     copy_tree(src_nb_dir, dst_nb_dir)
