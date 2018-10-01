@@ -57,7 +57,7 @@ def check_env():
 # copy overlays to python package
 def copy_overlays():
     src_ol_dir = os.path.join(board_folder, 'overlays')
-    dst_ol_dir = os.path.join('pynq-cv', 'overlays')
+    dst_ol_dir = os.path.join('pynq_cv', 'overlays')
     copy_tree(src_ol_dir, dst_ol_dir)
     pynqcv_data_files.extend([os.path.join("..", dst_ol_dir, f)
                               for f in os.listdir(dst_ol_dir)])
