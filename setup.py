@@ -40,24 +40,25 @@ __email__ = "jackl@xilinx.com"
 
 
 # global variables
+pynqcv_module_name = 'pynq_cv'
 board = os.environ['BOARD']
-board_folder = 'boards/{}/'.format(board)
-notebooks_dir = os.environ['PYNQ_JUPYTER_NOTEBOOKS']
+repo_board_folder = 'boards/{}/'.format(board)
+board_notebooks_dir = os.environ['PYNQ_JUPYTER_NOTEBOOKS']
 pynqcv_data_files = []
 
 
 # check whether board is supported
 def check_env():
-    if not os.path.isdir(board_folder):
+    if not os.path.isdir(repo_board_folder):
         raise ValueError("Board {} is not supported.".format(board))
-    if not os.path.isdir(notebooks_dir):
-        raise ValueError("Directory {} does not exist.".format(notebooks_dir))
+    if not os.path.isdir(board_notebooks_dir):
+        raise ValueError("Directory {} does not exist.".format(board_notebooks_dir))
 
 
 # copy overlays to python package
 def copy_overlays():
-    src_ol_dir = os.path.join(board_folder, 'overlays')
-    dst_ol_dir = os.path.join('pynq_cv', 'overlays')
+    src_ol_dir = os.path.join(repo_board_folder, 'overlays')
+    dst_ol_dir = os.path.join(pynqcv_module_name, 'overlays')
     copy_tree(src_ol_dir, dst_ol_dir)
     pynqcv_data_files.extend([os.path.join("..", dst_ol_dir, f)
                               for f in os.listdir(dst_ol_dir)])
@@ -65,8 +66,8 @@ def copy_overlays():
 
 # copy notebooks to jupyter home
 def copy_notebooks():
-    src_nb_dir = os.path.join(board_folder, 'notebooks')
-    dst_nb_dir = os.path.join(notebooks_dir, 'pynqOpenCV')
+    src_nb_dir = os.path.join(repo_board_folder, 'notebooks')
+    dst_nb_dir = os.path.join(board_notebooks_dir, 'pynqOpenCV')
     if os.path.exists(dst_nb_dir):
         shutil.rmtree(dst_nb_dir)
     copy_tree(src_nb_dir, dst_nb_dir)
@@ -77,7 +78,7 @@ copy_overlays()
 copy_notebooks()
 
 
-setup(name='pynq-cv',
+setup(name=pynqcv_module_name,
       version='2.3',
       install_requires=['pynq>=2.3'],
       description='PYNQ computer vision package',
