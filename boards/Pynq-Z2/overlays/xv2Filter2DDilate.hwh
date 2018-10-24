@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
-<EDKSYSTEM EDWVERSION="1.2" TIMESTAMP="Mon Oct 22 13:12:55 2018" VIVADOVERSION="2018.2">
+<EDKSYSTEM EDWVERSION="1.2" TIMESTAMP="Mon Oct 22 13:23:12 2018" VIVADOVERSION="2018.2">
 
   <SYSTEMINFO ARCH="zynq" DEVICE="7z020" NAME="hdmi" PACKAGE="clg400" SPEEDGRADE="-1"/>
 
@@ -21872,7 +21872,7 @@
     </MODULE>
     <MODULE FULLNAME="/video/hdmi_in/frontend/dvi2rgb_0" HWVERSION="1.7" INSTANCE="video_hdmi_in_frontend_dvi2rgb_0" IPTYPE="PERIPHERAL" IS_ENABLE="1" MODCLASS="PERIPHERAL" MODTYPE="dvi2rgb" VLNV="digilentinc.com:ip:dvi2rgb:1.7">
       <DOCUMENTS>
-        <DOCUMENT SOURCE="/group/xrlabs/jackl/repo/repo_imageprocessing/imageprocessing/overlays/cvXfFilter2DDilate/build_Pynq-Z1_2018.2_100MHz_noncache/_sds/p0/vivado/.local/dsa/iprepo/ip/dvi2rgb_v1_7/docs/dvi2rgb.pdf"/>
+        <DOCUMENT SOURCE="/group/xrlabs/jackl/repo/repo_imageprocessing/imageprocessing/overlays/cvXfFilter2DDilate/build_Pynq-Z2_2018.2_100MHz_noncache/_sds/p0/vivado/.local/dsa/iprepo/ip/dvi2rgb_v1_7/docs/dvi2rgb.pdf"/>
       </DOCUMENTS>
       <PARAMETERS>
         <PARAMETER NAME="kEmulateDDC" VALUE="true"/>
@@ -24234,7 +24234,7 @@
     </MODULE>
     <MODULE FULLNAME="/video/hdmi_out/frontend/rgb2dvi_0" HWVERSION="1.2" INSTANCE="video_hdmi_out_frontend_rgb2dvi_0" IPTYPE="PERIPHERAL" IS_ENABLE="1" MODCLASS="PERIPHERAL" MODTYPE="rgb2dvi" VLNV="digilentinc.com:ip:rgb2dvi:1.2">
       <DOCUMENTS>
-        <DOCUMENT SOURCE="/group/xrlabs/jackl/repo/repo_imageprocessing/imageprocessing/overlays/cvXfFilter2DDilate/build_Pynq-Z1_2018.2_100MHz_noncache/_sds/p0/vivado/.local/dsa/iprepo/ip/rgb2dvi_v1_2/docs/rgb2dvi_v1_2.pdf"/>
+        <DOCUMENT SOURCE="/group/xrlabs/jackl/repo/repo_imageprocessing/imageprocessing/overlays/cvXfFilter2DDilate/build_Pynq-Z2_2018.2_100MHz_noncache/_sds/p0/vivado/.local/dsa/iprepo/ip/rgb2dvi_v1_2/docs/rgb2dvi_v1_2.pdf"/>
       </DOCUMENTS>
       <PARAMETERS>
         <PARAMETER NAME="kGenerateSerialClk" VALUE="false"/>
