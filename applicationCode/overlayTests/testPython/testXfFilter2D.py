@@ -1,4 +1,4 @@
-#!/opt/python3.6/bin/python3.6
+#!/usr/bin/python3.6
 
 ###############################################################################
 #  Copyright (c) 2018, Xilinx, Inc.
@@ -33,17 +33,18 @@
 ###############################################################################
 
 print("Loading overlay")
-
-from pynq.overlays.bare_hdmi import BareHDMIOverlay
-base = BareHDMIOverlay("/home/xilinx/proj/test/xv2Filter2D.bit")
+from pynq import Bitstream
+bs = Bitstream("/usr/local/lib/python3.6/dist-packages/pynq_cv/overlays/xv2Filter2DDilate.bit")
+bs.download()
 
 print("Loading xlnk")
 from pynq import Xlnk
+Xlnk.set_allocator_library('/usr/local/lib/python3.6/dist-packages/pynq_cv/overlays/xv2Filter2DDilate.so')
 mem_manager = Xlnk()
 
+import pynq_cv.overlays.xv2Filter2DDilate as xv2
 import numpy as np
 import cv2
-import xv2Filter2D as xv2
 import time
 
 img = cv2.imread('../images/bigBunny_1080.png')
