@@ -28,7 +28,10 @@
       $ tar -zxvf ultra96_platform_sysroot_2018.2.tar.gz
       ```
     + Note that you can adapt /your_PynqPlatform_folder to your preference, but the deepest subfolder should match the platform name, in this case 'ultra'. 
-  + set an environmental variable to xfOpenCV: setenv XFOPENCV_PATH <your_xfopencv_folder>
+  + set an environmental variable to xfOpenCV
+    ```commandline
+    $ setenv XFOPENCV_PATH <your_xfopencv_folder>
+    ```
   + set up Xilinx SDx tools, version 2018.2 by running its setup script
 
 
