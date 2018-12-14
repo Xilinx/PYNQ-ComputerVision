@@ -32,33 +32,19 @@
  
 /*****************************************************************************
 *
-*
 *     Author: Kristof Denolf <kristof@xilinx.com>
-*     Date:   2017/11/22
+*     Date:   2018/03/13
 *
 *****************************************************************************/
 
-#ifndef _XFSDXERODE_H_
-#define _XFSDXERODE_H_
-
-///SDx temporal fix for Clang issue
-#ifdef __SDSCC__
-#undef __ARM_NEON__
-#undef __ARM_NEON
-#include <opencv2/core/core.hpp>
-#define __ARM_NEON__
-#define __ARM_NEON
-#else
-#include <opencv2/core/core.hpp>
-#endif
-//#include <opencv2/core/core.hpp>
+#include "xfErodeCoreForVivadoHLS.h"
+#include "imgproc/xf_erosion.hpp" 
 
 
-namespace xF { 
- 
-void erode(cv::Mat &src, cv::Mat &dst, const cv::Mat &kernel=cv::Mat(0,0,0), cv::Point anchor=cv::Point(-1,-1), int iterations=1, int borderType=cv::BORDER_CONSTANT, const cv::Scalar& borderValue=cv::Scalar::all(-DBL_MAX));
-
-} // namespace xF
-
-#endif
-
+void xF_erode(xf::Mat<${srcTypeCMakeParamErode}, ${maxHeightCMakeParamErode}, ${maxWidthCMakeParamErode}, ${NPCCMakeParamErode}>* imgInput, xf::Mat<${srcTypeCMakeParamErode}, ${maxHeightCMakeParamErode}, ${maxWidthCMakeParamErode}, ${NPCCMakeParamErode}>* imgOutput)
+{
+	// call xf::erode
+	xf::erode<${borderTypeCMakeParamErode},${srcTypeCMakeParamErode},${maxHeightCMakeParamErode},${maxWidthCMakeParamErode},${NPCCMakeParamErode}>(*imgInput,*imgOutput);
+	
+	return;
+}
