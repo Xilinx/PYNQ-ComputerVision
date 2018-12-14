@@ -72,7 +72,7 @@
  Before we load the overlay, it is a good idea to first install the PYNQ computer vision extensions. This can be done by following the pip install instructions for the pynq-computervision extension found [here](https://github.com/Xilinx/PYNQ-ComputerVision). From the command line on your pynq board, you need to run:
  
 ```bash
-$ sudo -H pip3.6 install --upgrade git+https://github.com/Xilinx/PYNQ-ComputerVision.git
+$ sudo -H pip3 install --upgrade git+https://github.com/Xilinx/PYNQ-ComputerVision.git
 ```
 Then to load the overlay, you add the following to your python code:
 
