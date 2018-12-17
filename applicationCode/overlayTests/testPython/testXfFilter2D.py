@@ -33,8 +33,8 @@
 ###############################################################################
 
 print("Loading overlay")
-from pynq import Bitstream
-bs = Bitstream("/usr/local/lib/python3.6/dist-packages/pynq_cv/overlays/xv2Filter2DDilate.bit")
+from pynq import Overlay
+bs = Overlay("/usr/local/lib/python3.6/dist-packages/pynq_cv/overlays/xv2Filter2DDilate.bit")
 bs.download()
 
 print("Loading xlnk")
