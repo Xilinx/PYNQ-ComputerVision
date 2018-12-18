@@ -37,42 +37,10 @@
 *
 *****************************************************************************/
 
-#ifndef _XFSDXSTEREOBM_H_
-#define _XFSDXSTEREOBM_H_
+#ifndef _XFSTEREOBMCOREFORVIVADOHLS_H_
+#define _XFSTEREOBMCOREFORVIVADOHLS_H_
 
-///SDx temporal fix for Clang issue
-#ifdef __SDSCC__
-#undef __ARM_NEON__
-#undef __ARM_NEON
-#include <opencv2/core/core.hpp>
-#define __ARM_NEON__
-#define __ARM_NEON
-#else
-#include <opencv2/core/core.hpp>
-#endif
-//#include <opencv2/core/core.hpp>
-
-
-namespace xF { //Namespace not working yet
-
-
-class StereoBM
-{
-	public:
-		static cv::Ptr<xF::StereoBM> create(int numDisparities = 0, int blockSize = 21);
-		virtual void compute(cv::Mat &left, cv::Mat &right, cv::Mat &disparity) = 0;
-		virtual void setPreFilterCap (int preFilterCap) = 0;
-		virtual void setTextureThreshold (int textureThreshold) = 0;
-		virtual void setUniquenessRatio (int uniquenessRatio) = 0;
-		virtual void setMinDisparity(int minDisparity) = 0;
-		virtual int getPreFilterCap () = 0;
-		virtual int getTextureThreshold () = 0;
-		virtual int getUniquenessRatio () = 0;
-		virtual int getMinDisparity() = 0;
-	
-};
-
-
-} // namespace xF
+#include "common/xf_common.h"
+void xF_stereoBMCompute(xf::Mat<${srcTypeCMakeParamStereoBM}, ${maxHeightCMakeParamStereoBM}, ${maxWidthCMakeParamStereoBM}, ${NPCCMakeParamStereoBM}>* imgInputLeft, xf::Mat<${srcTypeCMakeParamStereoBM}, ${maxHeightCMakeParamStereoBM}, ${maxWidthCMakeParamStereoBM}, ${NPCCMakeParamStereoBM}>* imgInputRight, xf::Mat<${disparityTypeCMakeParamStereoBM}, ${maxHeightCMakeParamStereoBM}, ${maxWidthCMakeParamStereoBM}, ${NPCCMakeParamStereoBM}>* imgInputDisparity, xf::xFSBMState<${blockSizeCMakeParamStereoBM},${numberOfDisparitiesCMakeParamStereoBM},${numberOfDisparityUnitsCMakeParamStereoBM}> xfsbmstate);
 
 #endif
