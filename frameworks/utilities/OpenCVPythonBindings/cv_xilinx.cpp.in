@@ -1314,9 +1314,6 @@ static int convert_to_char(PyObject *o, char *dst, const char *name = "no_name")
 #  pragma GCC diagnostic ignored "-Wmissing-field-initializers"
 #endif
 
-//#include "pyopencv_generated_types.h"
-//#include "PythonBindingSDSOCFilter2D.h"
-
 static PyMethodDef special_methods[] = {
 #ifdef HAVE_OPENCV_HIGHGUI
   {"createTrackbar", pycvCreateTrackbar, METH_VARARGS, "createTrackbar(trackbarName, windowName, value, count, onChange) -> None"},
