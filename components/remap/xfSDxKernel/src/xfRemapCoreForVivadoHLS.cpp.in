@@ -33,32 +33,15 @@
 /*****************************************************************************
 *
 *     Author: Kristof Denolf <kristof@xilinx.com>
-*     Date:   2018/01/25
+*     Date:   2018/09/05
 *
 *****************************************************************************/
 
-#ifndef _XFSDXREMAP_H_
-#define _XFSDXREMAP_H_
+#include "xfRemapCoreForVivadoHLS.h"
+#include "imgproc/xf_remap.hpp" 
 
-///SDx temporal fix for Clang issue
-#ifdef __SDSCC__
-#undef __ARM_NEON__
-#undef __ARM_NEON
-#include <opencv2/core/core.hpp>
-#define __ARM_NEON__
-#define __ARM_NEON
-#else
-#include <opencv2/core/core.hpp>
-#endif
-//#include <opencv2/core/core.hpp>
-
-
-namespace xF {
-
-
-void remap(cv::Mat &src, cv::Mat &dst, cv::Mat &map1, cv::Mat &map2, int interpolation, int borderMode=cv::BORDER_CONSTANT, const cv::Scalar& borderValue=cv::Scalar());
-
-
-} // namespace xF
-
-#endif
+void xF_remap(xf::Mat<${srcTypeCMakeParamRemap}, ${maxHeightCMakeParamRemap}, ${maxWidthCMakeParamRemap}, ${NPCCMakeParamRemap}>* imgInput, xf::Mat<${srcTypeCMakeParamRemap}, ${maxHeightCMakeParamRemap}, ${maxWidthCMakeParamRemap}, ${NPCCMakeParamRemap}>* imgOutput, xf::Mat<${mapTypeCMakeParamRemap}, ${maxHeightCMakeParamRemap}, ${maxWidthCMakeParamRemap}, ${NPCCMakeParamRemap}>* mapX, xf::Mat<${mapTypeCMakeParamRemap}, ${maxHeightCMakeParamRemap}, ${maxWidthCMakeParamRemap}, ${NPCCMakeParamRemap}>* mapY)
+{	
+	// call xf::remap	
+	xf::remap<${windowRowsCMakeParamRemap},${interpolationTypeCMakeParamRemap},${srcTypeCMakeParamRemap},${mapTypeCMakeParamRemap},${srcTypeCMakeParamRemap},${maxHeightCMakeParamRemap},${maxWidthCMakeParamRemap},${NPCCMakeParamRemap}>(*imgInput,*imgOutput,*mapX,*mapY);
+}

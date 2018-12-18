@@ -37,6 +37,8 @@
 *
 *****************************************************************************/
 
+#include "xfRemapCoreForVivadoHLS.h"
+
 ///SDx temporal fix for Clang issue
 #ifdef __SDSCC__
 #undef __ARM_NEON__
@@ -48,30 +50,26 @@
 #include <opencv2/core/core.hpp>
 #endif
 //#include <opencv2/core/core.hpp>
+
 #include "opencv2/imgproc/imgproc.hpp"
-
-#include "common/xf_common.h"
-
-
-#include <hls_video.h>
-#include "imgproc/xf_remap.hpp" 
 
 #include <Utils/inc/UtilsForXfOpenCV.h>
 
-#include "xfSDxRemap.h"
+//PL instantiation parameters
 
-//PL instatiation parameters
+namespace xF {
 
-void xF_remap(cv::Mat &src, cv::Mat &dst, cv::Mat &map1, cv::Mat &map2, int interpolation, int borderMode, const cv::Scalar& borderValue)
+void remap(cv::Mat &src, cv::Mat &dst, cv::Mat &map1, cv::Mat &map2, int interpolation, int borderMode, const cv::Scalar& borderValue)
 {
-	const int windowRowsTP = ${windowRowsCMakeParam};
-	const int borderTypeTP = ${borderTypeCMakeParam};
-	const int maxWidthTP = ${maxWidthCMakeParam};
-	const int maxHeightTP = ${maxHeightCMakeParam};
-	const int srcTypeTP = ${srcTypeCMakeParam};
-	const int dstTypeTP = ${srcTypeCMakeParam}; 
-	const int mapTypeTP = ${mapTypeCMakeParam};
-	const int NPCTP = ${NPCCMakeParam};
+	const int windowRowsTP = ${windowRowsCMakeParamRemap};
+	const int borderTypeTP = ${borderTypeCMakeParamRemap};
+	const int maxWidthTP = ${maxWidthCMakeParamRemap};
+	const int maxHeightTP = ${maxHeightCMakeParamRemap};
+	const int srcTypeTP = ${srcTypeCMakeParamRemap};
+	const int dstTypeTP = ${srcTypeCMakeParamRemap}; 
+	const int mapTypeTP = ${mapTypeCMakeParamRemap};
+	const int NPCTP = ${NPCCMakeParamRemap};
+	const int interpolationTypeTP = ${interpolationTypeCMakeParamRemap};
 	
 	//check for limitations of xfOpenCV module
 	assert(src.channels() == 1);
@@ -80,7 +78,8 @@ void xF_remap(cv::Mat &src, cv::Mat &dst, cv::Mat &map1, cv::Mat &map2, int inte
 	assert(borderMode == borderTypeTP);
 	assert(mapTypeTP == XF_32FC1); //only floating point x,y maps supported
 	assert(map1.type() == CV_32FC1 && map2.type() == CV_32FC1); //only floating point x,y maps supported
-	assert(interpolation == cv::INTER_NEAREST|| interpolation == cv::INTER_LINEAR); //xf opencv only supports nearest neighbor or bilinear interpolation 
+	assert(interpolation == cv::INTER_NEAREST|| interpolation == cv::INTER_LINEAR); //xf opencv only supports nearest neighbor or bilinear interpolation
+	assert(interpolation == interpolationTypeTP);
 	
 	xf::Mat<srcTypeTP, maxHeightTP, maxWidthTP, NPCTP> *imgInput;
 	xf::Mat<dstTypeTP, maxHeightTP, maxWidthTP, NPCTP> *imgOutput;
@@ -97,7 +96,7 @@ void xF_remap(cv::Mat &src, cv::Mat &dst, cv::Mat &map1, cv::Mat &map2, int inte
 	mapY = new xf::Mat<mapTypeTP, maxHeightTP, maxWidthTP, NPCTP>(map2.rows,map2.cols,(void *) map2.data);
 	
 	// call xf::remap	
-	xf::remap<${windowRowsCMakeParam},${srcTypeCMakeParam},${mapTypeCMakeParam},${srcTypeCMakeParam},${maxHeightCMakeParam},${maxWidthCMakeParam},${NPCCMakeParam}>(*imgInput,*imgOutput,*mapX,*mapY,interpolation);
+	xF_remap(imgInput,imgOutput,mapX,mapY);
 
 	// If SW post conversion required, we do it here
 	if (dstPostConversion) {
@@ -111,3 +110,5 @@ void xF_remap(cv::Mat &src, cv::Mat &dst, cv::Mat &map1, cv::Mat &map2, int inte
 	
 	return;
 }
+
+} // namespace xF
