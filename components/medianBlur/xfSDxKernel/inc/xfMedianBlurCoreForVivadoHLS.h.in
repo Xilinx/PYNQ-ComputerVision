@@ -29,27 +29,21 @@
  *  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  *****************************************************************************/
- 
+
 /*****************************************************************************
 *
 *     Author: Kristof Denolf <kristof@xilinx.com>
-*     Date:   2017/12/05
+*     Date:   2017/11/22
 *
 *****************************************************************************/
 
-#include "xfMedianBlurCoreForVivadoHLS.h"
-#include "imgproc/xf_median_blur.hpp"
- 
+#ifndef _XFMEDIANCOREFORVIVADOHLS_H_
+#define _XFMEDIANCOREFORVIVADOHLS_H_
+
+#include "common/xf_common.h"
 
 void xF_medianBlur( 
 xf::Mat<${srcTypeCMakeParamMedianBlur}, ${maxHeightCMakeParamMedianBlur}, ${maxWidthCMakeParamMedianBlur}, ${NPCCMakeParamMedianBlur}>* imgInput,  
-xf::Mat<${dstTypeCMakeParamMedianBlur}, ${maxHeightCMakeParamMedianBlur}, ${maxWidthCMakeParamMedianBlur}, ${NPCCMakeParamMedianBlur}>* imgOutput)
-{	 
+xf::Mat<${dstTypeCMakeParamMedianBlur}, ${maxHeightCMakeParamMedianBlur}, ${maxWidthCMakeParamMedianBlur}, ${NPCCMakeParamMedianBlur}>* imgOutput);
  
-	// call xf::medianBlur
-	xf::medianBlur<${filterSizeCMakeParamMedianBlur},${borderTypeCMakeParamMedianBlur},${srcTypeCMakeParamMedianBlur},${maxHeightCMakeParamMedianBlur}, ${maxWidthCMakeParamMedianBlur},${NPCCMakeParamMedianBlur}>(*imgInput,*imgOutput);
-	
-	return;
-}
- 
- 
+#endif

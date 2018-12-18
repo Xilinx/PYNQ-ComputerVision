@@ -32,8 +32,8 @@
 
 /*****************************************************************************
 *
-*     Author: Murad Qasaimeh <muradq@xilinx.com> <kristof@xilinx.com>
-*     Date:   2018/06/22
+*     Author: Kristof Denolf <kristof@xilinx.com>
+*     Date:   2017/11/22
 *
 *****************************************************************************/
 
@@ -51,7 +51,11 @@
 #include <opencv2/core/core.hpp>
 #endif 
 
-void xF_medianBlur(cv::Mat &src, cv::Mat &dst, int ksize);
- 
+namespace xF { 
+void MedianBlur(cv::Mat &src, cv::Mat &dst, int ksize);
+}
 
 #endif
+ 
+
+ 

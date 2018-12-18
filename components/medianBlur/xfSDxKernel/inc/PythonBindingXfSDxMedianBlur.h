@@ -32,8 +32,9 @@
  
 /*****************************************************************************
 *
-*     Author: Murad Qasaimeh <muradq@xilinx.com> <kristof@xilinx.com>
-*     Date:   2018/06/22
+*     Author: Kristof Denolf <kristof@xilinx.com>
+*             Jack Lo <jackl@xilinx.com>
+*     Date:   2017/12/05
 *
 *****************************************************************************/
 
@@ -58,7 +59,7 @@ static PyObject* pyopencv_cv_medianBlur(PyObject* , PyObject* args, PyObject* kw
         pyopencv_to(pyobj_src, src, ArgInfo("src", 0)) &&
         pyopencv_to(pyobj_dst, dst, ArgInfo("dst", 1)) )
     {
-        ERRWRAP2(xF_medianBlur(src, dst, ksize));
+        ERRWRAP2(xF::medianBlur(src, dst, ksize));
         return pyopencv_from(dst);
     }
     }
