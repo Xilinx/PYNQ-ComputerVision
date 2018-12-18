@@ -33,7 +33,7 @@
 /*****************************************************************************
 *
 *     Author: Kristof Denolf <kristof@xilinx.com>
-*     Date:   2018/05/11
+*     Date:   2018/10/29
 *
 *****************************************************************************/
 
@@ -53,57 +53,15 @@
 #include "imgproc/xf_resize.hpp" 
 #include <Utils/inc/UtilsForXfOpenCV.h>
 
-#include "xfResizeCoreForVivadoHLS.h"  
-
-namespace xF {
+#include "xfResizeCoreForVivadoHLS.h"
+#include "xfSDxResize.h" 
  
-void resize(cv::Mat &src, cv::Mat &dst, cv::Size dsize, double fx, double fy, int interpolation)
+void xF_resize(xf::Mat<${srcTypeCMakeParamResize}, ${srcMaxHeightCMakeParamResize}, ${srcMaxWidthCMakeParamResize}, ${NPCCMakeParamResize}>* imgInput, xf::Mat<${srcTypeCMakeParamResize}, ${dstMaxHeightCMakeParamResize}, ${dstMaxWidthCMakeParamResize}, ${NPCCMakeParamResize}>* imgOutput) 
 { 
-	const int interpolationTP	= ${interpolationTypeCMakeParamResize};
-	const int srcTypeTP 		= ${srcTypeCMakeParamResize};  
-	const int srcMaxWidthTP 	= ${srcMaxWidthCMakeParamResize};
-	const int srcMaxHeightTP 	= ${srcMaxHeightCMakeParamResize};	
-	const int dstMaxWidthTP 	= ${dstMaxWidthCMakeParamResize};
-	const int dstMaxHeightTP 	= ${dstMaxHeightCMakeParamResize};	
-	const int NPCTP             = ${NPCCMakeParam};
-	const int maxDownScaleTP    = ${maxDownScaleCMakeParamResize};
-	
-	if (fx == 0.0 || fy == 0.0)
-	{
-		assert(dsize.width != 0 && dsize.height != 0);
-	}
-	else
-	{
-		dsize = cv::Size(round(fx*src.cols),round(fy*src.rows));
-	}
-	
-	//check for limitations of xfOpenCV module
-	assert(src.channels() == 1);
-	assert(dsize.width <=  dstMaxWidthTP &&  round(fx*src.size().width) <= dstMaxWidthTP); 
-	assert(dsize.height <= dstMaxHeightTP && round(fy*src.size().height) <= dstMaxHeightTP);  
-	
-	xf::Mat<srcTypeTP, srcMaxHeightTP, srcMaxWidthTP, NPCTP>* imgInput; 
-	xf::Mat<srcTypeTP, dstMaxHeightTP, dstMaxWidthTP, NPCTP>* imgOutput;
 
-	// perform some checks on the src type
-	cvToXfSource(src, imgInput);	 
-          
-	// perform some checks on the dst type
-	bool dstPostConversion = cvToXfDestination(dst, imgOutput, dsize, src.type()); 
-	 
-	// call CoreForVivadoHLS wrapper of xf::resize
-	xF_resize(imgInput, imgOutput);
-
-	//perform checks on the dst type
-	if (dstPostConversion) {
-		xfMatDepthPostConversion(dst,imgOutput);
-	}
-	
-	delete imgInput;	 
-	delete imgOutput;
+	// call xf::resize
+	xf::resize<${interpolationTypeCMakeParamResize},${srcTypeCMakeParamResize},${srcMaxHeightCMakeParamResize},${srcMaxWidthCMakeParamResize},${dstMaxHeightCMakeParamResize},${dstMaxWidthCMakeParamResize},${NPCCMakeParamResize},${maxDownScaleCMakeParamResize}>(*imgInput, *imgOutput);
 	
 	return;
 }
-
-} //namespace xF
 

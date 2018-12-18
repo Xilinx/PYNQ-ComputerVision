@@ -38,26 +38,12 @@
 *
 *****************************************************************************/
 
-#ifndef _XFSDXRESIZE_H_
-#define _XFSDXRESIZE_H_
+#ifndef _XFDILATECOREFORVIVADOHLS_H_
+#define _XFDILATECOREFORVIVADOHLS_H_
 
-///SDx temporal fix for Clang issue
-#ifdef __SDSCC__
-#undef __ARM_NEON__
-#undef __ARM_NEON
-#include <opencv2/core/core.hpp>
-#define __ARM_NEON__
-#define __ARM_NEON
-#else
-#include <opencv2/core/core.hpp>
-#endif 
+#include "common/xf_common.h"
 
-namespace xF { 
-
-//---------------------------------------------------------- Declaration ----------------------------------------------------------
-
-void resize(cv::Mat &src, cv::Mat &dst, cv::Size dsize, double fx=0, double fy=0, int interpolation=0);
+void xF_resize(xf::Mat<${srcTypeCMakeParamResize}, ${srcMaxHeightCMakeParamResize}, ${srcMaxWidthCMakeParamResize}, ${NPCCMakeParamResize}>* imgInput, xf::Mat<${srcTypeCMakeParamResize}, ${dstMaxHeightCMakeParamResize}, ${dstMaxWidthCMakeParamResize}, ${NPCCMakeParamResize}>* imgOutput);
  
-} // namespace xF 
 
 #endif
