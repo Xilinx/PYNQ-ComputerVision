@@ -32,30 +32,26 @@
  
 /*****************************************************************************
 *
-*
 *     Author: Kristof Denolf <kristof@xilinx.com>
-*     Date:   2017/11/22
+*     Date:   2018/05/11
 *
 *****************************************************************************/
-#ifndef _XFSDXSUBTRACT_H_
-#define _XFSDXSUBTRACT_H_
 
-///SDx temporal fix for Clang issue
-#ifdef __SDSCC__
-#undef __ARM_NEON__
-#undef __ARM_NEON
-#include <opencv2/core/core.hpp>
-#define __ARM_NEON__
-#define __ARM_NEON
-#else
-#include <opencv2/core/core.hpp>
-#endif
+#include "xfSubtractCoreForVivadoHLS.h"
+#include "core/xf_arithm.hpp" 
 
-namespace xF {  
+void xF_subtract(
+xf::Mat<${srcTypeCMakeParamSubtract}, ${maxHeightCMakeParamSubtract}, ${maxWidthCMakeParamSubtract}, ${NPCCMakeParamSubtract}>* imgInput1, 
+xf::Mat<${srcTypeCMakeParamSubtract}, ${maxHeightCMakeParamSubtract}, ${maxWidthCMakeParamSubtract}, ${NPCCMakeParamSubtract}>* imgInput2, 
+xf::Mat<${srcTypeCMakeParamSubtract}, ${maxHeightCMakeParamSubtract}, ${maxWidthCMakeParamSubtract}, ${NPCCMakeParamSubtract}>* imgOutput)
+{
+	// call xf::subtract
+	xf::subtract<${policyTypeCMakeParamSubtract},${srcTypeCMakeParamSubtract},${maxHeightCMakeParamSubtract},${maxWidthCMakeParamSubtract},${NPCCMakeParamSubtract}>(*imgInput1,*imgInput2,*imgOutput);
+	
+	return;
+}
 
-void subtract(cv::Mat &src1, cv::Mat &src2, cv::Mat &dst, cv::Mat mask= cv::Mat(), int dtype=-1); 
 
-} // namespace xF
-#endif
+
 
  
