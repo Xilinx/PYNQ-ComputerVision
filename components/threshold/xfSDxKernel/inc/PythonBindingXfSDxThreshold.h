@@ -32,8 +32,9 @@
  
 /*****************************************************************************
 *
-*     Author: Murad Qasaimeh <muradq@xilinx.com>
-*     Date:   2018/06/11
+*     Author: Kristof Denolf <kristof@xilinx.com>
+*             Jack Lo <jackl@xilinx.com>
+*     Date:   2018/01/25
 *
 *****************************************************************************/
 
@@ -60,7 +61,7 @@ static PyObject* pyopencv_cv_threshold(PyObject* , PyObject* args, PyObject* kw)
         pyopencv_to(pyobj_src, src, ArgInfo("src", 0)) &&
         pyopencv_to(pyobj_dst, dst, ArgInfo("dst", 1)) )
     {
-        ERRWRAP2(retval = xF_threshold(src, dst, thresh, maxval, type));
+        ERRWRAP2(retval = xF::threshold(src, dst, thresh, maxval, type));
         return Py_BuildValue("(NN)", pyopencv_from(retval), pyopencv_from(dst));
     }
      
