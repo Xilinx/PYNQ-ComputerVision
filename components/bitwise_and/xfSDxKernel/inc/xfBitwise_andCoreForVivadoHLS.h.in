@@ -33,67 +33,18 @@
 /*****************************************************************************
 *
 *     Author: Kristof Denolf <kristof@xilinx.com>
-*     Date:   2018/05/11
+*     Date:   2017/11/22
 *
 *****************************************************************************/
 
-///SDx temporal fix for Clang issue
-#ifdef __SDSCC__
-#undef __ARM_NEON__
-#undef __ARM_NEON
-#include <opencv2/core/core.hpp>
-#define __ARM_NEON__
-#define __ARM_NEON
-#else
-#include <opencv2/core/core.hpp>
-#endif 
-#include <Utils/inc/UtilsForXfOpenCV.h>
+#ifndef _XFBITWISEANDCOREFORVIVADOHLS_H_
+#define _XFBITWISEANDCOREFORVIVADOHLS_H_
 
-#include "xfBitwise_andCoreForVivadoHLS.h"
+#include "common/xf_common.h"
 
-namespace xF {
-  
-void bitwise_and(cv::Mat &src1, cv::Mat &src2, cv::Mat &dst, cv::Mat mask)
-{  
-	const int srcTypeTP = ${srcTypeCMakeParamBitwise_and};  
-	const int maxWidthTP = ${maxWidthCMakeParamBitwise_and};
-	const int maxHeightTP = ${maxHeightCMakeParamBitwise_and};	
-	const int NPCTP = ${NPCCMakeParamBitwise_and};
-	
-	//check for limitations of xfOpenCV module
-	assert(src1.channels() == 1);
-	assert(src2.channels() == 1);
-	assert(dst.channels() == 1); 
-	assert(mask.empty() == true);
-		
-	xf::Mat<srcTypeTP, maxHeightTP, maxWidthTP, NPCTP>* imgInput1;
-	xf::Mat<srcTypeTP, maxHeightTP, maxWidthTP, NPCTP>* imgInput2;
-	xf::Mat<srcTypeTP, maxHeightTP, maxWidthTP, NPCTP>* imgOutput;
-
-	// perform some checks on the src type
-	cvToXfSource(src1, imgInput1);	
-	cvToXfSource(src2, imgInput2);
-          
-	// perform some checks on the dst type
-	bool dstPostConversion1 = cvToXfDestination(dst, imgOutput, src1); 
-	bool dstPostConversion2 = cvToXfDestination(dst, imgOutput, src2);
-	 
-	// call CoreForVivadoHLS wrapper of xf::bitwise_and
-	xF_bitwise_and(imgInput1,imgInput2,imgOutput);
-	
-	//perform checks on the dst type
-	if (dstPostConversion1) {
-		xfMatDepthPostConversion(dst,imgOutput);
-	}	
-	if (dstPostConversion2) {
-		xfMatDepthPostConversion(dst,imgOutput);
-	}
-	
-	delete imgInput1;	
-	delete imgInput2;
-	delete imgOutput;
-	
-	return;
-}
-
-} //namespace xF
+void xF_bitwise_and(
+xf::Mat<${srcTypeCMakeParamBitwise_and}, ${maxHeightCMakeParamBitwise_and}, ${maxWidthCMakeParamBitwise_and}, ${NPCCMakeParamBitwise_and}>* imgInput1, 
+xf::Mat<${srcTypeCMakeParamBitwise_and}, ${maxHeightCMakeParamBitwise_and}, ${maxWidthCMakeParamBitwise_and}, ${NPCCMakeParamBitwise_and}>* imgInput2, 
+xf::Mat<${srcTypeCMakeParamBitwise_and}, ${maxHeightCMakeParamBitwise_and}, ${maxWidthCMakeParamBitwise_and}, ${NPCCMakeParamBitwise_and}>* imgOutput);
+ 
+#endif
