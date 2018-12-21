@@ -235,6 +235,9 @@ setDefaultParameters1In1OutModule(${componentNameCapLocalForRule})
 #bitwise_xor
 set(componentNameCapLocalForRule "Bitwise_xor")
 setDefaultParameters1In1OutModule(${componentNameCapLocalForRule})
+#bitwise_not
+set(componentNameCapLocalForRule "Bitwise_not")
+setDefaultParameters1In1OutModule(${componentNameCapLocalForRule})
 
 #Threshold
 set(componentNameCapLocalForRule "Threshold")
@@ -428,7 +431,7 @@ function(buildSDxCompilerFlags componentList SDxCompileFlags)
 			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocal}<${srcTypeCMakeParamBitwise_xor},${maxHeightCMakeParamBitwise_xor},${maxWidthCMakeParamBitwise_xor},${NPCCMakeParamBitwise_xor}>\" xf${componentNameLocalCap}CoreForVivadoHLS.cpp -files ${xfOpenCV_INCLUDE_DIRS}/core/xf_arithm.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}")	
 		elseif (${componentNameLocal} STREQUAL "bitwise_not")
 			message(STATUS "generating flags for bitwise_not")
-			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocal}<${srcTypeCMakeParam},${maxHeightCMakeParam},${maxWidthCMakeParam},${NPCCMakeParam}>\" xf${componentNameLocalCap}.cpp -files ${xfOpenCV_INCLUDE_DIRS}/core/xf_arithm.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}")		
+			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocal}<${srcTypeCMakeParamBitwise_not},${maxHeightCMakeParamBitwise_not},${maxWidthCMakeParamBitwise_not},${NPCCMakeParamBitwise_not}>\" xf${componentNameLocalCap}CoreForVivadoHLS.cpp -files ${xfOpenCV_INCLUDE_DIRS}/core/xf_arithm.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}")		
 		elseif (${componentNameLocal} STREQUAL "medianBlur")
 			message(STATUS "generating flags for medianBlur")
 			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocal}<${filterSizeCMakeParamMedianBlur},${borderTypeCMakeParamMedianBlur},${srcTypeCMakeParamMedianBlur},${dstTypeCMakeParamMedianBlur},${maxHeightCMakeParamMedianBlur},${maxWidthCMakeParamMedianBlur},${NPCCMakeParamMedianBlur}>\" xf${componentNameLocalCap}CoreForVivadoHLS.cpp -files ${xfOpenCV_INCLUDE_DIRS}/imgproc/xf_median_blur.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}")	
