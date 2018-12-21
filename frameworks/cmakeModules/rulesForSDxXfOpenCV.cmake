@@ -156,6 +156,15 @@ setDefaultParameters1In1OutModule(${componentNameCapLocalForRule})
 set(componentNameCapLocalForRule "Erode")
 setDefaultParameters1In1OutModule(${componentNameCapLocalForRule})
 
+# boxFilter 
+set(componentNameCapLocalForRule "BoxFilter")
+setDefaultParameters1In1OutModule(${componentNameCapLocalForRule})
+
+  
+if(NOT DEFINED kernelSizeCMakeParam${componentNameCapLocalForRule})
+	set(kernelSizeCMakeParam${componentNameCapLocalForRule} 3 CACHE STRING "box filter size 3,5,7")
+endif()
+
 #remap
 set(componentNameCapLocalForRule "Remap")
 setDefaultParameters1In1OutModule(${componentNameCapLocalForRule})
@@ -341,6 +350,7 @@ endif()
 if(NOT DEFINED maxDownScaleCMakeParam${componentNameCapLocalForRule})
 	set(maxDownScaleCMakeParam${componentNameCapLocalForRule} 2 CACHE STRING "maximum height")
 endif()
+
 #CornerHarris
 if(NOT DEFINED filterSizeCMakeParam)
 	set(filterSizeCMakeParam 3 CACHE STRING "Filter size (3,5 and 7 supported)")
@@ -369,13 +379,7 @@ endif()
 if(NOT DEFINED retTypeCMakeParam)
 	set(retTypeCMakeParam ${XF_RADIANS} CACHE STRING "phase format Type") # XF_RADIANs or XF_DEGREES
 endif()
-
-# boxFilter 
-if(NOT DEFINED boxFilterSizeCMakeParam)
-	set(boxFilterSizeCMakeParam 3 CACHE STRING "box filter size 3,5,7") 
-endif()
   
-
 #arithmatic ops
 set(policyTypeCMakeParam ${XF_CONVERT_POLICY_SATURATE})
 
