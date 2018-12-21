@@ -32,31 +32,19 @@
 
 /*****************************************************************************
 *
-*     Author: Kristof Denolf <kristof@xilinx.com>s        
-*     Date:   201//02/09
+*     Author: Kristof Denolf <kristof@xilinx.com>
+*     Date:   2018//09/24
 *
 *****************************************************************************/
 
-#ifndef _XFSDXCANNY_H_
-#define _XFSDXCANNY_H_
+#ifndef _XFCANNYCOREFORVIVADOHLS_H_
+#define _XFCANNYCOREFORVIVADOHLS_H_
 
-///SDx temporal fix for Clang issue
-#ifdef __SDSCC__
-#undef __ARM_NEON__
-#undef __ARM_NEON
-#include <opencv2/core/core.hpp>
-#define __ARM_NEON__
-#define __ARM_NEON
-#else
-#include <opencv2/core/core.hpp>
-#endif
-//#include <opencv2/core/core.hpp>
+#include "common/xf_common.h"
 
-
-namespace xF { 
-
-void Canny(cv::Mat &image, cv::Mat &edges, double threshold1, double threshold2, int apertureSize=3, bool L2gradient=false);
-
-} // xF
-
+void xF_Canny(
+xf::Mat<${srcTypeCMakeParamCanny}, ${maxHeightCMakeParamCanny}, ${maxWidthCMakeParamCanny}, ${srcNPCCMakeParamCanny}>* imgInput,  
+xf::Mat<${dstTypeCMakeParamCanny}, ${maxHeightCMakeParamCanny}, ${maxWidthCMakeParamCanny}, ${dstNPCCMakeParamCanny}>* imgOutput,
+unsigned char threshold1, unsigned char threshold2);
+ 
 #endif

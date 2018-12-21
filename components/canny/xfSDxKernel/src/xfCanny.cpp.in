@@ -48,34 +48,23 @@
 #include <opencv2/core/core.hpp>
 #endif
 //#include <opencv2/core/core.hpp>
-
-#include "common/xf_common.h"
-
-
-#include <hls_video.h>
-#include "imgproc/xf_canny.hpp"
-#include "imgproc/xf_edge_tracing.hpp" 
-
+ 
 #include <Utils/inc/UtilsForXfOpenCV.h>
 
-#include "xfSDxCanny.h"
+#include "xfCannyCoreForVivadoHLS.h"
 
-void xF_Canny(cv::Mat &image, cv::Mat &edges, double threshold1, double threshold2, int apertureSize, bool L2gradient)
+namespace xF {
+
+void Canny(cv::Mat &image, cv::Mat &edges, double threshold1, double threshold2, int apertureSize, bool L2gradient)
 {
 	
-	const int apertureSizeTP = ${apertureSizeCMakeParam};
-	const int L2gradientTP = ${L2gradientCMakeParam};
-	const int maxWidthTP = ${maxWidthCMakeParam};
-	const int maxHeightTP = ${maxHeightCMakeParam};
-	const int srcTypeTP = ${srcTypeCMakeParam};
-	const int dstTypeTP = ${srcTypeCMakeParam};
-	const int srcNPCTP = ${srcNPCCMakeParam};
-	const int dstNPCTP = ${dstNPCCMakeParam};
-	
-	const int dstIntermedTypeTP = ${dstIntermedTypeCMakeParam};
-	const int srcIntermedTypeTP = ${srcIntermedTypeCMakeParam};
-	const int dstIntermedNPCTP = ${dstIntermedNPCCMakeParam};
-	const int srcIntermedNPCTP = ${srcIntermedNPCCMakeParam};
+	const int maxWidthTP = ${maxWidthCMakeParamCanny};
+	const int maxHeightTP = ${maxHeightCMakeParamCanny};
+	const int srcTypeTP = ${srcTypeCMakeParamCanny};
+	const int dstTypeTP = ${srcTypeCMakeParamCanny};
+	const int srcNPCTP = ${srcNPCCMakeParamCanny};
+	const int dstNPCTP = ${dstNPCCMakeParamCanny};
+	 
 	
 	//check for limitations of xfOpenCV module
 	assert(image.channels() == 1);
@@ -90,16 +79,8 @@ void xF_Canny(cv::Mat &image, cv::Mat &edges, double threshold1, double threshol
 	// perform some checks on the dst type
 	bool dstPostConversion = cvToXfDestination(edges, imgOutput, image);
 	
-	// prepare intermediate buffers
-	xf::Mat<dstIntermedTypeTP, maxHeightTP, maxWidthTP, dstIntermedNPCTP> dstInter(image.rows,image.cols);
-	xf::Mat<srcIntermedTypeTP, maxHeightTP, maxWidthTP, srcIntermedNPCTP> srcInter(image.rows,image.cols, (void *) dstInter.data);
-
-	// call xf::Canny and xf::EdgeTracing
-	#pragma SDS async(1)
-	xf::Canny<apertureSizeTP,L2gradientTP,srcTypeTP,dstIntermedTypeTP,maxHeightTP,maxWidthTP,srcNPCTP,dstIntermedNPCTP>(*imgInput,dstInter,(unsigned char) threshold1,(unsigned char) threshold2);
-	#pragma SDS wait(1)
-	xf::EdgeTracing<srcIntermedTypeTP,dstTypeTP,maxHeightTP,maxWidthTP,srcIntermedNPCTP,dstNPCTP>(srcInter,*imgOutput);
-
+ 	xF_Canny(imgInput, imgOutput, (unsigned char)threshold1,(unsigned char)threshold2);
+		
    // If SW post conversion required, we do it here
    if (dstPostConversion) {
 		xfMatDepthPostConversion(edges,imgOutput);
@@ -109,4 +90,6 @@ void xF_Canny(cv::Mat &image, cv::Mat &edges, double threshold1, double threshol
 	delete imgOutput;
 	
 	return;
+}
+
 }

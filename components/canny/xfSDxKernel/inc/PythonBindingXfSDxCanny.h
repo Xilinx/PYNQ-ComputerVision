@@ -62,7 +62,7 @@ static PyObject* pyopencv_cv_Canny(PyObject* , PyObject* args, PyObject* kw)
         pyopencv_to(pyobj_image, image, ArgInfo("image", 0)) &&
         pyopencv_to(pyobj_edges, edges, ArgInfo("edges", 1)) )
     {
-        ERRWRAP2(cv::Canny(image, edges, threshold1, threshold2, apertureSize, L2gradient));
+        ERRWRAP2(xF::Canny(image, edges, threshold1, threshold2, apertureSize, L2gradient)); 
         return pyopencv_from(edges);
     }
     PyErr_Clear();
