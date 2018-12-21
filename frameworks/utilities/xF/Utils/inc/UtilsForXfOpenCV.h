@@ -31,6 +31,7 @@
  *****************************************************************************/
 
 /*****************************************************************************
+*
 *     Author: Kristof Denolf <kristof@xilinx.com>
 *             Jack Lo <jack.lo@xilinx.com>
 *     Date:   2018/03/05
@@ -96,6 +97,42 @@ void cvToXfSource(cv::Mat &src, xf::Mat<srcTypeTP, maxHeightTP, maxWidthTP, NPCT
 		imgInput->copyTo(tmpMat.data); // copy converted data to xf::Mat 
 		std::cout << "done copying data" << std::endl;
 	}
+}
+
+template<int dstTypeTP, int maxHeightTP, int maxWidthTP, int NPCTP>
+bool cvToXfDestination(cv::Mat &dst, xf::Mat<dstTypeTP, maxHeightTP, maxWidthTP, NPCTP>* &imgOutput, cv::Size size, int dtype)
+{
+	// Extract depth and number of channels from xF type
+	const int dstDepthTP = XF_DEPTH(dstTypeTP,NPCTP); 
+	const int dstChannelsTP = XF_CHANNELS(dstTypeTP,NPCTP);
+	
+	int dDepth = CV_MAT_DEPTH(dtype); 
+	int dChannels = CV_MAT_CN(dtype);
+		
+	//check in dst Mat was already allocated and matches ddepth
+	if (dst.empty())
+	{
+		std::cout << "dst not yet allocated" << std::endl;
+		dst = cv::Mat(size,CV_MAKE_TYPE(dDepth,dChannels));		
+	} else if (dst.depth() != dDepth || dst.channels() != dChannels) { // if dst cv::Mat has wrong depth, or has a different number of channels than the source re-allocate it 
+		std::cout << "dst allocated does not match ddepth, reallocating" << std::endl;
+		dst = cv::Mat(size,CV_MAKE_TYPE(dDepth,dChannels));
+	}
+	
+	// Check for matching data depths in dst Mat and perform set flag for post conversion
+	bool dstPostConversion = false;
+	if (dst.depth() == XF_XFDEPTH2CVDEPTH(dstDepthTP) && dst.channels() == dstChannelsTP /* && ddepth < HLS_USRTYPE1 */) { // shallow copy only possible if types match (and are native C types)
+		//std::cout << "provided dst type matches instantiated core type" << std::endl;
+		imgOutput = new xf::Mat<dstTypeTP, maxHeightTP, maxWidthTP, NPCTP>(size.height,size.width,(void *) dst.data);
+	}
+	else // if depths or channels do no match, allocate Mat of depth dstTypeTP and perform SW post conversion later
+	{
+		imgOutput = new xf::Mat<dstTypeTP, maxHeightTP, maxWidthTP, NPCTP>(size.height,size.width);
+		std::cout << "provided output does not match, need SW post conversion" << std::endl;
+		dstPostConversion = true;
+	}
+
+	return dstPostConversion;
 }
 
 template<int dstTypeTP, int maxHeightTP, int maxWidthTP, int NPCTP>
