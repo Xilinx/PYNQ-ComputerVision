@@ -37,61 +37,17 @@
 *
 *****************************************************************************/
 
-///SDx temporal fix for Clang issue
-#ifdef __SDSCC__
-#undef __ARM_NEON__
-#undef __ARM_NEON
-#include <opencv2/core/core.hpp>
-#define __ARM_NEON__
-#define __ARM_NEON
-#else
-#include <opencv2/core/core.hpp>
-#endif 
- 
-#include <Utils/inc/UtilsForXfOpenCV.h>
-
 #include "xfBitwise_xorCoreForVivadoHLS.h"
+#include "core/xf_arithm.hpp" 
 
-namespace xF { 
-
-void bitwise_xor(cv::Mat &src1, cv::Mat &src2, cv::Mat &dst, cv::Mat mask)
-{  
-	const int srcTypeTP 	= ${srcTypeCMakeParamBitwise_xor};  
-	const int maxWidthTP 	= ${maxWidthCMakeParamBitwise_xor};
-	const int maxHeightTP 	= ${maxHeightCMakeParamBitwise_xor};	
-	const int NPCTP = ${NPCCMakeParamBitwise_xor};
-	
-	//check for limitations of xfOpenCV module
-	assert(src1.channels() 	== 1);
-	assert(src2.channels() 	== 1);
-	assert(dst.channels() 	== 1); 
-	
-	xf::Mat<srcTypeTP, maxHeightTP, maxWidthTP, NPCTP>* imgInput1;
-	xf::Mat<srcTypeTP, maxHeightTP, maxWidthTP, NPCTP>* imgInput2;
-	xf::Mat<srcTypeTP, maxHeightTP, maxWidthTP, NPCTP>* imgOutput;
-
-	// perform some checks on the src type
-	cvToXfSource(src1, imgInput1);	
-	cvToXfSource(src2, imgInput2);
-          
-	// perform some checks on the dst type
-	bool dstPostConversion1 = cvToXfDestination(dst, imgOutput, src1); 
-	bool dstPostConversion2 = cvToXfDestination(dst, imgOutput, src2); 
-	// call xf::xor
-	xF_bitwise_xor(imgInput1,imgInput2,imgOutput);
-
-	//perform checks on the dst type
-	if (dstPostConversion1) {
-		xfMatDepthPostConversion(dst,imgOutput);
-	}	
-	if (dstPostConversion2) {
-		xfMatDepthPostConversion(dst,imgOutput);
-	}
-	
-	delete imgInput1;	
-	delete imgInput2;
-	delete imgOutput;
+void xF_bitwise_xor(
+xf::Mat<${srcTypeCMakeParamBitwise_xor}, ${maxHeightCMakeParamBitwise_xor}, ${maxWidthCMakeParamBitwise_xor}, ${NPCCMakeParamBitwise_xor}>* imgInput1, 
+xf::Mat<${srcTypeCMakeParamBitwise_xor}, ${maxHeightCMakeParamBitwise_xor}, ${maxWidthCMakeParamBitwise_xor}, ${NPCCMakeParamBitwise_xor}>* imgInput2, 
+xf::Mat<${srcTypeCMakeParamBitwise_xor}, ${maxHeightCMakeParamBitwise_xor}, ${maxWidthCMakeParamBitwise_xor}, ${NPCCMakeParamBitwise_xor}>* imgOutput)
+{
+	// call xf::bitwise_xor
+	xf::bitwise_xor<${srcTypeCMakeParamBitwise_xor},${maxHeightCMakeParamBitwise_xor},${maxWidthCMakeParamBitwise_xor},${NPCCMakeParamBitwise_xor}>(*imgInput1,*imgInput2,*imgOutput);
 	
 	return;
 }
-}
+
