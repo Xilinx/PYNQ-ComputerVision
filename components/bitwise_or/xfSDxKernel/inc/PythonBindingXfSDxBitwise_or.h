@@ -32,17 +32,18 @@
  
 /*****************************************************************************
 *
-*     Author: Murad Qasaimeh <muradq@xilinx.com> <kristof@xilinx.com>
-*     Date:   2018/06/22
+*     Author: Kristof Denolf <kristof@xilinx.com>
+*             Jack Lo <jackl@xilinx.com>
+*     Date:   2018/12/21
 *
 *****************************************************************************/
 
-#ifndef PYOPENCV_CV_BITWISE_OR
-#define PYOPENCV_CV_BITWISE_OR
+#ifndef PYOPENCV_CV_BITWISEOR
+#define PYOPENCV_CV_BITWISEOR
 
 #include "xfSDxBitwise_or.h"
 
-static PyObject* pyopencv_cv_bitwise_or(PyObject*, PyObject* args, PyObject* kw)
+static PyObject* pyopencv_cv_bitwise_or(PyObject* , PyObject* args, PyObject* kw)
 {
     using namespace cv;
 
@@ -63,7 +64,7 @@ static PyObject* pyopencv_cv_bitwise_or(PyObject*, PyObject* args, PyObject* kw)
         pyopencv_to(pyobj_dst, dst, ArgInfo("dst", 1)) &&
         pyopencv_to(pyobj_mask, mask, ArgInfo("mask", 0)) )
     {
-        ERRWRAP2(xF_bitwise_or(src1, src2, dst, mask));
+        ERRWRAP2(xF::bitwise_or(src1, src2, dst, mask));
         return pyopencv_from(dst);
     }
     }

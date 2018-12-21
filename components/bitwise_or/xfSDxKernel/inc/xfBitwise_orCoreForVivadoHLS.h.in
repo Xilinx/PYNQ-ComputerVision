@@ -32,29 +32,19 @@
  
 /*****************************************************************************
 *
-*
 *     Author: Kristof Denolf <kristof@xilinx.com>
 *     Date:   2018/12/21
 *
 *****************************************************************************/
 
-#ifndef _XFSDXBITWISEOR_H_
-#define _XFSDXBITWISEOR_H_
+#ifndef _XFBITWISEORCOREFORVIVADOHLS_H_
+#define _XFBITWISEORCOREFORVIVADOHLS_H_
 
-///SDx temporal fix for Clang issue
-#ifdef __SDSCC__
-#undef __ARM_NEON__
-#undef __ARM_NEON
-#include <opencv2/core/core.hpp>
-#define __ARM_NEON__
-#define __ARM_NEON
-#else
-#include <opencv2/core/core.hpp>
+#include "common/xf_common.h"
+
+void xF_bitwise_or(
+xf::Mat<${srcTypeCMakeParamBitwise_or}, ${maxHeightCMakeParamBitwise_or}, ${maxWidthCMakeParamBitwise_or}, ${NPCCMakeParamBitwise_or}>* imgInput1, 
+xf::Mat<${srcTypeCMakeParamBitwise_or}, ${maxHeightCMakeParamBitwise_or}, ${maxWidthCMakeParamBitwise_or}, ${NPCCMakeParamBitwise_or}>* imgInput2, 
+xf::Mat<${srcTypeCMakeParamBitwise_or}, ${maxHeightCMakeParamBitwise_or}, ${maxWidthCMakeParamBitwise_or}, ${NPCCMakeParamBitwise_or}>* imgOutput);
+ 
 #endif
-
-namespace xF {  
-
-void bitwise_or(cv::Mat &src1, cv::Mat &src2, cv::Mat &dst, cv::Mat mask=cv::Mat());  
-
-} // namespace xF
-#endif
