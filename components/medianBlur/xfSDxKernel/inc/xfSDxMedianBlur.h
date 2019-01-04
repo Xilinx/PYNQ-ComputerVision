@@ -52,7 +52,7 @@
 #endif 
 
 namespace xF { 
-void MedianBlur(cv::Mat &src, cv::Mat &dst, int ksize);
+void medianBlur(cv::Mat &src, cv::Mat &dst, int ksize);
 }
 
 #endif

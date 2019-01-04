@@ -42,7 +42,7 @@ SET (overlayName xv2overlay)
 
 # define component list in overlay here
 #set(componentList "filter2D;remap")
-set(componentList "filter2D;dilate")
+set(componentList "bitwise_not;boxFilter")
 
 #SETTING USER SPECIFIC INSTANTIATION PARAMETERS
 #set(maxWidthCMakeParam 640) 

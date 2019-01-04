@@ -270,14 +270,15 @@ setDefaultParameters1In1OutModule(${componentNameCapLocalForRule})
 
 #MedianBlur
 set(componentNameCapLocalForRule "MedianBlur")
+
+if(NOT DEFINED borderTypeCMakeParam${componentNameCapLocalForRule})
+	set(borderTypeCMakeParam${componentNameCapLocalForRule} ${XF_BORDER_REPLICATE} CACHE STRING "border type")
+endif()
+
 setDefaultParameters1In1OutModule(${componentNameCapLocalForRule})
 
 if(NOT DEFINED filterSizeCMakeParam${componentNameCapLocalForRule})
 	set(filterSizeCMakeParam${componentNameCapLocalForRule} 3 CACHE STRING "filter size")
-endif()
-
-if(NOT DEFINED borderTypeTP${componentNameCapLocalForRule})
-	set(borderTypeTP${componentNameCapLocalForRule} ${XF_BORDER_REPLICATE} CACHE STRING "border type")
 endif()
 
 #Canny
@@ -438,7 +439,7 @@ function(buildSDxCompilerFlags componentList SDxCompileFlags)
 			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocal}<${srcTypeCMakeParamBitwise_not},${maxHeightCMakeParamBitwise_not},${maxWidthCMakeParamBitwise_not},${NPCCMakeParamBitwise_not}>\" xf${componentNameLocalCap}CoreForVivadoHLS.cpp -files ${xfOpenCV_INCLUDE_DIRS}/core/xf_arithm.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}")		
 		elseif (${componentNameLocal} STREQUAL "medianBlur")
 			message(STATUS "generating flags for medianBlur")
-			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocal}<${filterSizeCMakeParamMedianBlur},${borderTypeCMakeParamMedianBlur},${srcTypeCMakeParamMedianBlur},${dstTypeCMakeParamMedianBlur},${maxHeightCMakeParamMedianBlur},${maxWidthCMakeParamMedianBlur},${NPCCMakeParamMedianBlur}>\" xf${componentNameLocalCap}CoreForVivadoHLS.cpp -files ${xfOpenCV_INCLUDE_DIRS}/imgproc/xf_median_blur.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}")	
+			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocal}<${filterSizeCMakeParamMedianBlur},${borderTypeCMakeParamMedianBlur},${srcTypeCMakeParamMedianBlur},${maxHeightCMakeParamMedianBlur},${maxWidthCMakeParamMedianBlur},${NPCCMakeParamMedianBlur}>\" xf${componentNameLocalCap}CoreForVivadoHLS.cpp -files ${xfOpenCV_INCLUDE_DIRS}/imgproc/xf_median_blur.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}")	
 		elseif (${componentNameLocal} STREQUAL "magnitude")
 			message(STATUS "generating flags for magnitude")
 			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocal}<${normTypeCMakeParam},${srcTypeCMakeParam},${dstTypeCMakeParam},${maxHeightCMakeParam},${maxWidthCMakeParam},${NPCCMakeParam}>\" xf${componentNameLocalCap}.cpp -files ${xfOpenCV_INCLUDE_DIRS}/core/xf_magnitude.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}")
