@@ -72,11 +72,13 @@ void remap(cv::Mat &src, cv::Mat &dst, cv::Mat &map1, cv::Mat &map2, int interpo
 	const int interpolationTypeTP = ${interpolationTypeCMakeParamRemap};
 	
 	//check for limitations of xfOpenCV module
+    //compile-time checks
+	static_assert(borderTypeTP == XF_BORDER_CONSTANT, "XF only supports border constant");
+	static_assert(mapTypeTP == XF_32FC1, "only floating point x,y maps supported");
+    //run-time
 	assert(src.channels() == 1);
 	assert(dst.channels() == 1);
-	assert(borderTypeTP == XF_BORDER_CONSTANT); //XF only supports border constant
 	assert(borderMode == borderTypeTP);
-	assert(mapTypeTP == XF_32FC1); //only floating point x,y maps supported
 	assert(map1.type() == CV_32FC1 && map2.type() == CV_32FC1); //only floating point x,y maps supported
 	assert(interpolation == cv::INTER_NEAREST|| interpolation == cv::INTER_LINEAR); //xf opencv only supports nearest neighbor or bilinear interpolation
 	assert(interpolation == interpolationTypeTP);

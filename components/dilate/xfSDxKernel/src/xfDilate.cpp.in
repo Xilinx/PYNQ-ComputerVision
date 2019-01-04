@@ -70,9 +70,11 @@ void dilate(cv::Mat &src, cv::Mat &dst, const cv::Mat &kernel, cv::Point anchor,
 	const int NPCTP = ${NPCCMakeParamDilate};
 	
 	//check for limitations of xfOpenCV module
+	//compile-time checks
+	static_assert(borderTypeTP == XF_BORDER_CONSTANT, "XF only supports border constant");
+    //run-time
 	assert(src.channels() == 1);
 	assert(dst.channels() == 1);
-	assert(borderTypeTP == XF_BORDER_CONSTANT); //XF only supports border constant
 	assert(borderType == borderTypeTP);
 	assert(kernel.empty() == true);
 	

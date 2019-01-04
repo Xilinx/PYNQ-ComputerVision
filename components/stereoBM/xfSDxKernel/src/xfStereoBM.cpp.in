@@ -74,6 +74,7 @@ public:
 		const int blockSizeTP = ${blockSizeCMakeParamStereoBM};
 		const int numberOfDisparitiesTP = ${numberOfDisparitiesCMakeParamStereoBM};
 	
+        //run-time
 		assert(blockSize == blockSizeTP);
 		assert(numDisparities == numberOfDisparitiesTP);	
 	}
@@ -134,13 +135,15 @@ public:
 		std::cout << "in xf::StereoBM::compute" << std::endl;
 		
 		//check for limitations of xfOpenCV module
+		//run-time
 		assert(left.channels() == 1);
 		assert(right.channels() == 1);
 		assert(disparity.channels() == 1);
 	
-		assert(disparityTypeTP == XF_16UC1); //xfOpenCV only supports 16UC1 as a 12.4 fixed precision format
-		assert(srcTypeTP == XF_8UC1); //xfOpenCV only supports 8UC1
-		assert(NPCTP == XF_NPPC1); //xfOpenCV only supports 1 pixel per clock
+        //compile-time checks
+		static_assert(disparityTypeTP == XF_16UC1, "xfOpenCV only supports 16UC1 as a 12.4 fixed precision format");
+		static_assert(srcTypeTP == XF_8UC1, "xfOpenCV only supports 8UC1");
+		static_assert(NPCTP == XF_NPPC1, "xfOpenCV only supports 1 pixel per clock");
 		
 		xf::Mat<srcTypeTP, maxHeightTP, maxWidthTP, NPCTP>* leftMat;
 		xf::Mat<srcTypeTP, maxHeightTP, maxWidthTP, NPCTP>* rightMat;

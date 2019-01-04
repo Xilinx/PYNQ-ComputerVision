@@ -66,9 +66,11 @@ void medianBlur(cv::Mat &src, cv::Mat &dst, int ksize)
 	const int NPCTP = ${NPCCMakeParamMedianBlur};
 	
 	//check for limitations of xfOpenCV module
+	//compile-time checks
+	static_assert(borderTypeTP == XF_BORDER_REPLICATE, "XF only supports border replicate");
+    //run-time
 	assert(src.channels() == 1);
 	assert(dst.channels() == 1);
-	assert(borderTypeTP == XF_BORDER_REPLICATE); //XF only supports border replicate 	
 	assert(ksize == filterSizeTP); 
 	
 	xf::Mat<srcTypeTP, maxHeightTP, maxWidthTP, NPCTP>* imgInput;
