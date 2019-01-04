@@ -73,9 +73,11 @@ void filter2D(cv::Mat &src, cv::Mat &dst, int ddepth, cv::Mat &kernel, cv::Point
 	const int NPCTP = ${NPCCMakeParamFilter2D};
 	
 	//check for limitations of xfOpenCV module
+	//compile-time checks
+	static_assert(borderTypeTP == XF_BORDER_CONSTANT, "XF only supports border constant");
+	//run-time
 	assert(src.channels() == 1);
 	assert(dst.channels() == 1);
-	assert(borderTypeTP == XF_BORDER_CONSTANT); //XF only supports border constant
 	assert(borderType == borderTypeTP);
 	
 	//std::cout << "Calling cmake specialized function" << std::endl;
