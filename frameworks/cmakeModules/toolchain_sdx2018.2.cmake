@@ -31,40 +31,45 @@
 ###############################################################################
 
 #     Author: Kristof Denolf <kristof@xilinx.com>
-#     Date:   2017/12/05
+#     Date:   2018/07/23
 
-# cmake .. -DCMAKE_TOOLCHAIN_FILE=toolchain_sdx2017.4.cmake
+# cmake .. -DCMAKE_TOOLCHAIN_FILE=toolchain_sdx2018.2.cmake
 #  -DSDxPlatform="<absolute path to platform or predefined sdx platform name>"
-#  -DSDxClockID="clock ID number"
+#  -DSDxClockID="core clock ID number"
+#  -DSDxDMClockID="data motion network clock ID (optional, if not specified, set to SDxClockID)"
 #  -DSDxArch="arm32 or arm64"
 #  -DSDxSysroot="absolute path to the sysroot folder"
+#  Options (set ON or OFF):
+#    . usePL: enable PL offloading (default ON)
+#    . noBitstream: do not generate PL bitstream (default OFF)
+#    . noSDCardImage: do not generate SD card image (default OFF)
+
+cmake_policy(SET CMP0012 NEW)
 
 set(SDxPlatform "zcu102" CACHE STRING "SDx platform")
-message(STATUS "IN TOOLCHAINFILE: SDx platform: ${SDxPlatform} ")
-
-if (${SDxPlatform} STREQUAL "zcu102") 		#zcu102 clock ID def (MHz): 0=100, 1=200, 2=300, 3=400
-  set(SDxClockID "3" CACHE STRING "SDx clock ID")
-  message(STATUS "zcu102 clock def in MHz: 0=100, 1=200, 2=300, 3=400")
-  set(SDxArch "arm64")
-elseif (${SDxPlatform} STREQUAL "zc706") 	#zc706 clock ID def (MHz): 0=166, 1=143, 2=100, 3=200
-  set(SDxClockID "3" CACHE STRING "SDx clock ID")
-  message(STATUS "zc706 clock def in MHz: 0=100, 1=200, 2=300, 3=400")
-  set(SDxArch "arm32")
-elseif (${SDxPlatform} STREQUAL "zc702") 	#zc702 clock ID def (MHz): 0=166, 1=143, 2=100, 3=200
-  set(SDxClockID "3" CACHE STRING "SDx clock ID")
-  message(STATUS "zc702 clock def in MHz:  0=166, 1=143, 2=100, 3=200")
-  set(SDxArch "arm32")
-else (${SDxPlatform} STREQUAL "zcu102")
-  message(STATUS "non default platform, please also set SDx clock ID (default clock ID is 0) and SDx arch (default is 64 bit)")
-  set(SDxClockID "0" CACHE STRING "SDx clock ID")
-  set(SDxArch "arm64" CACHE STRING "SDx aarch")
-endif (${SDxPlatform} STREQUAL "zcu102")
+set(SDxClockID "0" CACHE STRING "SDx clock ID")
+set(SDxDMClockID ${SDxClockID} CACHE STRING "SDx clock ID")
+set(SDxArch "arm64" CACHE STRING "SDx aarch")
 
 message(STATUS "SDx platform: ${SDxPlatform} , clock ID: ${SDxClockID}, aarch: ${SDxArch} bit")
 
+#Option to enable moving blocks to PL, enabled by default
+OPTION(usePL "enable PL offloading" ON) # enabled by default
+OPTION(noBitstream "do not generate PL bitstream" OFF)
+OPTION(noSDCardImage "do not generate SD card image" OFF)
+message(STATUS "Selected Options: usePL=${usePL}, noBitstream: ${noBitstream}, noSDCardImage=${noSDCardImage}")
+
 #set general sdx compiler and linker flags
 UNSET(CMAKE_CXX_FLAGS)
-set(CMAKE_CXX_FLAGS "-sds-pf ${SDxPlatform} -dmclkid ${SDxClockID}" CACHE STRING "" FORCE)
+IF (${noBitstream})
+set (noBitstreamCXXFlag -mno-bitstream)
+ENDIF (${noBitstream})
+
+IF (${noSDCardImage})
+set (noSDCardImageFlag -mno-boot-files)
+ENDIF (${noSDCardImage})
+
+set(CMAKE_CXX_FLAGS "-sds-pf ${SDxPlatform} -dmclkid ${SDxDMClockID} ${noBitstreamCXXFlag} ${noSDCardImageFlag}" CACHE STRING "" FORCE)
 
 # workaround for SDx: for *.{cpp,c} to *.o instead of *.{c,cpp}.o
 set(CMAKE_C_OUTPUT_EXTENSION_REPLACE 1)
@@ -93,19 +98,34 @@ else (WIN32)
   SET(SDxHostSystemName "lin")
 endif (WIN32)
 
+#SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x -mstrict-align -hls-target 1")
+SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mstrict-align -hls-target 1")
+
 if (${SDxArch} STREQUAL "arm64") # 64 bit toolchain
-  SET (CMAKE_FIND_ROOT_PATH ${XSDK_PARENT}/gnu/aarch64/${SDxHostSystemName}/aarch64-linux/aarch64-linux-gnu)
+  #SET (CMAKE_FIND_ROOT_PATH ${XSDK_PARENT}/gnu/aarch64/${SDxHostSystemName}/aarch64-linux/aarch64-linux-gnu)
   SET (CMAKE_SYSTEM_PROCESSOR aarch64)
+  SET (gnuPrefix1 aarch64-linux)
+  SET (gnuPrefix2 aarch64-linux-gnu)
+  SET (gnuArch aarch64)
 
   #extra compilation flags
   #NONE
 else (${SDxArch} STREQUAL "arm64") #32 bit toolchain
-  SET (CMAKE_FIND_ROOT_PATH ${XSDK_PARENT}/gnu/aarch32/${SDxHostSystemName}/gcc-arm-linux-gnueabi/arm-linux-gnueabihf)
+  #SET (CMAKE_FIND_ROOT_PATH ${XSDK_PARENT}/gnu/aarch32/${SDxHostSystemName}/gcc-arm-linux-gnueabi/arm-linux-gnueabihf)
   SET (CMAKE_SYSTEM_PROCESSOR arm)
-
+  SET (gnuPrefix1 gcc-arm-linux-gnueabi)
+  SET (gnuPrefix2 arm-linux-gnueabihf)
+  SET (gnuArch aarch32)
+  
   #extra compilation flags
   SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D__ARM_PCS_VFP")
 endif (${SDxArch} STREQUAL "arm64")
+
+UNSET(CMAKE_C_FLAGS)
+SET(CMAKE_C_FLAGS "${CMAKE_CXX_FLAGS}" CACHE STRING "" FORCE)
+MESSAGE(STATUS "CMAKE C FLAGS ${CMAKE_C_FLAGS}")
+
+SET (CMAKE_FIND_ROOT_PATH ${XSDK_PARENT}/gnu/${gnuArch}/${SDxHostSystemName}/${gnuPrefix1}/${gnuPrefix2})
 
 
 #find sysroot first try the command line argument SDxSysroot, then try to find it as part of the platform or fall back to SDK for default SDx platforms 
@@ -118,16 +138,29 @@ MESSAGE (STATUS "SDx sysroot: ${SDxSysroot}")
 #change OpenCV_DIR to cross compiled libraries in sysroot 
 SET (ENV{OpenCV_DIR} ${SDxSysroot}/usr)
 SET (ENV{OPENCV_DIR} ${SDxSysroot}/usr)
-SET (ENV{GSTREAMER_DIR} ${SDxSysroot}/usr)
+SET (ENV{GSTREAMER_DIR} ${SDxSysroot}/usr) 
 
 # set up cross compilation paths
 SET (CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
 SET (CMAKE_SKIP_BUILD_RPATH FALSE)
 SET (CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
-SET (CMAKE_INSTALL_RPATH ${SDxSysroot}/lib)
+SET (CMAKE_INSTALL_RPATH ${SDxSysroot}/lib;${SDxSysroot}/usr/lib;${SDxSysroot}/lib/${gnuPrefix2};${SDxSysroot}/usr/lib/${gnuPrefix2})
 SET (CMAKE_LIBRARY_PATH ${SDxSysroot}/lib)
 set (CMAKE_INCLUDE_PATH ${SDxSysroot}/usr/)
-SET (CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+
+# Added includes for ultra96 build
+include_directories(
+  ${SDxSysroot}/usr/include/c++/7 
+  ${SDxSysroot}/usr/include/c++/7/${gnuPrefix2} 
+  ${SDxSysroot}/usr/include/c++/7/backward 
+  ${SDxSysroot}/usr/include
+  ${SDxSysroot}/usr/include/${gnuPrefix2}
+  )
+
+# -rpath-link needed in 2018.2 reVISION sysroots
+SET (CMAKE_SHARED_LINKER_FLAGS "--sysroot=${SDxSysroot} -Wl,-rpath-link,${SDxSysroot}/lib:${SDxSysroot}/usr/lib:${SDxSysroot}/lib/${gnuPrefix2}:${SDxSysroot}/usr/lib/${gnuPrefix2}" CACHE STRING "" FORCE)
+SET (CMAKE_EXE_LINKER_FLAGS "--sysroot=${SDxSysroot} -Wl,-rpath-link,${SDxSysroot}/lib:${SDxSysroot}/usr/lib:${SDxSysroot}/lib/${gnuPrefix2}:${SDxSysroot}/usr/lib/${gnuPrefix2}" CACHE STRING "" FORCE)
+
 
 #Windows specifics to enable sds++ cross compilation
 if (WIN32)
@@ -145,18 +178,14 @@ if (WIN32)
 	MESSAGE(STATUS "CMAKE_AR: ${CMAKE_AR}")
 
 	include_directories(
-		${SDxSysroot}/usr/include/c++/6.2.1 
-		${SDxSysroot}/usr/include/c++/6.2.1/aarch64-xilinx-linux 
-		${SDxSysroot}/usr/include/c++/6.2.1/backward 
-		${SDxSysroot}/usr/include 
 		${SDxSysroot}/usr/include/glib-2.0 
 		${SDxSysroot}/usr/lib/glib-2.0/include 
 
-		${XSDK_PARENT}/gnu/aarch64/nt/aarch64-linux/aarch64-linux-gnu/include/c++/6.2.1 
-		${XSDK_PARENT}/gnu/aarch64/nt/aarch64-linux/aarch64-linux-gnu/include/c++/6.2.1/aarch64-linux-gnu 
-		${XSDK_PARENT}/gnu/aarch64/nt/aarch64-linux/aarch64-linux-gnu/include/c++/6.2.1/backward 
-		${XSDK_PARENT}/gnu/aarch64/nt/aarch64-linux/lib/gcc/aarch64-linux-gnu/6.2.1/include 
-		${XSDK_PARENT}/gnu/aarch64/nt/aarch64-linux/lib/gcc/aarch64-linux-gnu/6.2.1/include-fixed 
-		${XSDK_PARENT}/gnu/aarch64/nt/aarch64-linux/aarch64-linux-gnu/include
+		${XSDK_PARENT}/gnu/${gnuArch}/nt/${gnuPrefix1}/${gnuPrefix2}/include/c++/6.2.1 
+		${XSDK_PARENT}/gnu/${gnuArch}/nt/${gnuPrefix1}/${gnuPrefix2}/include/c++/6.2.1/${gnuPrefix2} 
+		${XSDK_PARENT}/gnu/${gnuArch}/nt/${gnuPrefix1}/${gnuPrefix2}/include/c++/6.2.1/backward 
+		${XSDK_PARENT}/gnu/${gnuArch}/nt/${gnuPrefix1}/lib/gcc/${gnuPrefix2}/6.2.1/include 
+		${XSDK_PARENT}/gnu/${gnuArch}/nt/${gnuPrefix1}/lib/gcc/${gnuPrefix2}/6.2.1/include-fixed 
+		${XSDK_PARENT}/gnu/${gnuArch}/nt/${gnuPrefix1}/${gnuPrefix2}/include
 	)
 endif (WIN32)

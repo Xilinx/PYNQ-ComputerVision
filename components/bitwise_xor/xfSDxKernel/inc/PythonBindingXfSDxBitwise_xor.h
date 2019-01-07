@@ -32,13 +32,14 @@
  
 /*****************************************************************************
 *
-*     Author: Murad Qasaimeh <muradq@xilinx.com> <kristof@xilinx.com>
-*     Date:   2018/06/22
+*     Author: Kristof Denolf <kristof@xilinx.com>
+*             Jack Lo <jackl@xilinx.com>
+*     Date:   2018/12/21
 *
 *****************************************************************************/
 
-#ifndef PYOPENCV_CV_BITWISE_XOR
-#define PYOPENCV_CV_BITWISE_XOR
+#ifndef PYOPENCV_CV_BITWISEXOR
+#define PYOPENCV_CV_BITWISEXOR
 
 #include "xfSDxBitwise_xor.h"
 
@@ -63,7 +64,7 @@ static PyObject* pyopencv_cv_bitwise_xor(PyObject* , PyObject* args, PyObject* k
         pyopencv_to(pyobj_dst, dst, ArgInfo("dst", 1)) &&
         pyopencv_to(pyobj_mask, mask, ArgInfo("mask", 0)) )
     {
-        ERRWRAP2(xF_bitwise_xor(src1, src2, dst, mask));
+        ERRWRAP2(xF::bitwise_xor(src1, src2, dst, mask));
         return pyopencv_from(dst);
     }
     }

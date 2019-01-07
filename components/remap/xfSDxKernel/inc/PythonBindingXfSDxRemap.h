@@ -29,7 +29,7 @@
  *  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  *****************************************************************************/
-
+ 
 /*****************************************************************************
 *
 *     Author: Kristof Denolf <kristof@xilinx.com>
@@ -70,7 +70,7 @@ static PyObject* pyopencv_cv_remap(PyObject* , PyObject* args, PyObject* kw)
         pyopencv_to(pyobj_map2, map2, ArgInfo("map2", 0)) &&
         pyopencv_to(pyobj_borderValue, borderValue, ArgInfo("borderValue", 0)) )
     {
-        ERRWRAP2(xF_remap(src, dst, map1, map2, interpolation, borderMode, borderValue));
+        ERRWRAP2(xF::remap(src, dst, map1, map2, interpolation, borderMode, borderValue));
         return pyopencv_from(dst);
     }
 

@@ -29,7 +29,7 @@
  *  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  *****************************************************************************/
-
+ 
 /*****************************************************************************
 *
 *     Author: Kristof Denolf <kristof@xilinx.com>
@@ -66,7 +66,7 @@ static PyObject* pyopencv_cv_filter2D(PyObject* , PyObject* args, PyObject* kw)
         pyopencv_to(pyobj_kernel, kernel, ArgInfo("kernel", 0)) &&
         pyopencv_to(pyobj_anchor, anchor, ArgInfo("anchor", 0)) )
     {
-        ERRWRAP2(xF_filter2D(src, dst, ddepth, kernel, anchor, delta, borderType));
+        ERRWRAP2(xF::filter2D(src, dst, ddepth, kernel, anchor, delta, borderType));
         //ERRWRAP2(cv::filter2D(src, dst, ddepth, kernel, anchor, delta, borderType));
         return pyopencv_from(dst);
     }

@@ -32,10 +32,12 @@
  
 /*****************************************************************************
 *
-*     Author: Murad Qasaimeh <muradq@xilinx.com> <kristof@xilinx.com>
-*     Date:   2018/06/22
+*     Author: Kristof Denolf <kristof@xilinx.com>
+*     Date:   2018/12/21
 *
 *****************************************************************************/
+
+#include "xfBoxFilterCoreForVivadoHLS.h"
 
 ///SDx temporal fix for Clang issue
 #ifdef __SDSCC__
@@ -49,29 +51,27 @@
 #endif
 //#include <opencv2/core/core.hpp>
 
-#include "common/xf_common.h"
-
-#include <hls_video.h>
-#include "imgproc/xf_box_filter.hpp"
 #include <Utils/inc/UtilsForXfOpenCV.h>
-#include "xfSDxBoxFilter.h"
+
+namespace xF {
  
-void xF_boxFilter(cv::Mat &src, cv::Mat &dst, int ddepth, cv::Size ksize, cv::Point anchor, bool normalize, int borderType)
+void boxFilter(cv::Mat &src, cv::Mat &dst, int ddepth, cv::Size ksize, cv::Point anchor, bool normalize, int borderType)
 {
-	const int borderTypeTP	= ${BoxFilterBorderTypeCMakeParam}; 
-	const int filterSizeTP 	= ${boxFilterSizeCMakeParam}; 
-	const int maxWidthTP 	= ${maxWidthCMakeParam};
-	const int maxHeightTP 	= ${maxHeightCMakeParam};
-	const int srcTypeTP 	= ${srcTypeCMakeParam};
-	const int dstTypeTP 	= ${dstTypeCMakeParam};
+	const int borderTypeTP	= ${borderTypeCMakeParamBoxFilter}; 
+	const int kernelSizeTP 	= ${kernelSizeCMakeParamBoxFilter}; 
+	const int maxWidthTP 	= ${maxWidthCMakeParamBoxFilter};
+	const int maxHeightTP 	= ${maxHeightCMakeParamBoxFilter};
+	const int srcTypeTP 	= ${srcTypeCMakeParamBoxFilter};
+	const int dstTypeTP 	= ${dstTypeCMakeParamBoxFilter};
 	const int NPCTP 		= ${NPCCMakeParam};
 	
 	//check for limitations of xfOpenCV module
+	//compile-time checks
+	static_assert(borderTypeTP == XF_BORDER_CONSTANT, "XF only supports border constant");
+    //run-time
 	assert(src.channels() == 1);
 	assert(dst.channels() == 1);
-	assert(borderTypeTP == ${XF_BORDER_CONSTANT}); //XF only supports border constant 
-	
-	assert(ksize.width == ${boxFilterSizeCMakeParam});
+	assert(ksize.width == kernelSizeTP);
 	
 	xf::Mat<srcTypeTP, maxHeightTP, maxWidthTP, NPCTP>* imgInput;
 	xf::Mat<dstTypeTP, maxHeightTP, maxWidthTP, NPCTP>* imgOutput;
@@ -82,8 +82,8 @@ void xF_boxFilter(cv::Mat &src, cv::Mat &dst, int ddepth, cv::Size ksize, cv::Po
 	// perform some checks on the dst type
 	bool dstPostConversion = cvToXfDestination(dst, imgOutput, src, ddepth); 
 
-	// call xf::boxFilter 
-	xf::boxFilter<${BoxFilterBorderTypeCMakeParam},${boxFilterSizeCMakeParam},${srcTypeCMakeParam},${maxHeightCMakeParam}, ${maxWidthCMakeParam},${NPCCMakeParam}>(*imgInput,*imgOutput);
+	// call CoreForVivadoHLS wrapper of xf::boxFilter 
+	xF_boxFilter(imgInput,imgOutput);
 
 	//perform checks on the dst type
 	if (dstPostConversion) {
@@ -96,3 +96,4 @@ void xF_boxFilter(cv::Mat &src, cv::Mat &dst, int ddepth, cv::Size ksize, cv::Po
 	return;
 }
  
+} //namespace xF

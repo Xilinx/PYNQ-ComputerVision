@@ -29,7 +29,7 @@
  *  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  *****************************************************************************/
-
+ 
 /*****************************************************************************
 *
 *     Author: Kristof Denolf <kristof@xilinx.com>
@@ -69,7 +69,7 @@ static PyObject* pyopencv_cv_dilate(PyObject* , PyObject* args, PyObject* kw)
         pyopencv_to(pyobj_anchor, anchor, ArgInfo("anchor", 0)) &&
         pyopencv_to(pyobj_borderValue, borderValue, ArgInfo("borderValue", 0)) )
     {
-        ERRWRAP2(xF_dilate(src, dst, kernel, anchor, iterations, borderType, borderValue));
+        ERRWRAP2(xF::dilate(src, dst, kernel, anchor, iterations, borderType, borderValue));
         //ERRWRAP2(cv::dilate(src, dst, kernel, anchor, iterations, borderType, borderValue));
         return pyopencv_from(dst);
     }

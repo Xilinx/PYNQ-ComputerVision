@@ -32,6 +32,7 @@
  
 /*****************************************************************************
 *
+*
 *     Author: Kristof Denolf <kristof@xilinx.com>
 *     Date:   2017/11/22
 *
@@ -53,20 +54,11 @@
 //#include <opencv2/core/core.hpp>
 
 
-//namespace xF { //Namespace not working yet
+namespace xF { 
+ 
+void erode(cv::Mat &src, cv::Mat &dst, const cv::Mat &kernel=cv::Mat(0,0,0), cv::Point anchor=cv::Point(-1,-1), int iterations=1, int borderType=cv::BORDER_CONSTANT, const cv::Scalar& borderValue=cv::Scalar::all(-DBL_MAX));
 
-//---------------------------------------------------------- Declaration ----------------------------------------------------------
-//Template specialization not working yet in SDx
-/*
-
-*/
-
-void xF_erode(cv::Mat &src, cv::Mat &dst, const cv::Mat &kernel=cv::Mat(0,0,0), cv::Point anchor=cv::Point(-1,-1), int iterations=1, int borderType=cv::BORDER_CONSTANT, const cv::Scalar& borderValue=cv::Scalar::all(-DBL_MAX));
-
-//----------------------------------------------------------  Definition  ----------------------------------------------------------
-//Template specialization not working yet in SDx
-
-
-//} // xF
+} // namespace xF
 
 #endif
+

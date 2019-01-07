@@ -53,9 +53,12 @@
 //#include <opencv2/core/core.hpp>
 
 
-//---------------------------------------------------------- Declaration ----------------------------------------------------------
+namespace xF {
 
-void xF_remap(cv::Mat &src, cv::Mat &dst, cv::Mat &map1, cv::Mat &map2, int interpolation, int borderMode=cv::BORDER_CONSTANT, const cv::Scalar& borderValue=cv::Scalar());
 
+void remap(cv::Mat &src, cv::Mat &dst, cv::Mat &map1, cv::Mat &map2, int interpolation, int borderMode=cv::BORDER_CONSTANT, const cv::Scalar& borderValue=cv::Scalar());
+
+
+} // namespace xF
 
 #endif

@@ -32,8 +32,8 @@
 
 /*****************************************************************************
 *
-*     Author: Murad Qasaimeh <muradq@xilinx.com> <kristof@xilinx.com>
-*     Date:   2018/06/22
+*     Author: Kristof Denolf <kristof@xilinx.com>
+*     Date:   2018/12/21
 *
 *****************************************************************************/
 
@@ -50,7 +50,11 @@
 #else
 #include <opencv2/core/core.hpp>
 #endif 
+
+namespace xF { 
  
-void xF_boxFilter(cv::Mat &src, cv::Mat &dst, int ddepth, cv::Size ksize, cv::Point anchor=cv::Point(-1, -1), bool normalize=true, int borderType=cv::BORDER_DEFAULT);
+void boxFilter(cv::Mat &src, cv::Mat &dst, int ddepth, cv::Size ksize, cv::Point anchor=cv::Point(-1, -1), bool normalize=true, int borderType=cv::BORDER_DEFAULT);
+
+} // namespace xF
  
 #endif

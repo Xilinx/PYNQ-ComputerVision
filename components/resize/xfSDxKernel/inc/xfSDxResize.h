@@ -32,8 +32,9 @@
  
 /*****************************************************************************
 *
-*     Author: Murad Qasaimeh <muradq@xilinx.com> <kristof@xilinx.com>
-*     Date:   2018/06/22
+*
+*     Author: Kristof Denolf <kristof@xilinx.com>
+*     Date:   2018/10/29
 *
 *****************************************************************************/
 
@@ -51,8 +52,12 @@
 #include <opencv2/core/core.hpp>
 #endif 
 
-void xF_resize(cv::Mat &src, cv::Mat &dst, cv::Size dsize, double fx=0, double fy=0, int interpolation=0);
+namespace xF { 
+
+//---------------------------------------------------------- Declaration ----------------------------------------------------------
+
+void resize(cv::Mat &src, cv::Mat &dst, cv::Size dsize, double fx=0, double fy=0, int interpolation=0);
  
- 
+} // namespace xF 
 
 #endif

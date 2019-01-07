@@ -37,6 +37,8 @@
 *
 *****************************************************************************/
 
+#include "xfFilter2DCoreForVivadoHLS.h"
+
 ///SDx temporal fix for Clang issue
 #ifdef __SDSCC__
 #undef __ARM_NEON__
@@ -49,36 +51,33 @@
 #endif
 //#include <opencv2/core/core.hpp>
 
-#include "common/xf_common.h"
-
-
-#include <hls_video.h>
-#include "imgproc/xf_custom_convolution.hpp"
-
 #include <Utils/inc/UtilsForXfOpenCV.h>
 
-#include "xfSDxFilter2D.h"
-
 //PL instatiation parameters
-#define XFSHIFT		${XSHIFTCMakeParam}
+#define XFSHIFT		${XSHIFTCMakeParamFilter2D}
 typedef short xfkernelType; //xfOpenCV forces coefficients as XF_16SP
 
-void xF_filter2D(cv::Mat &src, cv::Mat &dst, int ddepth, cv::Mat &kernel, cv::Point anchor, double delta, int borderType)
+namespace xF {
+
+
+void filter2D(cv::Mat &src, cv::Mat &dst, int ddepth, cv::Mat &kernel, cv::Point anchor, double delta, int borderType)
 {
 	
-	const int borderTypeTP = ${borderTypeCMakeParam};
-	const int kernelRowsTP = ${kernelSizeCMakeParam};
-	const int kernelColsTP = ${kernelSizeCMakeParam};
-	const int maxWidthTP = ${maxWidthCMakeParam};
-	const int maxHeightTP = ${maxHeightCMakeParam};
-	const int srcTypeTP = ${srcTypeCMakeParam};
-	const int dstTypeTP = ${dstTypeCMakeParam};
-	const int NPCTP = ${NPCCMakeParam};
+	const int borderTypeTP = ${borderTypeCMakeParamFilter2D};
+	const int kernelRowsTP = ${kernelSizeCMakeParamFilter2D};
+	const int kernelColsTP = ${kernelSizeCMakeParamFilter2D};
+	const int maxWidthTP = ${maxWidthCMakeParamFilter2D};
+	const int maxHeightTP = ${maxHeightCMakeParamFilter2D};
+	const int srcTypeTP = ${srcTypeCMakeParamFilter2D};
+	const int dstTypeTP = ${dstTypeCMakeParamFilter2D};
+	const int NPCTP = ${NPCCMakeParamFilter2D};
 	
 	//check for limitations of xfOpenCV module
+	//compile-time checks
+	static_assert(borderTypeTP == XF_BORDER_CONSTANT, "XF only supports border constant");
+	//run-time
 	assert(src.channels() == 1);
 	assert(dst.channels() == 1);
-	assert(borderTypeTP == XF_BORDER_CONSTANT); //XF only supports border constant
 	assert(borderType == borderTypeTP);
 	
 	//std::cout << "Calling cmake specialized function" << std::endl;
@@ -102,8 +101,10 @@ void xF_filter2D(cv::Mat &src, cv::Mat &dst, int ddepth, cv::Mat &kernel, cv::Po
 		}
 
 	// call xf::filter2D 
-	xf::filter2D<${borderTypeCMakeParam},${kernelSizeCMakeParam},${kernelSizeCMakeParam},${srcTypeCMakeParam},${dstTypeCMakeParam},${maxHeightCMakeParam}, ${maxWidthCMakeParam},${NPCCMakeParam}>(*imgInput,*imgOutput,kernelWindow,XFSHIFT);
-
+	//xf::filter2D<${borderTypeCMakeParam},${kernelSizeCMakeParam},${kernelSizeCMakeParam},${srcTypeCMakeParam},${dstTypeCMakeParam},${maxHeightCMakeParam}, ${maxWidthCMakeParam},${NPCCMakeParam}>(*imgInput,*imgOutput,kernelWindow,XFSHIFT);
+	xF_filter2D(imgInput,imgOutput,kernelWindow,XFSHIFT);
+	
+	
 	//perform checks on the dst type
 	if (dstPostConversion) {
 		xfMatDepthPostConversion(dst,imgOutput);
@@ -114,3 +115,100 @@ void xF_filter2D(cv::Mat &src, cv::Mat &dst, int ddepth, cv::Mat &kernel, cv::Po
 	
 	return;
 }
+
+/*
+template<>
+void xF_filter2D<${borderTypeCMakeParam}, ${kernelSizeCMakeParam}, ${kernelSizeCMakeParam},  ${srcTypeCMakeParam}, ${dstTypeCMakeParam}, ${maxHeightCMakeParam}, ${maxWidthCMakeParam}, ${NPCCMakeParam}>(cv::Mat &src, cv::Mat &dst, int ddepth, cv::Mat &kernel, cv::Point anchor, double delta, int borderType)
+{
+	const int borderTypeTP = ${borderTypeCMakeParam};
+	const int kernelRowsTP = ${kernelSizeCMakeParam};
+	const int kernelColsTP = ${kernelSizeCMakeParam};	
+	const int srcTypeTP = ${srcTypeCMakeParam};
+	const int dstTypeTP = ${dstTypeCMakeParam};
+	const int maxHeightTP = ${maxHeightCMakeParam};
+	const int maxWidthTP = ${maxWidthCMakeParam};
+	const int NPCTP = ${NPCCMakeParam};
+	
+	assert(src.channels() == 1);
+	assert(dst.channels() == 1);
+	assert(borderTypeTP == XF_BORDER_CONSTANT); //XF only supports border constant
+	assert(borderType == borderTypeTP);
+	
+	std::cout << "Calling specialized templated function" << std::endl;
+
+	cv::Mat srcHLS, dstHLS;
+	
+	const int scrDepthTP = XF_DEPTH(srcTypeTP,NPCTP);
+	const int dstDepthTP = XF_DEPTH(dstTypeTP,NPCTP);
+	
+	xf::Mat<srcTypeTP, maxHeightTP, maxWidthTP, NPCTP>* imgInput;
+	xf::Mat<dstTypeTP, maxHeightTP, maxWidthTP, NPCTP>* imgOutput;
+
+	// perform some checks on the src type
+	if (src.depth() == scrDepthTP && src.depth() < HLS_USRTYPE1) { // no conversion needed if types match and are native C types
+		std::cout << "provided src type matches instantiated core type" << std::endl;
+		imgInput =  new xf::Mat<srcTypeTP, maxHeightTP, maxWidthTP, NPCTP>(src.rows,src.cols,(void *)src.data);
+	}
+	else { // if types do not match, perform SW conversion
+		std::cout << "provided src type does not match instantiated core type, applying SW conversion" << std::endl;
+		cv::Mat tmpMat;
+		src.convertTo(tmpMat, XF_XFDEPTH2CVDEPTH(scrDepthTP));
+		imgInput = new xf::Mat<srcTypeTP, maxHeightTP, maxWidthTP, NPCTP>(src.rows,src.cols);
+		std::cout << "conversion done, memory allocated, copying data" << std::endl;
+		imgInput->copyTo(tmpMat.data);
+		std::cout << "done copying data" << std::endl;
+	}
+	
+	// perform some checks on the dst type
+	ddepth = (ddepth == -1) ? src.depth() : ddepth;
+		
+	//check in dst Mat was already allocated and matches ddepth
+	if (dst.empty())
+	{
+		std::cout << "dst not yet allocated" << std::endl;
+		dst = cv::Mat(src.size(),CV_MAKE_TYPE(ddepth,src.channels()));		
+	} else if (dst.depth() != ddepth) {
+		std::cout << "dst allocated does not match ddepth, reallocating" << std::endl;
+		dst = cv::Mat(src.size(),CV_MAKE_TYPE(ddepth,src.channels()));
+	}
+	
+	bool dstPostConversion = false;
+	if (ddepth == dstDepthTP && ddepth < HLS_USRTYPE1) { // no conversion needed if types match and are native C types
+		std::cout << "provided dst type matches instantiated core type" << std::endl;
+		imgOutput = new xf::Mat<dstTypeTP, maxHeightTP, maxWidthTP, NPCTP>(src.rows,src.cols,(void *) dst.data);
+	}
+	else
+	{
+		imgOutput = new xf::Mat<dstTypeTP, maxHeightTP, maxWidthTP, NPCTP>(src.rows,src.cols);
+		std::cout << "provided output does not match, need SW post conversion" << std::endl;
+		dstPostConversion = true;
+	}
+
+	//prepare kernel coefficients as array with kernelType fixed to XF_16SP
+	
+	xfkernelType kernelWindow[kernelRowsTP*kernelColsTP];
+	for(int i=0; i<kernelRowsTP; i++)
+		for(int j=0; j<kernelColsTP; j++)
+		{
+			kernelWindow[i*kernelRowsTP+j] = (xfkernelType) (kernel.at<float>(i,j) * (float)(1 << XFSHIFT));
+		}
+
+	// call xf::filter2D 
+	//xf::filter2D<borderTypeTP,kernelColsTP,kernelRowsTP,srcTypeTP,dstTypeTP,maxHeightTP, maxWidthTP,NPCTP>(*imgInput,*imgOutput,kernelWindow,XFSHIFT);
+	xf::filter2D<${borderTypeCMakeParam},${kernelSizeCMakeParam},${kernelSizeCMakeParam},${srcTypeCMakeParam},${dstTypeCMakeParam},${maxHeightCMakeParam}, ${maxWidthCMakeParam},${NPCCMakeParam}>(*imgInput,*imgOutput,kernelWindow,XFSHIFT);
+
+	//perform checks on the dst type
+	if (dstPostConversion) {
+		std::cout << "Dst type does not match, performing SW conversion" << std::endl;
+		cv::Mat tmpMat2(src.rows,src.cols,CV_MAKE_TYPE(XF_XFDEPTH2CVDEPTH(dstDepthTP),src.channels()),imgOutput->copyFrom());
+		tmpMat2.convertTo(dst, dst.type());
+	}
+	
+	delete imgInput;
+	delete imgOutput;
+	
+	return;
+}
+*/
+
+} // namespace xF

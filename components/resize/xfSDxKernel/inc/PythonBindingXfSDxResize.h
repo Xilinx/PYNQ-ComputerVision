@@ -32,8 +32,9 @@
  
 /*****************************************************************************
 *
-*     Author: Murad Qasaimeh <muradq@xilinx.com> <kristof@xilinx.com>
-*     Date:   2018/06/22
+*     Author: Kristof Denolf <kristof@xilinx.com>
+*             Jack Lo <jackl@xilinx.com>
+*     Date:   2017/12/05
 *
 *****************************************************************************/
 
@@ -63,7 +64,7 @@ static PyObject* pyopencv_cv_resize(PyObject* , PyObject* args, PyObject* kw)
         pyopencv_to(pyobj_dst, dst, ArgInfo("dst", 1)) &&
         pyopencv_to(pyobj_dsize, dsize, ArgInfo("dsize", 0)) )
     {
-        ERRWRAP2(xF_resize(src, dst, dsize, fx, fy, interpolation));
+        ERRWRAP2(xF::resize(src, dst, dsize, fx, fy, interpolation));
         return pyopencv_from(dst);
     }
     }

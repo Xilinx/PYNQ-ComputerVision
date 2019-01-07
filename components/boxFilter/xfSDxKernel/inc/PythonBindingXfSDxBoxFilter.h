@@ -32,8 +32,9 @@
  
 /*****************************************************************************
 *
-*     Author: Murad Qasaimeh <muradq@xilinx.com> <kristof@xilinx.com>
-*     Date:   2018/06/22
+*     Author: Kristof Denolf <kristof@xilinx.com>
+*             Jack Lo <jackl@xilinx.com>
+*     Date:   2018/12/21
 *
 *****************************************************************************/
 
@@ -66,7 +67,7 @@ static PyObject* pyopencv_cv_boxFilter(PyObject* , PyObject* args, PyObject* kw)
         pyopencv_to(pyobj_ksize, ksize, ArgInfo("ksize", 0)) &&
         pyopencv_to(pyobj_anchor, anchor, ArgInfo("anchor", 0)) )
     {
-        ERRWRAP2(xF_boxFilter(src, dst, ddepth, ksize, anchor, normalize, borderType));
+        ERRWRAP2(xF::boxFilter(src, dst, ddepth, ksize, anchor, normalize, borderType));
         return pyopencv_from(dst);
     }
     }

@@ -1,0 +1,61 @@
+/******************************************************************************
+ *  Copyright (c) 2018, Xilinx, Inc.
+ *  All rights reserved.
+ * 
+ *  Redistribution and use in source and binary forms, with or without 
+ *  modification, are permitted provided that the following conditions are met:
+ *
+ *  1.  Redistributions of source code must retain the above copyright notice, 
+ *     this list of conditions and the following disclaimer.
+ *
+ *  2.  Redistributions in binary form must reproduce the above copyright 
+ *      notice, this list of conditions and the following disclaimer in the 
+ *      documentation and/or other materials provided with the distribution.
+ *
+ *  3.  Neither the name of the copyright holder nor the names of its 
+ *      contributors may be used to endorse or promote products derived from 
+ *      this software without specific prior written permission.
+ *
+ *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ *  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, 
+ *  THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR 
+ *  PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR 
+ *  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, 
+ *  EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, 
+ *  PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+ *  OR BUSINESS INTERRUPTION). HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
+ *  WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR 
+ *  OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
+ *  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ *****************************************************************************/
+ 
+/*****************************************************************************
+*
+*     Author: Kristof Denolf <kristof@xilinx.com>
+*     Date:   2018/01/22
+*
+*****************************************************************************/
+  
+#include "xfCannyCoreForVivadoHLS.h"
+
+#include "imgproc/xf_canny.hpp"
+#include "imgproc/xf_edge_tracing.hpp" 
+
+void xF_Canny(
+xf::Mat<${srcTypeCMakeParamCanny}, ${maxHeightCMakeParamCanny}, ${maxWidthCMakeParamCanny}, ${srcNPCCMakeParamCanny}>* imgInput,  
+xf::Mat<${dstTypeCMakeParamCanny}, ${maxHeightCMakeParamCanny}, ${maxWidthCMakeParamCanny}, ${dstNPCCMakeParamCanny}>* imgOutput,
+unsigned char threshold1, unsigned char threshold2)
+{
+	// prepare intermediate buffers
+	xf::Mat<${srcIntermedTypeCMakeParamCanny},${maxHeightCMakeParamCanny},${maxWidthCMakeParamCanny},${dstIntermedNPCCMakeParamCanny}> dstInter(${maxHeightCMakeParamCanny},${maxWidthCMakeParamCanny});
+	xf::Mat<${dstIntermedTypeCMakeParamCanny},${maxHeightCMakeParamCanny},${maxWidthCMakeParamCanny},${srcIntermedNPCCMakeParamCanny}> srcInter(${maxHeightCMakeParamCanny},${maxWidthCMakeParamCanny}, (void *) dstInter.data);
+	
+	// call xf::Canny and xf::EdgeTracing
+	#pragma SDS async(1)
+	xf::Canny<${apertureSizeCMakeParamCanny},${L2gradientCMakeParamCanny},${srcTypeCMakeParamCanny},${dstIntermedTypeCMakeParamCanny},${maxHeightCMakeParamCanny},${maxWidthCMakeParamCanny},${srcNPCCMakeParamCanny},${dstIntermedNPCCMakeParamCanny}>(*imgInput,dstInter,threshold1,threshold2);
+	#pragma SDS wait(1)
+	xf::EdgeTracing<${srcIntermedTypeCMakeParamCanny},${dstTypeCMakeParamCanny},${maxHeightCMakeParamCanny},${maxWidthCMakeParamCanny},${srcIntermedNPCCMakeParamCanny},${dstNPCCMakeParamCanny}>(srcInter,*imgOutput);
+	
+	return;
+}

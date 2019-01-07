@@ -53,18 +53,26 @@
 //#include <opencv2/core/core.hpp>
 
 
-//---------------------------------------------------------- Declaration ----------------------------------------------------------
+namespace xF { //Namespace not working yet
 
-class xF_StereoBM
+
+class StereoBM
 {
 	public:
-		static cv::Ptr<xF_StereoBM> create(int numDisparities = 0, int blockSize = 21);
+		static cv::Ptr<xF::StereoBM> create(int numDisparities = 0, int blockSize = 21);
 		virtual void compute(cv::Mat &left, cv::Mat &right, cv::Mat &disparity) = 0;
 		virtual void setPreFilterCap (int preFilterCap) = 0;
 		virtual void setTextureThreshold (int textureThreshold) = 0;
 		virtual void setUniquenessRatio (int uniquenessRatio) = 0;
 		virtual void setMinDisparity(int minDisparity) = 0;
+		virtual int getPreFilterCap () = 0;
+		virtual int getTextureThreshold () = 0;
+		virtual int getUniquenessRatio () = 0;
+		virtual int getMinDisparity() = 0;
 	
 };
+
+
+} // namespace xF
 
 #endif

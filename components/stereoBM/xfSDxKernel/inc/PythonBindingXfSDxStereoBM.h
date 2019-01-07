@@ -29,7 +29,7 @@
  *  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  *****************************************************************************/
-
+ 
 /*****************************************************************************
 *
 *     Author: Kristof Denolf <kristof@xilinx.com>
@@ -48,7 +48,7 @@
 struct pyopencv_StereoBM_t
 {
     PyObject_HEAD
-    Ptr<xF_StereoBM> v;
+    Ptr<xF::StereoBM> v;
 };
 
 static PyTypeObject pyopencv_StereoBM_Type =
@@ -64,15 +64,15 @@ static void pyopencv_StereoBM_dealloc(PyObject* self)
     PyObject_Del(self);
 }
 
-template<> PyObject* pyopencv_from(const Ptr<xF_StereoBM>& r)
+template<> PyObject* pyopencv_from(const Ptr<xF::StereoBM>& r)
 {
     pyopencv_StereoBM_t *m = PyObject_NEW(pyopencv_StereoBM_t, &pyopencv_StereoBM_Type);
-    new (&(m->v)) Ptr<xF_StereoBM>(); // init Ptr with placement new
+    new (&(m->v)) Ptr<xF::StereoBM>(); // init Ptr with placement new
     m->v = r;
     return (PyObject*)m;
 }
 
-template<> bool pyopencv_to(PyObject* src, Ptr<xF_StereoBM>& dst, const char* name)
+template<> bool pyopencv_to(PyObject* src, Ptr<xF::StereoBM>& dst, const char* name)
 {
     if( src == NULL || src == Py_None )
         return true;
@@ -81,7 +81,7 @@ template<> bool pyopencv_to(PyObject* src, Ptr<xF_StereoBM>& dst, const char* na
         failmsg("Expected cv::StereoBM for argument '%s'", name);
         return false;
     }
-    dst = ((pyopencv_StereoBM_t*)src)->v.dynamicCast<xF_StereoBM>();
+    dst = ((pyopencv_StereoBM_t*)src)->v.dynamicCast<xF::StereoBM>();
     return true;
 }
 
@@ -92,15 +92,15 @@ static PyObject* pyopencv_cv_StereoBM_create(PyObject* , PyObject* args, PyObjec
 
     int numDisparities=0;
     int blockSize=21;
-    Ptr<xF_StereoBM> retval;
+    Ptr<xF::StereoBM> retval;
 	
-	std::cout << "creating xf stereo bm object" << std::endl;
+	std::cout << "creating xF stereo bm object" << std::endl;
 
     const char* keywords[] = { "numDisparities", "blockSize", NULL };
     if( PyArg_ParseTupleAndKeywords(args, kw, "|ii:StereoBM_create", (char**)keywords, &numDisparities, &blockSize) )
     {
         //ERRWRAP2(retval = cv::StereoBM::create(numDisparities, blockSize));
-		ERRWRAP2(retval = xF_StereoBM::create(numDisparities, blockSize));
+		ERRWRAP2(retval = xF::StereoBM::create(numDisparities, blockSize));
         return pyopencv_from(retval);
     }
 
@@ -111,13 +111,13 @@ static PyObject* pyopencv_cv_StereoMatcher_compute(PyObject* self, PyObject* arg
 {
     using namespace cv;
 	
-	std::cout << "calling xf stereo BM python binding" << std::endl;
+	std::cout << "calling xF stereo BM python binding" << std::endl;
 
-    xF_StereoBM* _self_ = NULL;
+    xF::StereoBM* _self_ = NULL;
     if(PyObject_TypeCheck(self, &pyopencv_StereoBM_Type))
-        _self_ = dynamic_cast<xF_StereoBM*>(((pyopencv_StereoBM_t*)self)->v.get());
+        _self_ = dynamic_cast<xF::StereoBM*>(((pyopencv_StereoBM_t*)self)->v.get());
     if (_self_ == NULL)
-        return failmsgp("Incorrect type of self (must be 'xF_StereoBM')");
+        return failmsgp("Incorrect type of self (must be 'xF::StereoBM')");
     {
     PyObject* pyobj_left = NULL;
     Mat left;
@@ -138,24 +138,169 @@ static PyObject* pyopencv_cv_StereoMatcher_compute(PyObject* self, PyObject* arg
     }
     PyErr_Clear();
 
-    /*{
-    PyObject* pyobj_left = NULL;
-    UMat left;
-    PyObject* pyobj_right = NULL;
-    UMat right;
-    PyObject* pyobj_disparity = NULL;
-    UMat disparity;
+    return NULL;
+}
 
-    const char* keywords[] = { "left", "right", "disparity", NULL };
-    if( PyArg_ParseTupleAndKeywords(args, kw, "OO|O:StereoMatcher.compute", (char**)keywords, &pyobj_left, &pyobj_right, &pyobj_disparity) &&
-        pyopencv_to(pyobj_left, left, ArgInfo("left", 0)) &&
-        pyopencv_to(pyobj_right, right, ArgInfo("right", 0)) &&
-        pyopencv_to(pyobj_disparity, disparity, ArgInfo("disparity", 1)) )
+static PyObject* pyopencv_cv_StereoMatcher_getMinDisparity(PyObject* self, PyObject* args, PyObject* kw)
+{
+    using namespace cv;
+
+    xF::StereoBM* _self_ = NULL;
+    if(PyObject_TypeCheck(self, &pyopencv_StereoBM_Type))
+        _self_ = dynamic_cast<xF::StereoBM*>(((pyopencv_StereoBM_t*)self)->v.get());
+    if (_self_ == NULL)
+        return failmsgp("Incorrect type of self (must be 'StereoMatcher' or its derivative)");
+    int retval;
+
+    if(PyObject_Size(args) == 0 && (kw == NULL || PyObject_Size(kw) == 0))
     {
-        ERRWRAP2(_self_->compute(left, right, disparity));
-        return pyopencv_from(disparity);
+        ERRWRAP2(retval = _self_->getMinDisparity());
+        return pyopencv_from(retval);
     }
-    }*/
+
+    return NULL;
+}
+
+static PyObject* pyopencv_cv_StereoMatcher_setMinDisparity(PyObject* self, PyObject* args, PyObject* kw)
+{
+    using namespace cv;
+
+    xF::StereoBM* _self_ = NULL;
+    if(PyObject_TypeCheck(self, &pyopencv_StereoBM_Type))
+        _self_ = dynamic_cast<xF::StereoBM*>(((pyopencv_StereoBM_t*)self)->v.get());
+    if (_self_ == NULL)
+        return failmsgp("Incorrect type of self (must be 'StereoMatcher' or its derivative)");
+    int minDisparity=0;
+
+    const char* keywords[] = { "minDisparity", NULL };
+    if( PyArg_ParseTupleAndKeywords(args, kw, "i:StereoMatcher.setMinDisparity", (char**)keywords, &minDisparity) )
+    {
+        ERRWRAP2(_self_->setMinDisparity(minDisparity));
+        Py_RETURN_NONE;
+    }
+
+    return NULL;
+}
+
+static PyObject* pyopencv_cv_StereoBM_getPreFilterCap(PyObject* self, PyObject* args, PyObject* kw)
+{
+    using namespace cv;
+
+    xF::StereoBM* _self_ = NULL;
+    if(PyObject_TypeCheck(self, &pyopencv_StereoBM_Type))
+        _self_ = dynamic_cast<xF::StereoBM*>(((pyopencv_StereoBM_t*)self)->v.get());
+    if (_self_ == NULL)
+        return failmsgp("Incorrect type of self (must be 'StereoBM' or its derivative)");
+    int retval;
+
+    if(PyObject_Size(args) == 0 && (kw == NULL || PyObject_Size(kw) == 0))
+    {
+        ERRWRAP2(retval = _self_->getPreFilterCap());
+        return pyopencv_from(retval);
+    }
+
+    return NULL;
+}
+
+static PyObject* pyopencv_cv_StereoBM_getTextureThreshold(PyObject* self, PyObject* args, PyObject* kw)
+{
+    using namespace cv;
+
+    xF::StereoBM* _self_ = NULL;
+    if(PyObject_TypeCheck(self, &pyopencv_StereoBM_Type))
+        _self_ = dynamic_cast<xF::StereoBM*>(((pyopencv_StereoBM_t*)self)->v.get());
+    if (_self_ == NULL)
+        return failmsgp("Incorrect type of self (must be 'StereoBM' or its derivative)");
+    int retval;
+
+    if(PyObject_Size(args) == 0 && (kw == NULL || PyObject_Size(kw) == 0))
+    {
+        ERRWRAP2(retval = _self_->getTextureThreshold());
+        return pyopencv_from(retval);
+    }
+
+    return NULL;
+}
+
+static PyObject* pyopencv_cv_StereoBM_getUniquenessRatio(PyObject* self, PyObject* args, PyObject* kw)
+{
+    using namespace cv;
+
+    xF::StereoBM* _self_ = NULL;
+    if(PyObject_TypeCheck(self, &pyopencv_StereoBM_Type))
+        _self_ = dynamic_cast<xF::StereoBM*>(((pyopencv_StereoBM_t*)self)->v.get());
+    if (_self_ == NULL)
+        return failmsgp("Incorrect type of self (must be 'StereoBM' or its derivative)");
+    int retval;
+
+    if(PyObject_Size(args) == 0 && (kw == NULL || PyObject_Size(kw) == 0))
+    {
+        ERRWRAP2(retval = _self_->getUniquenessRatio());
+        return pyopencv_from(retval);
+    }
+
+    return NULL;
+}
+
+static PyObject* pyopencv_cv_StereoBM_setPreFilterCap(PyObject* self, PyObject* args, PyObject* kw)
+{
+    using namespace cv;
+
+    xF::StereoBM* _self_ = NULL;
+    if(PyObject_TypeCheck(self, &pyopencv_StereoBM_Type))
+        _self_ = dynamic_cast<xF::StereoBM*>(((pyopencv_StereoBM_t*)self)->v.get());
+    if (_self_ == NULL)
+        return failmsgp("Incorrect type of self (must be 'StereoBM' or its derivative)");
+    int preFilterCap=0;
+
+    const char* keywords[] = { "preFilterCap", NULL };
+    if( PyArg_ParseTupleAndKeywords(args, kw, "i:StereoBM.setPreFilterCap", (char**)keywords, &preFilterCap) )
+    {
+        ERRWRAP2(_self_->setPreFilterCap(preFilterCap));
+        Py_RETURN_NONE;
+    }
+
+    return NULL;
+}
+
+static PyObject* pyopencv_cv_StereoBM_setTextureThreshold(PyObject* self, PyObject* args, PyObject* kw)
+{
+    using namespace cv;
+
+    xF::StereoBM* _self_ = NULL;
+    if(PyObject_TypeCheck(self, &pyopencv_StereoBM_Type))
+        _self_ = dynamic_cast<xF::StereoBM*>(((pyopencv_StereoBM_t*)self)->v.get());
+    if (_self_ == NULL)
+        return failmsgp("Incorrect type of self (must be 'StereoBM' or its derivative)");
+    int textureThreshold=0;
+
+    const char* keywords[] = { "textureThreshold", NULL };
+    if( PyArg_ParseTupleAndKeywords(args, kw, "i:StereoBM.setTextureThreshold", (char**)keywords, &textureThreshold) )
+    {
+        ERRWRAP2(_self_->setTextureThreshold(textureThreshold));
+        Py_RETURN_NONE;
+    }
+
+    return NULL;
+}
+
+static PyObject* pyopencv_cv_StereoBM_setUniquenessRatio(PyObject* self, PyObject* args, PyObject* kw)
+{
+    using namespace cv;
+
+    xF::StereoBM* _self_ = NULL;
+    if(PyObject_TypeCheck(self, &pyopencv_StereoBM_Type))
+        _self_ = dynamic_cast<xF::StereoBM*>(((pyopencv_StereoBM_t*)self)->v.get());
+    if (_self_ == NULL)
+        return failmsgp("Incorrect type of self (must be 'StereoBM' or its derivative)");
+    int uniquenessRatio=0;
+
+    const char* keywords[] = { "uniquenessRatio", NULL };
+    if( PyArg_ParseTupleAndKeywords(args, kw, "i:StereoBM.setUniquenessRatio", (char**)keywords, &uniquenessRatio) )
+    {
+        ERRWRAP2(_self_->setUniquenessRatio(uniquenessRatio));
+        Py_RETURN_NONE;
+    }
 
     return NULL;
 }
@@ -163,7 +308,14 @@ static PyObject* pyopencv_cv_StereoMatcher_compute(PyObject* self, PyObject* arg
 static PyMethodDef pyopencv_StereoBM_methods[] =
 {
     {"compute", (PyCFunction)pyopencv_cv_StereoMatcher_compute, METH_VARARGS | METH_KEYWORDS, "compute(left, right[, disparity]) -> disparity"},
-	
+	{"getMinDisparity", (PyCFunction)pyopencv_cv_StereoMatcher_getMinDisparity, METH_VARARGS | METH_KEYWORDS, "getMinDisparity() -> retval\n."},
+	{"setMinDisparity", (PyCFunction)pyopencv_cv_StereoMatcher_setMinDisparity, METH_VARARGS | METH_KEYWORDS, "setMinDisparity(minDisparity) -> None\n."},
+	{"getPreFilterCap", (PyCFunction)pyopencv_cv_StereoBM_getPreFilterCap, METH_VARARGS | METH_KEYWORDS, "getPreFilterCap() -> retval\n."},
+	{"getTextureThreshold", (PyCFunction)pyopencv_cv_StereoBM_getTextureThreshold, METH_VARARGS | METH_KEYWORDS, "getTextureThreshold() -> retval\n."},
+	{"getUniquenessRatio", (PyCFunction)pyopencv_cv_StereoBM_getUniquenessRatio, METH_VARARGS | METH_KEYWORDS, "getUniquenessRatio() -> retval\n."},
+	{"setPreFilterCap", (PyCFunction)pyopencv_cv_StereoBM_setPreFilterCap, METH_VARARGS | METH_KEYWORDS, "setPreFilterCap(preFilterCap) -> None\n."},
+	{"setTextureThreshold", (PyCFunction)pyopencv_cv_StereoBM_setTextureThreshold, METH_VARARGS | METH_KEYWORDS, "setTextureThreshold(textureThreshold) -> None\n."},
+	{"setUniquenessRatio", (PyCFunction)pyopencv_cv_StereoBM_setUniquenessRatio, METH_VARARGS | METH_KEYWORDS, "setUniquenessRatio(uniquenessRatio) -> None\n."}
 };
 
 static void pyopencv_StereoBM_specials(void)

@@ -32,10 +32,13 @@
  
 /*****************************************************************************
 *
+*
 *     Author: Kristof Denolf <kristof@xilinx.com>
 *     Date:   2018/01/22
 *
 *****************************************************************************/
+
+#include "xfDilateCoreForVivadoHLS.h"
 
 ///SDx temporal fix for Clang issue
 #ifdef __SDSCC__
@@ -49,33 +52,29 @@
 #endif
 //#include <opencv2/core/core.hpp>
 
-#include "common/xf_common.h"
-
-
-#include <hls_video.h>
-#include "imgproc/xf_dilation.hpp" 
-
 #include <Utils/inc/UtilsForXfOpenCV.h>
-
-#include "xfSDxDilate.h"
 
 //PL instatiation parameters
 typedef unsigned char xfkernelType; //xfOpenCV does not yet support specifying the kernel
 
-void xF_dilate(cv::Mat &src, cv::Mat &dst, const cv::Mat &kernel, cv::Point anchor, int iterations, int borderType, const cv::Scalar& borderValue)
+namespace xF {
+
+void dilate(cv::Mat &src, cv::Mat &dst, const cv::Mat &kernel, cv::Point anchor, int iterations, int borderType, const cv::Scalar& borderValue)
 {
 	
-	const int borderTypeTP = ${borderTypeCMakeParam};
-	const int maxWidthTP = ${maxWidthCMakeParam};
-	const int maxHeightTP = ${maxHeightCMakeParam};
-	const int srcTypeTP = ${srcTypeCMakeParam};
-	const int dstTypeTP = ${srcTypeCMakeParam};
-	const int NPCTP = ${NPCCMakeParam};
+	const int borderTypeTP = ${borderTypeCMakeParamDilate};
+	const int maxWidthTP = ${maxWidthCMakeParamDilate};
+	const int maxHeightTP = ${maxHeightCMakeParamDilate};
+	const int srcTypeTP = ${srcTypeCMakeParamDilate};
+	const int dstTypeTP = ${srcTypeCMakeParamDilate};
+	const int NPCTP = ${NPCCMakeParamDilate};
 	
 	//check for limitations of xfOpenCV module
+	//compile-time checks
+	static_assert(borderTypeTP == XF_BORDER_CONSTANT, "XF only supports border constant");
+    //run-time
 	assert(src.channels() == 1);
 	assert(dst.channels() == 1);
-	assert(borderTypeTP == XF_BORDER_CONSTANT); //XF only supports border constant
 	assert(borderType == borderTypeTP);
 	assert(kernel.empty() == true);
 	
@@ -96,8 +95,8 @@ void xF_dilate(cv::Mat &src, cv::Mat &dst, const cv::Mat &kernel, cv::Point anch
 		for(int j=0; j<kernelCols; j++)
 			kernelWindow[i][j] = (kernelType) kernel.at<unsigned char>(i, j);*/
 
-	// call xf::dilate
-	xf::dilate<${borderTypeCMakeParam},${srcTypeCMakeParam},${maxHeightCMakeParam},${maxWidthCMakeParam},${NPCCMakeParam}>(*imgInput,*imgOutput);
+	// call CoreForVivadoHLS wrapper of xf::dilate
+	xF_dilate(imgInput, imgOutput);
 
    // If SW post conversion required, we do it here
    if (dstPostConversion) {
@@ -110,3 +109,4 @@ void xF_dilate(cv::Mat &src, cv::Mat &dst, const cv::Mat &kernel, cv::Point anch
 	return;
 }
 
+} //namespace xF

@@ -29,8 +29,14 @@ After the setup, new Jupyter notebooks will be added under the pynqOpenCV folder
 
 When after profiling, the critical OpenCV modules in an application are identified, the generation of a tailored overlay is easily done by specifying those modules as a list in a CMake project file. After that, building the tailored overlay only requires running cmake to generate the Makefiles followed by make to build the overlay.
 
-For detailed instructions:  [Building xfOpenCV Overlays for Pynq: CMake based sds++ cross-compilation](overlays/README.md). Currently, this only supports building on the Pynq-Z1 with 2017.4 Xilinx tools.
+For detailed instructions:  [Building xfOpenCV Overlays for Pynq: CMake based sds++ cross-compilation](overlays/README.md). Currently, this only supports building on the Ultra96 with 2018.2 Xilinx tools.
 
 ## License
 
-The source for this project is licensed under the [3-Clause BSD License](LICENSE)
+**Source files** : [3-Clause BSD License](LICENSE)
+
+**SDSoC Platform** : [Multiple License File](https://www.xilinx.com/member/forms/download/xef.html?filename=pynq-ultra96-dsa-license-ca.txt) 
+
+**Sysroot**
+  + License and Copyrights Info [TAR/GZIP](https://www.xilinx.com/member/forms/download/xef.html?filename=pynq-v2.3-license.tar.gz)
+  + Open Components Source Code [TAR/GZIP](https://www.xilinx.com/member/forms/download/xef.html?filename=pynq-v2.3-open_components.tar.gz)

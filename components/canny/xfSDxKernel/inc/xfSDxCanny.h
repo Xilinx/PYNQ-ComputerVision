@@ -32,9 +32,8 @@
 
 /*****************************************************************************
 *
-*     Author: Kristof Denolf <kristof@xilinx.com>
-*             
-*     Date:   2018/02/09
+*     Author: Kristof Denolf <kristof@xilinx.com>s        
+*     Date:   201//02/09
 *
 *****************************************************************************/
 
@@ -54,9 +53,10 @@
 //#include <opencv2/core/core.hpp>
 
 
-//---------------------------------------------------------- Declaration ----------------------------------------------------------
+namespace xF { 
 
-void xF_Canny(cv::Mat &image, cv::Mat &edges, double threshold1, double threshold2, int apertureSize=3, bool L2gradient=false);
+void Canny(cv::Mat &image, cv::Mat &edges, double threshold1, double threshold2, int apertureSize=3, bool L2gradient=false);
 
+} // xF
 
 #endif

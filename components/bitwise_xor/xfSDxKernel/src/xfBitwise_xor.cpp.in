@@ -32,8 +32,8 @@
  
 /*****************************************************************************
 *
-*     Author: Murad Qasaimeh <muradq@xilinx.com> <kristof@xilinx.com>
-*     Date:   2018/06/22
+*     Author: Kristof Denolf <kristof@xilinx.com>
+*     Date:   2018/12/21
 *
 *****************************************************************************/
 
@@ -47,26 +47,24 @@
 #else
 #include <opencv2/core/core.hpp>
 #endif 
-
-#include "common/xf_common.h"
-#include <hls_video.h>
-#include "core/xf_arithm.hpp" 
+ 
 #include <Utils/inc/UtilsForXfOpenCV.h>
 
-#include "xfSDxBitwise_xor.h"
-  
-void xF_bitwise_xor(cv::Mat &src1, cv::Mat &src2, cv::Mat &dst, cv::Mat mask)
+#include "xfBitwise_xorCoreForVivadoHLS.h"
+
+namespace xF { 
+
+void bitwise_xor(cv::Mat &src1, cv::Mat &src2, cv::Mat &dst, cv::Mat mask)
 {  
-	const int srcTypeTP 	= ${srcTypeCMakeParam};  
-	const int maxWidthTP 	= ${maxWidthCMakeParam};
-	const int maxHeightTP 	= ${maxHeightCMakeParam};	
-	const int NPCTP = ${NPCCMakeParam};
+	const int srcTypeTP 	= ${srcTypeCMakeParamBitwise_xor};  
+	const int maxWidthTP 	= ${maxWidthCMakeParamBitwise_xor};
+	const int maxHeightTP 	= ${maxHeightCMakeParamBitwise_xor};	
+	const int NPCTP = ${NPCCMakeParamBitwise_xor};
 	
 	//check for limitations of xfOpenCV module
 	assert(src1.channels() 	== 1);
 	assert(src2.channels() 	== 1);
 	assert(dst.channels() 	== 1); 
-	assert(mask.empty() == true);
 	
 	xf::Mat<srcTypeTP, maxHeightTP, maxWidthTP, NPCTP>* imgInput1;
 	xf::Mat<srcTypeTP, maxHeightTP, maxWidthTP, NPCTP>* imgInput2;
@@ -80,7 +78,7 @@ void xF_bitwise_xor(cv::Mat &src1, cv::Mat &src2, cv::Mat &dst, cv::Mat mask)
 	bool dstPostConversion1 = cvToXfDestination(dst, imgOutput, src1); 
 	bool dstPostConversion2 = cvToXfDestination(dst, imgOutput, src2); 
 	// call xf::xor
-	xf::bitwise_xor<${srcTypeCMakeParam},${maxHeightCMakeParam},${maxWidthCMakeParam},${NPCCMakeParam}>(*imgInput1,*imgInput2,*imgOutput);
+	xF_bitwise_xor(imgInput1,imgInput2,imgOutput);
 
 	//perform checks on the dst type
 	if (dstPostConversion1) {
@@ -96,4 +94,4 @@ void xF_bitwise_xor(cv::Mat &src1, cv::Mat &src2, cv::Mat &dst, cv::Mat mask)
 	
 	return;
 }
-
+}

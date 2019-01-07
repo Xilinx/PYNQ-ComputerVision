@@ -32,13 +32,14 @@
  
 /*****************************************************************************
 *
-*     Author: Murad Qasaimeh <muradq@xilinx.com> <kristof@xilinx.com>
-*     Date:   2018/06/22
+*
+*     Author: Kristof Denolf <kristof@xilinx.com>
+*     Date:   2018/12/21
 *
 *****************************************************************************/
 
-#ifndef _XFSDXBITWISE_OR_H_
-#define _XFSDXBITWISE_OR_H_
+#ifndef _XFSDXBITWISEOR_H_
+#define _XFSDXBITWISEOR_H_
 
 ///SDx temporal fix for Clang issue
 #ifdef __SDSCC__
@@ -49,9 +50,11 @@
 #define __ARM_NEON
 #else
 #include <opencv2/core/core.hpp>
-#endif 
-
-void xF_bitwise_or(cv::Mat &src1, cv::Mat &src2, cv::Mat &dst, cv::Mat mask=cv::Mat());  
- 
- 
 #endif
+
+namespace xF {  
+
+void bitwise_or(cv::Mat &src1, cv::Mat &src2, cv::Mat &dst, cv::Mat mask=cv::Mat());  
+
+} // namespace xF
+#endif

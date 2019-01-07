@@ -33,8 +33,8 @@
 /*****************************************************************************
 *
 *
-*     Author: Murad Qasaimeh <muradq@xilinx.com>
-*     Date:   2018/06/11
+*     Author: Kristof Denolf <kristof@xilinx.com>
+*     Date:   2017/11/22
 *
 *****************************************************************************/
 
@@ -51,9 +51,11 @@
 #else
 #include <opencv2/core/core.hpp>
 #endif
-//#include <opencv2/core/core.hpp>
- 
-double xF_threshold(cv::Mat &src, cv::Mat &dst, double thresh, double maxval=255, int type=0); //cv::THRESH_BINARY=0
-  
 
-#endif
+namespace xF {  
+
+double threshold(cv::Mat &src, cv::Mat &dst, double thresh, double maxval=255, int type = cv::THRESH_BINARY); //cv::THRESH_BINARY=0
+
+} // namespace xF
+#endif
+  

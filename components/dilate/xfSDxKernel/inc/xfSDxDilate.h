@@ -29,8 +29,9 @@
  *  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  *****************************************************************************/
-
+ 
 /*****************************************************************************
+*
 *
 *     Author: Kristof Denolf <kristof@xilinx.com>
 *     Date:   2017/11/22
@@ -53,8 +54,12 @@
 //#include <opencv2/core/core.hpp>
 
 
+namespace xF { 
+
 //---------------------------------------------------------- Declaration ----------------------------------------------------------
 
-void xF_dilate(cv::Mat &src, cv::Mat &dst, const cv::Mat &kernel=cv::Mat(0,0,0), cv::Point anchor=cv::Point(-1,-1), int iterations=1, int borderType=cv::BORDER_CONSTANT, const cv::Scalar& borderValue=cv::Scalar::all(-DBL_MAX));
+void dilate(cv::Mat &src, cv::Mat &dst, const cv::Mat &kernel=cv::Mat(0,0,0), cv::Point anchor=cv::Point(-1,-1), int iterations=1, int borderType=cv::BORDER_CONSTANT, const cv::Scalar& borderValue=cv::Scalar::all(-DBL_MAX));
+
+} // namespace xF
 
 #endif

@@ -32,8 +32,8 @@
  
 /*****************************************************************************
 *
-*     Author: Murad Qasaimeh <muradq@xilinx.com> <kristof@xilinx.com>
-*     Date:   2018/06/22
+*     Author: Kristof Denolf <kristof@xilinx.com>
+*     Date:   2018/05/11
 *
 *****************************************************************************/
 
@@ -47,20 +47,18 @@
 #else
 #include <opencv2/core/core.hpp>
 #endif 
-
-#include "common/xf_common.h"
-#include <hls_video.h>
-#include "core/xf_arithm.hpp" 
 #include <Utils/inc/UtilsForXfOpenCV.h>
 
-#include "xfSDxBitwise_and.h"
+#include "xfBitwise_andCoreForVivadoHLS.h"
+
+namespace xF {
   
-void xF_bitwise_and(cv::Mat &src1, cv::Mat &src2, cv::Mat &dst, cv::Mat mask)
+void bitwise_and(cv::Mat &src1, cv::Mat &src2, cv::Mat &dst, cv::Mat mask)
 {  
-	const int srcTypeTP = ${srcTypeCMakeParam};  
-	const int maxWidthTP = ${maxWidthCMakeParam};
-	const int maxHeightTP = ${maxHeightCMakeParam};	
-	const int NPCTP = ${NPCCMakeParam};
+	const int srcTypeTP = ${srcTypeCMakeParamBitwise_and};  
+	const int maxWidthTP = ${maxWidthCMakeParamBitwise_and};
+	const int maxHeightTP = ${maxHeightCMakeParamBitwise_and};	
+	const int NPCTP = ${NPCCMakeParamBitwise_and};
 	
 	//check for limitations of xfOpenCV module
 	assert(src1.channels() == 1);
@@ -78,10 +76,11 @@ void xF_bitwise_and(cv::Mat &src1, cv::Mat &src2, cv::Mat &dst, cv::Mat mask)
           
 	// perform some checks on the dst type
 	bool dstPostConversion1 = cvToXfDestination(dst, imgOutput, src1); 
-	bool dstPostConversion2 = cvToXfDestination(dst, imgOutput, src2); 
-	// call xf::and
-	xf::bitwise_and<${srcTypeCMakeParam},${maxHeightCMakeParam},${maxWidthCMakeParam},${NPCCMakeParam}>(*imgInput1,*imgInput2,*imgOutput);
-
+	bool dstPostConversion2 = cvToXfDestination(dst, imgOutput, src2);
+	 
+	// call CoreForVivadoHLS wrapper of xf::bitwise_and
+	xF_bitwise_and(imgInput1,imgInput2,imgOutput);
+	
 	//perform checks on the dst type
 	if (dstPostConversion1) {
 		xfMatDepthPostConversion(dst,imgOutput);
@@ -97,3 +96,4 @@ void xF_bitwise_and(cv::Mat &src1, cv::Mat &src2, cv::Mat &dst, cv::Mat mask)
 	return;
 }
 
+} //namespace xF

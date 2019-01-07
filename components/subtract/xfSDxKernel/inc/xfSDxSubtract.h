@@ -31,12 +31,12 @@
  *****************************************************************************/
  
 /*****************************************************************************
-* 
-*     Author: Murad Qasaimeh <muradq@xilinx.com> <kristof@xilinx.com>
-*     Date:   2018/06/22
+*
+*
+*     Author: Kristof Denolf <kristof@xilinx.com>
+*     Date:   2017/11/22
 *
 *****************************************************************************/
-
 #ifndef _XFSDXSUBTRACT_H_
 #define _XFSDXSUBTRACT_H_
 
@@ -49,9 +49,13 @@
 #define __ARM_NEON
 #else
 #include <opencv2/core/core.hpp>
-#endif 
-
-void xF_subtract(cv::Mat &src1, cv::Mat &src2, cv::Mat &dst, cv::Mat mask=cv::Mat());  
- 
- 
 #endif
+
+namespace xF {  
+
+void subtract(cv::Mat &src1, cv::Mat &src2, cv::Mat &dst, cv::Mat mask= cv::Mat(), int dtype=-1); 
+
+} // namespace xF
+#endif
+
+ 

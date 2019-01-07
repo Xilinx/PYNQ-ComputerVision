@@ -29,12 +29,12 @@
  *  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  *****************************************************************************/
-
+ 
 /*****************************************************************************
 *
 *     Author: Kristof Denolf <kristof@xilinx.com>
 *             Jack Lo <jackl@xilinx.com>
-*     Date:   2018/01/23
+*     Date:   2018/03/13
 *
 *****************************************************************************/
 
@@ -46,32 +46,34 @@
 static PyObject* pyopencv_cv_erode(PyObject* , PyObject* args, PyObject* kw)
 {
     using namespace cv;
- 
+
     PyObject* pyobj_src = NULL;
     Mat src;
     PyObject* pyobj_dst = NULL;
     Mat dst;
+    int ddepth=0;
     PyObject* pyobj_kernel = NULL;
     Mat kernel;
     PyObject* pyobj_anchor = NULL;
     Point anchor=Point(-1,-1);
     int iterations=1;
-    int borderType=BORDER_CONSTANT;
+    int borderType=BORDER_DEFAULT;
     PyObject* pyobj_borderValue = NULL;
     Scalar borderValue=morphologyDefaultBorderValue();
 
     const char* keywords[] = { "src", "kernel", "dst", "anchor", "iterations", "borderType", "borderValue", NULL };
-    if( PyArg_ParseTupleAndKeywords(args, kw, "OO|OOiiO:erode", (char**)keywords, &pyobj_src, &pyobj_kernel, &pyobj_dst, &pyobj_anchor, &iterations, &borderType, &pyobj_borderValue) &&
+    if( PyArg_ParseTupleAndKeywords(args, kw, "OO|OOii0:dilate", (char**)keywords, &pyobj_src, &pyobj_kernel, &pyobj_dst, &pyobj_anchor, &iterations, &borderType, &pyobj_borderValue) &&
         pyopencv_to(pyobj_src, src, ArgInfo("src", 0)) &&
         pyopencv_to(pyobj_dst, dst, ArgInfo("dst", 1)) &&
         pyopencv_to(pyobj_kernel, kernel, ArgInfo("kernel", 0)) &&
         pyopencv_to(pyobj_anchor, anchor, ArgInfo("anchor", 0)) &&
         pyopencv_to(pyobj_borderValue, borderValue, ArgInfo("borderValue", 0)) )
     {
-        ERRWRAP2(xF_erode(src, dst, kernel, anchor, iterations, borderType, borderValue));
+        ERRWRAP2(xF::erode(src, dst, kernel, anchor, iterations, borderType, borderValue));
         return pyopencv_from(dst);
     }
-   
+
     return NULL;
 }
+
 #endif

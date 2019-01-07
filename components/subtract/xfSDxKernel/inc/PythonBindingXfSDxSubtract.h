@@ -32,8 +32,9 @@
  
 /*****************************************************************************
 *
-*     Author: Murad Qasaimeh <muradq@xilinx.com> <kristof@xilinx.com>
-*     Date:   2018/06/22
+*     Author: Kristof Denolf <kristof@xilinx.com>
+*             Jack Lo <jackl@xilinx.com>
+*     Date:   2017/12/05
 *
 *****************************************************************************/
 
@@ -45,7 +46,8 @@
 static PyObject* pyopencv_cv_subtract(PyObject* , PyObject* args, PyObject* kw)
 {
     using namespace cv;
- 
+
+    {
     PyObject* pyobj_src1 = NULL;
     Mat src1;
     PyObject* pyobj_src2 = NULL;
@@ -63,9 +65,10 @@ static PyObject* pyopencv_cv_subtract(PyObject* , PyObject* args, PyObject* kw)
         pyopencv_to(pyobj_dst, dst, ArgInfo("dst", 1)) &&
         pyopencv_to(pyobj_mask, mask, ArgInfo("mask", 0)) )
     {
-        ERRWRAP2(xF_subtract(src1, src2, dst, mask));
+        ERRWRAP2(xF::subtract(src1, src2, dst, mask, dtype));
         return pyopencv_from(dst);
-    } 
+    }
+    }
     PyErr_Clear();
  
     return NULL;
