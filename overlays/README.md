@@ -139,5 +139,35 @@ The [example python script for filter 2D (testXfFilter2D.py)](../applicationCode
     ```
     you should see ~140fps measured result as well as an outline of big bunny pop up on your terminal.
  
+## Running sample Python unit tests
+
+Additional example unit tests for all supported kernels can be found [here](../applicationCode/unitTests/testPython). If valid overlays are built using the python build script ([buildUnitOverlays.py](../overlays/buildUnitOverlays.py)), then we can execute all the python tests on the board using the script [runUnitTests.py](../applicationCode/unitTests/testPython/runUnitTests.py). 
+
+First we run the build script on the host:
+```commandline
+$ cd ../applicationCode/overlays
+$ ./buildUnitOverlays.py |& tee build.log
+```
+Each kernel will be made into an overlay and the relevant files (.so, .bit, .hwh) will be stored in the build area: ../applicationCode/overlays/unitOverlays/overlayFiles.
+
+We then copy the files over to the board's overlays folder:
+```commandline
+$ cd ../applicationCode/overlays/unitOverlays/overlayFiles
+$ scp * xilinx@192.168.3.1:/home/xilinx/tmp
+$ ssh xilinx@192.168.3.1
+$ cd tmp
+$ sudo cp tmp/* /usr/local/lib/python3.6/dist-packages/pynq_cv/overlays/.
+```
+Then an images sub-folder should be created under ../applicationCode/unitTests/images which has the 3 image files used in the tests (bigBunny_1080.png, bbb-splash_1080.png, 000005_10_L.png, 000005_10_R.png). 
+```commandline
+$ cd /home/xilinx/proj/PYNQ-ComputerVision/applicationCode/unitTests
+$ mkdir images
+$ <cp image files to this sub-folder>
+```
+Finally, the test script can be run.
+```commandline
+$ cd /home/xilinx/proj/PYNQ-ComputerVision/applicationCode/unitTests/testPython
+$ ./runUnitTests.py |& tee run.log
+```
 
 
