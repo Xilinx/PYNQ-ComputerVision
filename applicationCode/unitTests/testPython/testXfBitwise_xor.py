@@ -32,6 +32,7 @@
 #
 ###############################################################################
 
+print("Running testXfBitwise_xor.py ...")
 print("Loading overlay")
 from pynq import Overlay
 bs = Overlay("/usr/local/lib/python3.6/dist-packages/pynq_cv/overlays/xv2bitwise_xor.bit")

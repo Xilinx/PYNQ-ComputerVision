@@ -32,20 +32,18 @@
 #
 ###############################################################################
 
+print("Running testXfStereoBM.py ...")
 print("Loading overlay")
 from pynq import Overlay
-#bs = Overlay("/usr/local/lib/python3.6/dist-packages/pynq_cv/overlays/xv2stereoBM.bit")
-bs = Overlay("/usr/local/lib/python3.6/dist-packages/pynq_cv/overlays/xv2XfstereoBM.bit")
+bs = Overlay("/usr/local/lib/python3.6/dist-packages/pynq_cv/overlays/xv2stereoBM.bit")
 bs.download()
 
 print("Loading xlnk")
 from pynq import Xlnk
-#Xlnk.set_allocator_library('/usr/local/lib/python3.6/dist-packages/pynq_cv/overlays/xv2stereoBM.so')
-Xlnk.set_allocator_library('/usr/local/lib/python3.6/dist-packages/pynq_cv/overlays/xv2XfstereoBM.so')
+Xlnk.set_allocator_library('/usr/local/lib/python3.6/dist-packages/pynq_cv/overlays/xv2stereoBM.so')
 mem_manager = Xlnk()
 
-#import pynq_cv.overlays.xv2stereoBM as xv2
-import pynq_cv.overlays.xv2XfstereoBM as xv2
+import pynq_cv.overlays.xv2stereoBM as xv2
 import numpy as np
 import cv2
 import time
