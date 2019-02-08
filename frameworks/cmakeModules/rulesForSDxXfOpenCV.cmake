@@ -1,5 +1,5 @@
 ###############################################################################
-#  Copyright (c) 2018, Xilinx, Inc.
+#  Copyright (c) 2019, Xilinx, Inc.
 #  All rights reserved.
 # 
 #  Redistribution and use in source and binary forms, with or without 
@@ -387,8 +387,9 @@ set(policyTypeCMakeParam ${XF_CONVERT_POLICY_SATURATE})
 endmacro()
 
 function(buildSDxCompilerFlags componentList SDxCompileFlags)
-	set(SDxCompileFlagsLocal "-fpic -sds-sys-config linux -sds-proc linux")
-
+	#set(SDxCompileFlagsLocal "-fpic -sds-sys-config linux -sds-proc linux")
+	set(SDxCompileFlagsLocal "-fpic") #TBD: extract sys-config and proc for spfm xml file
+	
 	foreach(componentNameLocal ${componentList})
 		message(STATUS "working on flags for component ${componentNameLocal}")
 		capFirstLetter(${componentNameLocal} componentNameLocalCap)
@@ -685,7 +686,7 @@ function (sysrootDependentLibSDSLink targetName)
 	endif (${SDS_SHARED_LIBPATH} STREQUAL "SDS_SHARED_LIBPATH-NOTFOUND")
 endfunction ()
 
-function (createXfOpenCVOverlayWithPythonBindings overlayName subDirLevels)
+function (createXfOpenCVOverlayWithPythonBindings overlayName subDirLevels componentList)
 	set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/${subDirLevels}/frameworks/cmakeModules)
 	
 	# Define project name
@@ -783,9 +784,93 @@ function (generateInstallRulesOverlay overlayName subDirLevels)
     install(CODE "execute_process(COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/${subDirLevels}/frameworks/utilities/SDxUtils/findAndInstallHwh.sh ${CMAKE_BINARY_DIR} ${CMAKE_BINARY_DIR}/lib${SDxArch}/${overlayName}.hwh)")
 endfunction()
 
-function (createOverlayWithPythonBindings overlayName subDirLevels)
+function (createOverlayWithPythonBindings overlayName subDirLevels componentList)
 	
-	createXfOpenCVOverlayWithPythonBindings(${overlayName} ${subDirLevels})	
+	createXfOpenCVOverlayWithPythonBindings(${overlayName} ${subDirLevels} "${componentList}")	
 	generateInstallRulesOverlay(${overlayName} ${subDirLevels})
 	
+endfunction()
+
+
+function (createXfOpenCVUnitTestPL subDirLevels componentName)
+
+	capFirstLetter(${componentName} componentNameCap)
+
+	# Define project name
+	project(Xf${componentName})
+	
+	# Find packages, add subdirectories and setup target independent include folders and libraries 
+	setupForOpenCVUtilsAndHRTimerAndXFMat(${subDirLevels})
+	find_package(xfOpenCV QUIET)
+
+	include_directories(
+		${xfOpenCV_INCLUDE_DIRS}
+	)
+
+	# ---- golden model ----
+	SET (currentTarget goldenOpenCV${componentNameCap})
+	message(STATUS "ADDING golden ${currentTarget}")
+
+	add_executable(${currentTarget} src/goldenOpenCV${componentNameCap}.cpp)
+
+	# ---- xFOpenCV test ----
+	
+	# check usePL option setting
+	if (usePL)
+		message(STATUS "INFO: enabling moving components to PL")
+	else (usePL)
+		message(STATUS "INFO: disabling moving components to PL")
+	endif (usePL)
+	
+	createModuleIncludeList("${componentName}" ${subDirLevels} xFIncList)
+	
+	include_directories(
+		${xFIncList}
+		${OpenCV_INCLUDE_DIRS}
+		${xfOpenCV_INCLUDE_DIRS}
+	)
+	
+	# ---- SDx overlay target ----
+	if (${VivadoHLS_FOUND})
+		message(STATUS "ADDING ${currentTarget} target")
+		
+		# Define PL instantiation parameters
+		setDefaultInstantiationParameters()
+			
+		#create include file for instantiation parameters
+		configure_file(inc/PLInstantiationParameters.h.in inc/PLInstantiationParameters.h)
+	
+		#create wrapper cpp file
+		configure_file(${PROJECT_SOURCE_DIR}/${subDirLevels}/components/${componentName}/xfSDxKernel/src/xf${componentNameCap}.cpp.in src/xf${componentNameCap}.cpp)
+		configure_file(${PROJECT_SOURCE_DIR}/${subDirLevels}/components/${componentName}/xfSDxKernel/src/xf${componentNameCap}CoreForVivadoHLS.cpp.in src/xf${componentNameCap}CoreForVivadoHLS.cpp)
+		configure_file(${PROJECT_SOURCE_DIR}/${subDirLevels}/components/${componentName}/xfSDxKernel/inc/xf${componentNameCap}CoreForVivadoHLS.h.in inc/xf${componentNameCap}CoreForVivadoHLS.h)
+		
+		#create build target
+		SET (currentTarget testSDxXf${componentNameCap})
+		message(STATUS "ADDING SDSoC target ${currentTarget}")
+		
+		# set directives and configure compile flags
+		 
+		if ((${CMAKE_C_COMPILER_ID} STREQUAL "SDSCC") AND usePL)
+			buildSDxCompilerFlags("${componentName}" CompileFlags)
+			message(STATUS "SDxCompileFlags ${CompileFlags}")
+		else ((${CMAKE_C_COMPILER_ID} STREQUAL "SDSCC") AND usePL) #native compilation
+			SET(CompileFlags "-O3")
+		endif ((${CMAKE_C_COMPILER_ID} STREQUAL "SDSCC") AND usePL)
+		
+		add_executable(${currentTarget} src/testSDxXf${componentNameCap}.cpp 
+			src/xf${componentNameCap}.cpp
+			src/xf${componentNameCap}CoreForVivadoHLS.cpp
+		)
+		
+		set_target_properties (${currentTarget} PROPERTIES COMPILE_FLAGS ${CompileFlags})	#FLAGS for compile only	
+		
+		target_include_directories (${currentTarget} PUBLIC
+			${PROJECT_SOURCE_DIR}/${subdirLevels}/${componentFolder}/${componentName}/xfSDxKernel/inc
+			${PROJECT_BINARY_DIR}/inc
+		)
+	
+		compilerDependentVivadoHLSInclude(${currentTarget})
+		
+	endif (${VivadoHLS_FOUND})
 endfunction()
