@@ -46,7 +46,7 @@ import errno
 from distutils.dir_util import mkpath
 import shutil
 
-toolchain_file = "../../../../../frameworks/cmakeModules/cmakeModulesXilinx/toolchain_sdx2018.2.cmake"
+toolchain_file = "../../../../../frameworks/cmakeModules/toolchain_sdx2018.2.cmake"
 arch           = "arm64"
 clockID        = "1"
 platform       = "/platforms/Ultra96/bare/2018.2/ultra"
@@ -65,9 +65,8 @@ def buildOverlay(component):
     #run make
     os.system("time make "+target+"|& tee make.log")
     #cp overlays to ../overlays/."
-    for filename in glob.glob('./libarm*/*'):
+    for filename in glob.glob("./"+target+"*"):
         shutil.copy2(filename, '../../unitTestFiles')
-    #shutil.copy2('./libarm*/*','../../overlayFiles/.')
     os.chdir("..")
         
 
