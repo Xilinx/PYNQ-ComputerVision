@@ -36,7 +36,6 @@
 *     Date:   2018/05/11
 *
 *****************************************************************************/
-
 ///SDx temporal fix for Clang issue
 #ifdef __SDSCC__
 #undef __ARM_NEON__
@@ -46,25 +45,22 @@
 #define __ARM_NEON
 #else
 #include <opencv2/core/core.hpp>
-#endif
-//#include <opencv2/core/core.hpp>
-
-#include "common/xf_common.h"
-#include <hls_video.h>
-#include "imgproc/xf_histogram.hpp" 
+#endif 
+ 
 #include <Utils/inc/UtilsForXfOpenCV.h>
-
-#include "xfSDxCalcHist.h"
+#include "xfCalcHistCoreForVivadoHLS.h"
+ 
+namespace xF {  
    
-void xF_calcHist(cv::Mat* images, int nimages, const int* channels, cv::Mat mask, cv::Mat &hist, int dims,const int * histSize,const float** ranges, bool uniform, bool accumulate)
+   
+void calcHist(cv::Mat* images, int nimages, const int* channels, cv::Mat mask, cv::Mat &hist, int dims,const int * histSize,const float** ranges, bool uniform, bool accumulate)
 {
 	const int maxWidthTP 	= ${maxWidthCMakeParam};
 	const int maxHeightTP 	= ${maxHeightCMakeParam};
 	const int srcTypeTP 	= ${srcTypeCMakeParam}; 
 	const int NPCTP 		= ${NPCCMakeParam};
 	
-	//check for limitations of xfOpenCV module
-	//run-time
+	//check for limitations of xfOpenCV module 
 	assert(images[0].channels() == 1); 
 	assert(nimages == 1); 
 	assert(dims == 1); 
@@ -80,13 +76,15 @@ void xF_calcHist(cv::Mat* images, int nimages, const int* channels, cv::Mat mask
 		uint32_t *histogram=(uint32_t *)malloc(256*sizeof(uint32_t));
 	#endif
 	
-	// call xf::calcHist
-	xf::calcHist<${srcTypeCMakeParam},${maxHeightCMakeParam},${maxWidthCMakeParam},${NPCCMakeParam}>(*imgInput, histogram);
+	// call xF_calcHist
+	xF_calcHist(imgInput, histogram);
 	
-	for(int cnt=0;cnt<256;cnt++){ 
-	hist.at<float>(cnt)=(float)histogram[cnt]; 
-		}
+	for(int cnt=0;cnt<256;cnt++)
+	{ 
+		hist.at<float>(cnt)=(float)histogram[cnt]; 
+	}
 	delete imgInput; 
 	 
+}
 }
 

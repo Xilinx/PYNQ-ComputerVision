@@ -136,7 +136,7 @@ int main ( int argc, char** argv )
 	std::cout << "running hardware cornerHarris" << std::endl;
 	timer.StartTimer();
 	for (int i = 0; i < numberOfIterations; i++){
-		xF_calcHist( &srcHLS, 1, 0, cv::Mat(), histogramHLS, 1, &histSize, &histRange, 1, 0 );
+		xF::calcHist( &srcHLS, 1, 0, cv::Mat(), histogramHLS, 1, &histSize, &histRange, 1, 0 );
 	}
 	timer.StopTimer();	
 	std::cout << "Elapsed time over " << numberOfIterations << "PL call(s): " << timer.GetElapsedUs() << " us or " << (float)timer.GetElapsedUs() / (float)numberOfIterations << "us per frame" << std::endl;

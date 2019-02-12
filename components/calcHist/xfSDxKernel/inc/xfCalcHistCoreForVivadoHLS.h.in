@@ -36,24 +36,13 @@
 *
 *****************************************************************************/
 
-#ifndef _XFSDXCALCHIST_H_
-#define _XFSDXCALCHIST_H_
-
-///SDx temporal fix for Clang issue
-#ifdef __SDSCC__
-#undef __ARM_NEON__
-#undef __ARM_NEON
-#include <opencv2/core/core.hpp>
-#define __ARM_NEON__
-#define __ARM_NEON
-#else
-#include <opencv2/core/core.hpp>
-#endif 
-
-
-namespace xF {  
-
-void calcHist(cv::Mat* images, int nimages,const int* channels, cv::Mat mask, cv::Mat &hist, int dims,const int * histSize,const float** ranges, bool uniform=true, bool accumulate=false);
+#ifndef _XFSDXCALCHISTCOREFORVIVADOHLS_H_
+#define _XFSDXCALCHISTCOREFORVIVADOHLS_H_
  
-}// namespace xF
+#include "common/xf_common.h"
+
+void xF_calcHist(
+	xf::Mat<${srcTypeCMakeParamCalcHist}, ${maxHeightCMakeParamCalcHist}, ${maxWidthCMakeParamCalcHist}, ${NPCCMakeParamCalcHist}>* imgInput,  
+	uint32_t *histogram);
+ 
 #endif

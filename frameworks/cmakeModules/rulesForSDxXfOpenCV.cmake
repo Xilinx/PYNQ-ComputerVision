@@ -281,6 +281,13 @@ if(NOT DEFINED filterSizeCMakeParam${componentNameCapLocalForRule})
 	set(filterSizeCMakeParam${componentNameCapLocalForRule} 3 CACHE STRING "filter size")
 endif()
 
+
+
+#CalcHist 
+set(componentNameCapLocalForRule "CalcHist")
+setDefaultParameters1In1OutModule(${componentNameCapLocalForRule})
+
+
 #Canny
 set(componentNameCapLocalForRule "Canny")
 setDefaultParameters1In1OutModule(${componentNameCapLocalForRule})
@@ -441,6 +448,10 @@ function(buildSDxCompilerFlags componentList SDxCompileFlags)
 		elseif (${componentNameLocal} STREQUAL "medianBlur")
 			message(STATUS "generating flags for medianBlur")
 			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocal}<${filterSizeCMakeParamMedianBlur},${borderTypeCMakeParamMedianBlur},${srcTypeCMakeParamMedianBlur},${maxHeightCMakeParamMedianBlur},${maxWidthCMakeParamMedianBlur},${NPCCMakeParamMedianBlur}>\" xf${componentNameLocalCap}CoreForVivadoHLS.cpp -files ${xfOpenCV_INCLUDE_DIRS}/imgproc/xf_median_blur.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}")	
+		elseif (${componentNameLocal} STREQUAL "calcHist")
+			message(STATUS "generating flags for calcHist") 		
+			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocal}<${srcTypeCMakeParamCalcHist},${maxHeightCMakeParamCalcHist},${maxWidthCMakeParamCalcHist},${NPCCMakeParamCalcHist}>\" xf${componentNameLocalCap}CoreForVivadoHLS.cpp -files ${xfOpenCV_INCLUDE_DIRS}/imgproc/xf_histogram.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}")	
+
 		elseif (${componentNameLocal} STREQUAL "magnitude")
 			message(STATUS "generating flags for magnitude")
 			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocal}<${normTypeCMakeParam},${srcTypeCMakeParam},${dstTypeCMakeParam},${maxHeightCMakeParam},${maxWidthCMakeParam},${NPCCMakeParam}>\" xf${componentNameLocalCap}.cpp -files ${xfOpenCV_INCLUDE_DIRS}/core/xf_magnitude.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}")
@@ -498,9 +509,7 @@ function(buildSDxCompilerFlags componentList SDxCompileFlags)
 		elseif (${componentNameLocal} STREQUAL "cornerHarris")
 			message(STATUS "generating flags for cornerHarris") 		
 			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocal}<${filterSizeCMakeParam},${blockWidthCMakeParam},${NMSRadiusCMakeParam},${srcTypeCMakeParam},${maxHeightCMakeParam},${maxWidthCMakeParam},${NPCCMakeParam}>\" xf${componentNameLocalCap}.cpp -files ${xfOpenCV_INCLUDE_DIRS}/features/xf_harris.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}")
-		elseif (${componentNameLocal} STREQUAL "calcHist")
-			message(STATUS "generating flags for calcHist") 		
-			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocal}<${srcTypeCMakeParam},${maxHeightCMakeParam},${maxWidthCMakeParam},${NPCCMakeParam}>\" xf${componentNameLocalCap}.cpp -files ${xfOpenCV_INCLUDE_DIRS}/imgproc/xf_histogram.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}")		 
+ 	 
  			
 	else (${CMAKE_C_COMPILER_ID} STREQUAL "SDSCC") #native compilation
 				
