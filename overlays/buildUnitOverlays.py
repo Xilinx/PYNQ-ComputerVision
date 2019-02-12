@@ -131,7 +131,7 @@ def createCMakeList(component):
 		file.write("set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/../../../frameworks/cmakeModules)\n")
 		file.write("include(rulesForSDxXfOpenCV)\n")
 		file.write("\n")
-		file.write("createOverlayWithPythonBindings(${overlayName} \"../../..\") \n")
+		file.write("createOverlayWithPythonBindings(${overlayName} \"../../..\" \"${componentList}\") \n")
 
 # Main function
 
