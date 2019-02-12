@@ -53,4 +53,4 @@ set(componentList "bitwise_not;boxFilter")
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/../../frameworks/cmakeModules)
 include(rulesForSDxXfOpenCV)
 
-createOverlayWithPythonBindings(${overlayName} "../..") 
+createOverlayWithPythonBindings(${overlayName} "../.." "${componentList}")
