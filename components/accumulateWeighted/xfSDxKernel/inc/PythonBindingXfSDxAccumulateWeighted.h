@@ -38,8 +38,8 @@
 *
 *****************************************************************************/
 
-#ifndef PYOPENCV_CV_FILTER2D
-#define PYOPENCV_CV_FILTER2D
+#ifndef PYOPENCV_CV_ACCUMULATEWEIGHTED
+#define PYOPENCV_CV_ACCUMULATEWEIGHTED
 
 #include "xfSDxAccumulateWeighted.h"
 
@@ -62,7 +62,7 @@ static PyObject* pyopencv_cv_accumulateWeighted(PyObject* , PyObject* args, PyOb
         pyopencv_to(pyobj_dst, dst, ArgInfo("dst", 1)) &&
         pyopencv_to(pyobj_mask, mask, ArgInfo("mask", 0)) )
     {
-        ERRWRAP2(xF_accumulateWeighted(src, dst, alpha, mask));
+        ERRWRAP2(xF::accumulateWeighted(src, dst, alpha, mask));
         return pyopencv_from(dst);
     }
     }

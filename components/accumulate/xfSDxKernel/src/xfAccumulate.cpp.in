@@ -74,9 +74,9 @@ void accumulate(cv::Mat &src, cv::Mat &dst, cv::Mat mask)
 	cvToXfSource(dst, imgInput2);
           
 	// perform some checks on the dst type
-	bool dstPostConversion = cvToXfDestination(dst, imgOutput, src,2); 
+	bool dstPostConversion = cvToXfDestination(dst, imgOutput, src, 2); 
 	 
-	// call xf::accumulate
+	// call xF_accumulate
 	xF_accumulate(imgInput1,imgInput2,imgOutput);
 
 	//perform checks on the dst type

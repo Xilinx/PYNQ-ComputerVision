@@ -38,22 +38,17 @@
 *
 *****************************************************************************/
 
-#ifndef _XFSDXACCUMULATEWEIGHTED_H_
-#define _XFSDXACCUMULATEWEIGHTED_H_
+#ifndef _XFSDXACCUMULATEWEIGHTEDCOREFORVIVADOHLS_H_
+#define _XFSDXACCUMULATEWEIGHTEDCOREFORVIVADOHLS_H_
 
-///SDx temporal fix for Clang issue
-#ifdef __SDSCC__
-#undef __ARM_NEON__
-#undef __ARM_NEON
-#include <opencv2/core/core.hpp>
-#define __ARM_NEON__
-#define __ARM_NEON
-#else
-#include <opencv2/core/core.hpp>
-#endif 
 
-namespace xF { 
-	void accumulateWeighted(cv::Mat &src, cv::Mat &dst, double alpha, cv::Mat mask= cv::Mat());  
-}
+#include "common/xf_common.h"
+
+void xF_accumulateWeighted( 
+xf::Mat<${srcTypeCMakeParamAccumulateWeighted}, ${maxHeightCMakeParamAccumulateWeighted}, ${maxWidthCMakeParamAccumulateWeighted}, ${NPCCMakeParamAccumulateWeighted}>* imgInput1, 
+xf::Mat<${srcTypeCMakeParamAccumulateWeighted}, ${maxHeightCMakeParamAccumulateWeighted}, ${maxWidthCMakeParamAccumulateWeighted}, ${NPCCMakeParamAccumulateWeighted}>* imgInput2, 
+xf::Mat<${dstTypeCMakeParamAccumulateWeighted}, ${maxHeightCMakeParamAccumulateWeighted}, ${maxWidthCMakeParamAccumulateWeighted}, ${NPCCMakeParamAccumulateWeighted}>* imgOutput,
+float alphaHLS);
+ 
  
 #endif
