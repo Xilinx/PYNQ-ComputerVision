@@ -36,61 +36,20 @@
 *     Date:   2018/05/11
 *
 *****************************************************************************/
-
-///SDx temporal fix for Clang issue
-#ifdef __SDSCC__
-#undef __ARM_NEON__
-#undef __ARM_NEON
-#include <opencv2/core/core.hpp>
-#define __ARM_NEON__
-#define __ARM_NEON
-#else
-#include <opencv2/core/core.hpp>
-#endif 
-
-#include <Utils/inc/UtilsForXfOpenCV.h>
+ 
+#include "core/xf_magnitude.hpp"  
 #include "xfMagnitudeCoreForVivadoHLS.h"
-
-
-namespace xF {
   
-	void magnitude(cv::Mat &srcx, cv::Mat &srcy, cv::Mat &dst)
-	{
-		const int normTypeTP 	= ${normTypeCMakeParamMagnitude};
-		const int maxWidthTP 	= ${maxWidthCMakeParamMagnitude};
-		const int maxHeightTP 	= ${maxHeightCMakeParamMagnitude};
-		const int srcTypeTP 	= ${srcTypeCMakeParamMagnitude};
-		const int dstTypeTP	= ${dstTypeCMakeParamMagnitude};
-		const int NPCTP		= ${NPCCMakeParamMagnitude};
+void xF_magnitude(
+xf::Mat<${srcTypeCMakeParamMagnitude}, ${maxHeightCMakeParamMagnitude}, ${maxWidthCMakeParamMagnitude}, ${NPCCMakeParamMagnitude}>* imgInputX, 
+xf::Mat<${srcTypeCMakeParamMagnitude}, ${maxHeightCMakeParamMagnitude}, ${maxWidthCMakeParamMagnitude}, ${NPCCMakeParamMagnitude}>* imgInputY, 
+xf::Mat<${dstTypeCMakeParamMagnitude}, ${maxHeightCMakeParamMagnitude}, ${maxWidthCMakeParamMagnitude}, ${NPCCMakeParamMagnitude}>* imgOutput)
+{
+	  
+	// call xf::magnitude
+	xf::magnitude<${normTypeCMakeParamMagnitude},${srcTypeCMakeParamMagnitude},${dstTypeCMakeParamMagnitude},${maxHeightCMakeParamMagnitude},${maxWidthCMakeParamMagnitude},${NPCCMakeParamMagnitude}>(*imgInputX, *imgInputY, *imgOutput);
+ 
 	
-		//check for limitations of xfOpenCV module 
-		//assert(srcx.type() == 2); // XF_16SC1
-		//assert(dst.type() == 2); // XF_16SC1 
-	
-		xf::Mat<srcTypeTP, maxHeightTP, maxWidthTP, NPCTP>* imgInputX;
-		xf::Mat<srcTypeTP, maxHeightTP, maxWidthTP, NPCTP>* imgInputY;
-		xf::Mat<dstTypeTP, maxHeightTP, maxWidthTP, NPCTP>* imgOutput;
-
-		// perform some checks on the src type
-		cvToXfSource(srcx, imgInputX);	
-		cvToXfSource(srcy, imgInputY);
-		        
-		// perform some checks on the dst type
-		bool dstPostConversion = cvToXfDestination(dst, imgOutput, srcx);
-			
-		// call xf::magnitude
-		xF_magnitude(imgInputX, imgInputY, imgOutput);
-
-		//perform checks on the dst type
-		if (dstPostConversion) {
-			xfMatDepthPostConversion(dst,imgOutput);
-		}
-	
-		delete imgInputX;
-		delete imgInputY;
-		delete imgOutput;
-	
-		return;
-	}
+	return;
 }
 

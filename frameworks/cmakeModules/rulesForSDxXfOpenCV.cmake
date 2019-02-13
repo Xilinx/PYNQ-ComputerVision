@@ -342,6 +342,20 @@ setDefaultParameters1In1OutModule(${componentNameCapLocalForRule})
 set(componentNameCapLocalForRule "LUT")
 setDefaultParameters1In1OutModule(${componentNameCapLocalForRule})
 
+#Magnitude
+if(NOT DEFINED normTypeCMakeParamMagnitude)
+	set(normTypeCMakeParamMagnitude ${XF_L1NORM} CACHE STRING "Normalization type")
+endif()
+if(NOT DEFINED srcTypeCMakeParamMagnitude)
+	set(srcTypeCMakeParamMagnitude ${XF_16SC1} CACHE STRING "Input pixel type")
+endif()
+if(NOT DEFINED dstTypeCMakeParamMagnitude)
+	set(dstTypeCMakeParamMagnitude ${XF_16SC1} CACHE STRING "Output pixel type")
+endif()
+set(componentNameCapLocalForRule "Magnitude")
+setDefaultParameters1In1OutModule(${componentNameCapLocalForRule})
+
+
 #Canny
 set(componentNameCapLocalForRule "Canny")
 setDefaultParameters1In1OutModule(${componentNameCapLocalForRule})
@@ -519,13 +533,11 @@ function(buildSDxCompilerFlags componentList SDxCompileFlags)
 		elseif (${componentNameLocal} STREQUAL "LUT")
 			message(STATUS "generating flags for LUT") 		
 			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocal}<${srcTypeCMakeParamLUT},${maxHeightCMakeParamLUT},${maxWidthCMakeParamLUT},${NPCCMakeParamLUT}>\" xf${componentNameLocalCap}CoreForVivadoHLS.cpp -files ${xfOpenCV_INCLUDE_DIRS}/imgproc/xf_lut.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}")
-
- 	 				
-
-
 		elseif (${componentNameLocal} STREQUAL "magnitude")
 			message(STATUS "generating flags for magnitude")
-			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocal}<${normTypeCMakeParam},${srcTypeCMakeParam},${dstTypeCMakeParam},${maxHeightCMakeParam},${maxWidthCMakeParam},${NPCCMakeParam}>\" xf${componentNameLocalCap}.cpp -files ${xfOpenCV_INCLUDE_DIRS}/core/xf_magnitude.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}")
+			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocal}<${normTypeCMakeParamMagnitude},${srcTypeCMakeParamMagnitude},${dstTypeCMakeParamMagnitude},${maxHeightCMakeParamMagnitude},${maxWidthCMakeParamMagnitude},${NPCCMakeParamMagnitude}>\" xf${componentNameLocalCap}CoreForVivadoHLS.cpp -files ${xfOpenCV_INCLUDE_DIRS}/core/xf_magnitude.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}")
+
+
 		elseif (${componentNameLocal} STREQUAL "multiply")
 			message(STATUS "generating flags for multiply") 
 			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocal}<${policyTypeCMakeParam},${srcTypeCMakeParam},${maxHeightCMakeParam},${maxWidthCMakeParam},${NPCCMakeParam}>\" xf${componentNameLocalCap}.cpp -files ${xfOpenCV_INCLUDE_DIRS}/core/xf_arithm.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}")				

@@ -41,20 +41,12 @@
 #ifndef _XFSDXMAGNITUDE_H_
 #define _XFSDXMAGNITUDE_H_
 
-///SDx temporal fix for Clang issue
-#ifdef __SDSCC__
-#undef __ARM_NEON__
-#undef __ARM_NEON
-#include <opencv2/core/core.hpp>
-#define __ARM_NEON__
-#define __ARM_NEON
-#else
-#include <opencv2/core/core.hpp>
-#endif 
 
+#include "common/xf_common.h"
 
-namespace xF {  
-	void magnitude(cv::Mat &srcx, cv::Mat &srcy, cv::Mat &dst);   
-} // xF
+void xF_magnitude(
+xf::Mat<${srcTypeCMakeParamMagnitude}, ${maxHeightCMakeParamMagnitude}, ${maxWidthCMakeParamMagnitude}, ${NPCCMakeParamMagnitude}>* imgInputX, 
+xf::Mat<${srcTypeCMakeParamMagnitude}, ${maxHeightCMakeParamMagnitude}, ${maxWidthCMakeParamMagnitude}, ${NPCCMakeParamMagnitude}>* imgInputY, 
+xf::Mat<${dstTypeCMakeParamMagnitude}, ${maxHeightCMakeParamMagnitude}, ${maxWidthCMakeParamMagnitude}, ${NPCCMakeParamMagnitude}>* imgOutput);
 
 #endif

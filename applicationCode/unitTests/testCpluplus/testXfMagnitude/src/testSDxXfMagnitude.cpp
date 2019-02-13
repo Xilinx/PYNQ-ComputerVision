@@ -158,7 +158,7 @@ int main ( int argc, char** argv )
 	 
 	timer.StartTimer();
 	for (int i = 0; i < numberOfIterations; i++){ 
-		xF_magnitude(gxHLS, gyHLS, dstHLS);
+		xF::magnitude(gxHLS, gyHLS, dstHLS);
 	}
 	timer.StopTimer();	
 	std::cout << "Elapsed time over " << numberOfIterations << "PL call(s): " << timer.GetElapsedUs() << " us or " << (float)timer.GetElapsedUs() / (float)numberOfIterations << "us per frame" << std::endl;
