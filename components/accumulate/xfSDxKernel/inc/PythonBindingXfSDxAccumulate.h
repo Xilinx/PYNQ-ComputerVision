@@ -38,8 +38,8 @@
 *
 *****************************************************************************/
 
-#ifndef PYOPENCV_CV_FILTER2D
-#define PYOPENCV_CV_FILTER2D
+#ifndef PYOPENCV_CV_Accumulate
+#define PYOPENCV_CV_Accumulate
 
 #include "xfSDxAccumulate.h"
 
@@ -61,7 +61,7 @@ static PyObject* pyopencv_cv_accumulate(PyObject* , PyObject* args, PyObject* kw
         pyopencv_to(pyobj_dst, dst, ArgInfo("dst", 1)) &&
         pyopencv_to(pyobj_mask, mask, ArgInfo("mask", 0)) )
     {
-        ERRWRAP2(xF_accumulate(src, dst, mask));
+        ERRWRAP2(xF::accumulate(src, dst, mask));
         return pyopencv_from(dst);
     }
     }

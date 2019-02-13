@@ -287,6 +287,13 @@ endif()
 set(componentNameCapLocalForRule "CalcHist")
 setDefaultParameters1In1OutModule(${componentNameCapLocalForRule})
 
+#Accumulate 
+if(NOT DEFINED dstTypeCMakeParamAccumulate)
+	set(dstTypeCMakeParamAccumulate ${XF_16UC1} CACHE STRING "Accumulate output pixel type")
+endif()
+set(componentNameCapLocalForRule "Accumulate")
+setDefaultParameters1In1OutModule(${componentNameCapLocalForRule})
+
 
 #Canny
 set(componentNameCapLocalForRule "Canny")
@@ -451,6 +458,10 @@ function(buildSDxCompilerFlags componentList SDxCompileFlags)
 		elseif (${componentNameLocal} STREQUAL "calcHist")
 			message(STATUS "generating flags for calcHist") 		
 			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocal}<${srcTypeCMakeParamCalcHist},${maxHeightCMakeParamCalcHist},${maxWidthCMakeParamCalcHist},${NPCCMakeParamCalcHist}>\" xf${componentNameLocalCap}CoreForVivadoHLS.cpp -files ${xfOpenCV_INCLUDE_DIRS}/imgproc/xf_histogram.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}")	
+		elseif (${componentNameLocal} STREQUAL "accumulate")
+			message(STATUS "generating flags for accumulate") 
+ 			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocal}<${srcTypeCMakeParamAccumulate},${dstTypeCMakeParamAccumulate},${maxHeightCMakeParamAccumulate},${maxWidthCMakeParamAccumulate},${NPCCMakeParamAccumulate}>\" xf${componentNameLocalCap}CoreForVivadoHLS.cpp -files ${xfOpenCV_INCLUDE_DIRS}/imgproc/xf_accumulate_image.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}")			
+ 		
 
 		elseif (${componentNameLocal} STREQUAL "magnitude")
 			message(STATUS "generating flags for magnitude")
@@ -461,10 +472,7 @@ function(buildSDxCompilerFlags componentList SDxCompileFlags)
 		elseif (${componentNameLocal} STREQUAL "merge")
 			message(STATUS "generating flags for merge") 
 			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocal}<${srcTypeCMakeParam},${dstTypeCMakeParam},${maxHeightCMakeParam},${maxWidthCMakeParam},${NPCCMakeParam}>\" xf${componentNameLocalCap}.cpp -files ${xfOpenCV_INCLUDE_DIRS}/imgproc/xf_channel_combine.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}")
-		elseif (${componentNameLocal} STREQUAL "accumulate")
-			message(STATUS "generating flags for accumulate") 
- 			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocal}<${srcTypeCMakeParam},${dstTypeCMakeParam},${maxHeightCMakeParam},${maxWidthCMakeParam},${NPCCMakeParam}>\" xf${componentNameLocalCap}.cpp -files ${xfOpenCV_INCLUDE_DIRS}/imgproc/xf_accumulate_image.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}")			
- 		elseif (${componentNameLocal} STREQUAL "accumulateSquare")
+		elseif (${componentNameLocal} STREQUAL "accumulateSquare")
 			message(STATUS "generating flags for accumulateSquare") 
 			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocal}<${srcTypeCMakeParam},${dstTypeCMakeParam},${maxHeightCMakeParam},${maxWidthCMakeParam},${NPCCMakeParam}>\" xf${componentNameLocalCap}.cpp -files ${xfOpenCV_INCLUDE_DIRS}/imgproc/xf_accumulate_squared.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}") 			
 		elseif (${componentNameLocal} STREQUAL "accumulateWeighted")

@@ -37,16 +37,17 @@
 *     Date:   2017/11/22
 *
 *****************************************************************************/
-#ifndef _XFSUBTRACTCOREFORVIVADOHLS_H_
-#define _XFSUBTRACTCOREFORVIVADOHLS_H_
 
-#include "common/xf_common.h"
+#ifndef _XFSDXACCUMULATECOREFORVIVADOHLS_H_
+#define _XFSDXACCUMULATECOREFORVIVADOHLS_H_
 
-void xF_subtract(
-xf::Mat<${srcTypeCMakeParamSubtract}, ${maxHeightCMakeParamSubtract}, ${maxWidthCMakeParamSubtract}, ${NPCCMakeParamSubtract}>* imgInput1, 
-xf::Mat<${srcTypeCMakeParamSubtract}, ${maxHeightCMakeParamSubtract}, ${maxWidthCMakeParamSubtract}, ${NPCCMakeParamSubtract}>* imgInput2, 
-xf::Mat<${srcTypeCMakeParamSubtract}, ${maxHeightCMakeParamSubtract}, ${maxWidthCMakeParamSubtract}, ${NPCCMakeParamSubtract}>* imgOutput);
+
+#include "common/xf_common.h" 
+
+void xF_accumulate(
+xf::Mat<${srcTypeCMakeParamAccumulate}, ${maxHeightCMakeParamAccumulate}, ${maxWidthCMakeParamAccumulate}, ${NPCCMakeParamAccumulate}>* imgInput1, 
+xf::Mat<${srcTypeCMakeParamAccumulate}, ${maxHeightCMakeParamAccumulate}, ${maxWidthCMakeParamAccumulate}, ${NPCCMakeParamAccumulate}>* imgInput2, 
+xf::Mat<${dstTypeCMakeParamAccumulate}, ${maxHeightCMakeParamAccumulate}, ${maxWidthCMakeParamAccumulate}, ${NPCCMakeParamAccumulate}>* imgOutput);
+ 
  
 #endif
-
- 

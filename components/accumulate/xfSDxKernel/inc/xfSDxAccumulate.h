@@ -38,8 +38,8 @@
 *
 *****************************************************************************/
 
-#ifndef _XFSDXERODE_H_
-#define _XFSDXERODE_H_
+#ifndef _XFSDXACCUMUKATE_H_
+#define _XFSDXACCUMUKATE_H_
 
 ///SDx temporal fix for Clang issue
 #ifdef __SDSCC__
@@ -52,7 +52,10 @@
 #include <opencv2/core/core.hpp>
 #endif 
 
-void xF_accumulate(cv::Mat &src, cv::Mat &dst, cv::Mat mask= cv::Mat());  
- 
+namespace xF { 
+
+void accumulate(cv::Mat &src, cv::Mat &dst, cv::Mat mask= cv::Mat());  
+
+}
  
 #endif

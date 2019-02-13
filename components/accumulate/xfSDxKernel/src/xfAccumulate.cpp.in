@@ -46,21 +46,19 @@
 #else
 #include <opencv2/core/core.hpp>
 #endif 
-
-#include "common/xf_common.h"
-#include <hls_video.h>
-#include "imgproc/xf_accumulate_image.hpp" 
+ 
 #include <Utils/inc/UtilsForXfOpenCV.h>
+#include "xfAccumulateCoreForVivadoHLS.h"
 
-#include "xfSDxAccumulate.h"
-  
-void xF_accumulate(cv::Mat &src, cv::Mat &dst, cv::Mat mask)
+namespace xF {  
+
+void accumulate(cv::Mat &src, cv::Mat &dst, cv::Mat mask)
 {  	
-	const int srcTypeTP 	= ${srcTypeCMakeParam};  
-	const int dstTypeTP 	= ${dstTypeCMakeParam};  
-	const int maxWidthTP 	= ${maxWidthCMakeParam};
-	const int maxHeightTP	= ${maxHeightCMakeParam};	
-	const int NPCTP			= ${NPCCMakeParam};
+	const int srcTypeTP 	= ${srcTypeCMakeParamAccumulate};  
+	const int dstTypeTP 	= ${dstTypeCMakeParamAccumulate};  
+	const int maxWidthTP 	= ${maxWidthCMakeParamAccumulate};
+	const int maxHeightTP	= ${maxHeightCMakeParamAccumulate};	
+	const int NPCTP			= ${NPCCMakeParamAccumulate};
 	
 	//check for limitations of xfOpenCV module
 	assert(src.channels() 	== 1);	// must be one channel 
@@ -73,13 +71,13 @@ void xF_accumulate(cv::Mat &src, cv::Mat &dst, cv::Mat mask)
 
 	// perform some checks on the src type
 	cvToXfSource(src, imgInput1);	 
-    cvToXfSource(dst, imgInput2);
+	cvToXfSource(dst, imgInput2);
           
 	// perform some checks on the dst type
 	bool dstPostConversion = cvToXfDestination(dst, imgOutput, src,2); 
 	 
 	// call xf::accumulate
-	xf::accumulate<${srcTypeCMakeParam},${dstTypeCMakeParam},${maxHeightCMakeParam},${maxWidthCMakeParam},${NPCCMakeParam}>(*imgInput1,*imgInput2,*imgOutput);
+	xF_accumulate(imgInput1,imgInput2,imgOutput);
 
 	//perform checks on the dst type
 	if (dstPostConversion) {
@@ -92,4 +90,6 @@ void xF_accumulate(cv::Mat &src, cv::Mat &dst, cv::Mat mask)
 	
 	return;
 }
+
+} // END xF namespace
 
