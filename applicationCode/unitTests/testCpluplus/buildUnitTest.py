@@ -49,7 +49,8 @@ import shutil
 toolchain_file = "../../../../../frameworks/cmakeModules/toolchain_sdx2018.2.cmake"
 arch           = "arm64"
 clockID        = "1"
-platform       = "/platforms/Ultra96/bare/2018.2/ultra"
+#platform       = "/platforms/Ultra96/bare/2018.2/ultra"
+platform       = "/group/xrlabs/projects/image_processing/platforms/Ultra96/bare_v2.3/2018.3_jackl/ultra"
 usePL          = "ON"
 noBitstream    = "OFF"
 noSDCardImage  = "ON"
@@ -64,10 +65,20 @@ def buildOverlay(component):
     os.system("time cmake .. -DCMAKE_TOOLCHAIN_FILE="+toolchain_file+" -DSDxArch="+arch+" -DSDxClockID="+clockID+" -DSDxPlatform="+platform+" -DusePL="+usePL+" -DnoBitstream="+noBitstream+" -DnoSDCardImage="+noSDCardImage+" |& tee cmake.log")
     #run make
     os.system("time make "+target+"|& tee make.log")
-    #cp overlays to ../overlays/."
-    for filename in glob.glob("./"+target+"*"):
-        shutil.copy2(filename, '../../unitTestFiles')
+    bitstream = target+".bit"
+    createConvBif(bitstream)
+    os.system("bootgen -image conv.bif -arch zynqmp -o "+bitstream+".bin -w")
+    #cp bitstream and elf file to unitTestFiles
+    shutil.copy2(target, '../../unitTestFiles')
+    shutil.copy2(bitstream+".bin", '../../unitTestFiles')
     os.chdir("..")
+
+def createConvBif(component):
+    with open("conv.bif","w") as file:
+        file.write("all:\n")
+        file.write("{\n")
+        file.write("    [destination_device = pl] "+component+"\n")
+        file.write("}\n")
         
 
 # Main function
