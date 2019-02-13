@@ -33,41 +33,22 @@
 /*****************************************************************************
 *
 *     Author: Kristof Denolf <kristof@xilinx.com>
-*             Jack Lo <jackl@xilinx.com>
-*     Date:   2018/01/25
+*     Date:   2018/05/11
 *
 *****************************************************************************/
-
-#ifndef PYOPENCV_CV_MAGNITUDE
-#define PYOPENCV_CV_MAGNITUDE
-
-#include "xfSDxMagnitude.h"
-
-static PyObject* pyopencv_cv_magnitude(PyObject* , PyObject* args, PyObject* kw)
-{
-    using namespace cv;
-
-    {
-    PyObject* pyobj_x = NULL;
-    Mat x;
-    PyObject* pyobj_y = NULL;
-    Mat y;
-    PyObject* pyobj_magnitude = NULL;
-    Mat magnitude;
-
-    const char* keywords[] = { "x", "y", "magnitude", NULL };
-    if( PyArg_ParseTupleAndKeywords(args, kw, "OO|O:magnitude", (char**)keywords, &pyobj_x, &pyobj_y, &pyobj_magnitude) &&
-        pyopencv_to(pyobj_x, x, ArgInfo("x", 0)) &&
-        pyopencv_to(pyobj_y, y, ArgInfo("y", 0)) &&
-        pyopencv_to(pyobj_magnitude, magnitude, ArgInfo("magnitude", 1)) )
-    {
-        ERRWRAP2(xF::magnitude(x, y, magnitude));
-        return pyopencv_from(magnitude);
-    }
-    }
-    PyErr_Clear();
  
-    return NULL;
+#include "core/xf_mean_stddev.hpp"  
+#include "xfMeanStdDevCoreForVivadoHLS.h"
+   
+void xF_meanStdDev(
+xf::Mat<${srcTypeCMakeParamMeanStdDev}, ${maxHeightCMakeParamMeanStdDev}, ${maxWidthCMakeParamMeanStdDev}, ${NPCCMakeParamMeanStdDev}>* imgInput,
+unsigned short *meanHLS, unsigned short *stddevHLS)
+{
+	
+	// call xf::meanStdDev
+	xf::meanStdDev<${srcTypeCMakeParam},${maxHeightCMakeParam},${maxWidthCMakeParam},${NPCCMakeParam}>(*imgInput, meanHLS, stddevHLS);
+ 
+	return;
+	 
 }
 
-#endif

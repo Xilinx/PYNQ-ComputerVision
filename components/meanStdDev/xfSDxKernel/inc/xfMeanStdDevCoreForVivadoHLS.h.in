@@ -36,23 +36,14 @@
 *
 *****************************************************************************/
 
-#ifndef _XFSDXMEADNSTD_H_
-#define _XFSDXMEADNSTD_H_
-
-///SDx temporal fix for Clang issue
-#ifdef __SDSCC__
-#undef __ARM_NEON__
-#undef __ARM_NEON
-#include <opencv2/core/core.hpp>
-#define __ARM_NEON__
-#define __ARM_NEON
-#else
-#include <opencv2/core/core.hpp>
-#endif 
+#ifndef _XFSDXMEANSTD_H_
+#define _XFSDXMEANSTD_H_
 
 
-namespace xF {  
-	void meanStdDev(cv::Mat &src, cv::Mat &mean, cv::Mat &stddev, cv::Mat mask =cv::Mat());
-}
+#include "common/xf_common.h"
 
+void xF_meanStdDev(
+xf::Mat<${srcTypeCMakeParamMeanStdDev}, ${maxHeightCMakeParamMeanStdDev}, ${maxWidthCMakeParamMeanStdDev}, ${NPCCMakeParamMeanStdDev}>* imgInput,
+unsigned short * meanHLS, unsigned short * stddevHLS);
+ 
 #endif

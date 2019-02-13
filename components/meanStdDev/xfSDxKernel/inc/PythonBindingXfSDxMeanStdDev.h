@@ -64,7 +64,7 @@ static PyObject* pyopencv_cv_meanStdDev(PyObject* , PyObject* args, PyObject* kw
         pyopencv_to(pyobj_stddev, stddev, ArgInfo("stddev", 1)) &&
         pyopencv_to(pyobj_mask, mask, ArgInfo("mask", 0)) )
     {
-        ERRWRAP2(xF_meanStdDev(src, mean, stddev, mask));
+        ERRWRAP2(xF::meanStdDev(src, mean, stddev, mask));
         return Py_BuildValue("(NN)", pyopencv_from(mean), pyopencv_from(stddev));
     }
     }
