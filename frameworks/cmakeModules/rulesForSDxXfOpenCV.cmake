@@ -333,6 +333,15 @@ endif()
 set(componentNameCapLocalForRule "Fast")
 setDefaultParameters1In1OutModule(${componentNameCapLocalForRule})
 
+
+#Integral
+set(componentNameCapLocalForRule "Integral")
+setDefaultParameters1In1OutModule(${componentNameCapLocalForRule})
+
+#LUT
+set(componentNameCapLocalForRule "LUT")
+setDefaultParameters1In1OutModule(${componentNameCapLocalForRule})
+
 #Canny
 set(componentNameCapLocalForRule "Canny")
 setDefaultParameters1In1OutModule(${componentNameCapLocalForRule})
@@ -504,7 +513,14 @@ function(buildSDxCompilerFlags componentList SDxCompileFlags)
 		elseif (${componentNameLocal} STREQUAL "fast")
 			message(STATUS "generating flags for fast") 		
 			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocal}<${NMSCMakeParamFast},${srcTypeCMakeParamFast},${maxHeightCMakeParamFast},${maxWidthCMakeParamFast},${NPCCMakeParamFast}>\" xf${componentNameLocalCap}CoreForVivadoHLS.cpp -files ${xfOpenCV_INCLUDE_DIRS}/features/xf_fast.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}")			
-		
+		elseif (${componentNameLocal} STREQUAL "integral")
+			message(STATUS "generating flags for integral") 
+			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocal}<${srcTypeCMakeParamIntegral},${dstTypeCMakeParamIntegral},${maxHeightCMakeParamIntegral},${maxWidthCMakeParamIntegral},${NPCCMakeParamIntegral}>\" xf${componentNameLocalCap}CoreForVivadoHLS.cpp -files ${xfOpenCV_INCLUDE_DIRS}/imgproc/xf_integral_image.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}")		
+		elseif (${componentNameLocal} STREQUAL "LUT")
+			message(STATUS "generating flags for LUT") 		
+			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocal}<${srcTypeCMakeParamLUT},${maxHeightCMakeParamLUT},${maxWidthCMakeParamLUT},${NPCCMakeParamLUT}>\" xf${componentNameLocalCap}CoreForVivadoHLS.cpp -files ${xfOpenCV_INCLUDE_DIRS}/imgproc/xf_lut.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}")
+
+ 	 				
 
 
 		elseif (${componentNameLocal} STREQUAL "magnitude")
@@ -522,10 +538,7 @@ elseif (${componentNameLocal} STREQUAL "phase")
  		elseif (${componentNameLocal} STREQUAL "boxFilter")
 			message(STATUS "generating flags for boxFilter") 
 			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocal}<${borderTypeCMakeParamBoxFilter},${kernelSizeCMakeParamBoxFilter},${srcTypeCMakeParamBoxFilter},${maxHeightCMakeParamBoxFilter},${maxWidthCMakeParamBoxFilter},${NPCCMakeParamBoxFilter}>\" xf${componentNameLocalCap}CoreForVivadoHLS.cpp -files ${xfOpenCV_INCLUDE_DIRS}/imgproc/xf_box_filter.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}") 		
-		elseif (${componentNameLocal} STREQUAL "integral")
-			message(STATUS "generating flags for integral") 
-			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocal}<${srcTypeCMakeParam},${dstTypeCMakeParam},${maxHeightCMakeParam},${maxWidthCMakeParam},${NPCCMakeParam}>\" xf${componentNameLocalCap}.cpp -files ${xfOpenCV_INCLUDE_DIRS}/imgproc/xf_integral_image.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}")		
-		elseif (${componentNameLocal} STREQUAL "meanStdDev")
+elseif (${componentNameLocal} STREQUAL "meanStdDev")
 			message(STATUS "generating flags for meanStdDev") 
 			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocal}<${srcTypeCMakeParam},${maxHeightCMakeParam},${maxWidthCMakeParam},${NPCCMakeParam}>\" xf${componentNameLocalCap}.cpp -files ${xfOpenCV_INCLUDE_DIRS}/core/xf_mean_stddev.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}")		
 		elseif (${componentNameLocal} STREQUAL "minMaxLoc")
@@ -543,11 +556,7 @@ elseif (${componentNameLocal} STREQUAL "phase")
 		elseif (${componentNameLocal} STREQUAL "pyrDown")
 			message(STATUS "generating flags for pyrDown")   		
 			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocal}<${srcTypeCMakeParam},${maxHeightCMakeParam},${maxWidthCMakeParam},${NPCCMakeParam}>\" xf${componentNameLocalCap}.cpp -files ${xfOpenCV_INCLUDE_DIRS}/imgproc/xf_pyr_down.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}")
-		elseif (${componentNameLocal} STREQUAL "LUT")
-			message(STATUS "generating flags for LUT") 		
-			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocal}<${srcTypeCMakeParam},${maxHeightCMakeParam},${maxWidthCMakeParam},${NPCCMakeParam}>\" xf${componentNameLocalCap}.cpp -files ${xfOpenCV_INCLUDE_DIRS}/imgproc/xf_lut.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}")
 
- 	 
  			
 	else (${CMAKE_C_COMPILER_ID} STREQUAL "SDSCC") #native compilation
 				

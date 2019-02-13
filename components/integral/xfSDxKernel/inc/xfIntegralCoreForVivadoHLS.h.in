@@ -29,29 +29,23 @@
  *  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  *****************************************************************************/
+ 
 /*****************************************************************************
+*
 *
 *     Author: Kristof Denolf <kristof@xilinx.com>
 *     Date:   2017/11/22
 *
 *****************************************************************************/
 
-#ifndef _XFSDXLUT_H_
-#define _XFSDXLUT_H_
-
-///SDx temporal fix for Clang issue
-#ifdef __SDSCC__
-#undef __ARM_NEON__
-#undef __ARM_NEON
-#include <opencv2/core/core.hpp>
-#define __ARM_NEON__
-#define __ARM_NEON
-#else
-#include <opencv2/core/core.hpp>
-#endif 
+#ifndef _XFSDXINTEGRAL_H_
+#define _XFSDXINTEGRAL_H_
 
 
-namespace xF {  
-	void LUT(cv::Mat &src, cv::Mat &LUT, cv::Mat &dst);
-}
+#include "common/xf_common.h"
+ 
+void xF_integral(
+xf::Mat<${srcTypeCMakeParamIntegral}, ${maxHeightCMakeParamIntegral}, ${maxWidthCMakeParamIntegral}, ${NPCCMakeParamIntegral}>* imgInput, 
+xf::Mat<${srcTypeCMakeParamIntegral}, ${maxHeightCMakeParamIntegral}, ${maxWidthCMakeParamIntegral}, ${NPCCMakeParamIntegral}>* imgOutput);
+
 #endif

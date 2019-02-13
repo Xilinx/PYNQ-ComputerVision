@@ -46,40 +46,39 @@
 #define __ARM_NEON
 #else
 #include <opencv2/core/core.hpp>
-#endif
-//#include <opencv2/core/core.hpp>
+#endif 
 
-#include "common/xf_common.h"
-#include <hls_video.h>
-#include "imgproc/xf_lut.hpp" 
 #include <Utils/inc/UtilsForXfOpenCV.h>
-
-#include "xfSDxLUT.h"
+#include "xfLUTCoreForVivadoHLS.h"
    
-void xF_LUT(cv::Mat &src, cv::Mat &LUT, cv::Mat &dst)
-{
-	const int maxWidthTP 	= ${maxWidthCMakeParam};
-	const int maxHeightTP 	= ${maxHeightCMakeParam};
-	const int srcTypeTP 	= ${srcTypeCMakeParam}; 
-	const int NPCTP 		= ${NPCCMakeParam};
-	
-	//check for limitations of xfOpenCV module
-	assert(src.channels() == 1); 
-	
-	xf::Mat<srcTypeTP, maxHeightTP, maxWidthTP, NPCTP>* imgInput; 	
-	xf::Mat<srcTypeTP, maxHeightTP, maxWidthTP, NPCTP>* imgOutput; 
 
-	// perform some checks on the src type
-	cvToXfSource(src, imgInput);           
- 
-	 unsigned char* p = LUT.ptr(); 
+namespace xF {
+
+	void LUT(cv::Mat &src, cv::Mat &LUT, cv::Mat &dst)
+	{
+		const int maxWidthTP 	= ${maxWidthCMakeParam};
+		const int maxHeightTP 	= ${maxHeightCMakeParam};
+		const int srcTypeTP 	= ${srcTypeCMakeParam}; 
+		const int NPCTP 		= ${NPCCMakeParam};
 	
-	// call xf::LUT
-	xf::LUT<${srcTypeCMakeParam},${maxHeightCMakeParam},${maxWidthCMakeParam},${NPCCMakeParam}>(*imgInput, *imgOutput, p);
-	 
+		//check for limitations of xfOpenCV module
+		assert(src.channels() == 1); 
 	
-	delete imgInput; 	
-	delete imgOutput; 
+		xf::Mat<srcTypeTP, maxHeightTP, maxWidthTP, NPCTP>* imgInput; 	
+		xf::Mat<srcTypeTP, maxHeightTP, maxWidthTP, NPCTP>* imgOutput; 
+
+		// perform some checks on the src type
+		cvToXfSource(src, imgInput);           
 	 
+		 unsigned char* p = LUT.ptr(); 
+	
+		// call xf::LUT
+		xF_LUT(imgInput, imgOutput, p);
+		 
+	
+		delete imgInput; 	
+		delete imgOutput; 
+		 
+	}
 }
 

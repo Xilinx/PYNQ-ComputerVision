@@ -36,57 +36,18 @@
 *     Date:   2018/05/11
 *
 *****************************************************************************/
-
-///SDx temporal fix for Clang issue
-#ifdef __SDSCC__
-#undef __ARM_NEON__
-#undef __ARM_NEON
-#include <opencv2/core/core.hpp>
-#define __ARM_NEON__
-#define __ARM_NEON
-#else
-#include <opencv2/core/core.hpp>
-#endif 
-
-#include <Utils/inc/UtilsForXfOpenCV.h>
+ 
+#include "imgproc/xf_integral_image.hpp"  
 #include "xfIntegralCoreForVivadoHLS.h"  
-
-namespace xF {
-
-	void integral(cv::Mat &src, cv::Mat &sum, int sdepth)
-	{
-		const int maxWidthTP = ${maxWidthCMakeParam};
-		const int maxHeightTP = ${maxHeightCMakeParam};
-		const int srcTypeTP = ${srcTypeCMakeParam};
-		const int dstTypeTP = ${dstTypeCMakeParam};
-		const int NPCTP = ${NPCCMakeParam};
+ 
+void xF_integral(
+xf::Mat<${srcTypeCMakeParamIntegral}, ${maxHeightCMakeParamIntegral}, ${maxWidthCMakeParamIntegral}, ${NPCCMakeParamIntegral}>* imgInput, 
+xf::Mat<${srcTypeCMakeParamIntegral}, ${maxHeightCMakeParamIntegral}, ${maxWidthCMakeParamIntegral}, ${NPCCMakeParamIntegral}>* imgOutput)
+{ 
 	
-		//check for limitations of xfOpenCV module
-		//run-time
-		assert(src.channels() == 1);
-		assert(sum.channels() == 1); 
-		//assert(dst.depth() == 2); 
-	
-		xf::Mat<srcTypeTP, maxHeightTP, maxWidthTP, NPCTP>* imgInput;
-		xf::Mat<dstTypeTP, maxHeightTP, maxWidthTP, NPCTP>* imgOutput;
-
-		// perform some checks on the src type
-		cvToXfSource(src, imgInput);
-		        
-		// perform some checks on the dst type
-		bool dstPostConversion = cvToXfDestination(sum, imgOutput, src, sdepth);  
-	
-		// call xf::integral
-		xF_integral(imgInput, imgOutput);
-
-		//perform checks on the dst type
-		if (dstPostConversion) {
-			xfMatDepthPostConversion(sum,imgOutput);
-		}
-
-		delete imgInput;
-		delete imgOutput;
-		 
-	}
+	// call xf::integral
+	xf::integral<${srcTypeCMakeParamIntegral},${dstTypeCMakeParamIntegral},${maxHeightCMakeParamIntegral},${maxWidthCMakeParamIntegral},${NPCCMakeParamIntegral}>(*imgInput,*imgOutput);
+ 
+	return;
 }
 

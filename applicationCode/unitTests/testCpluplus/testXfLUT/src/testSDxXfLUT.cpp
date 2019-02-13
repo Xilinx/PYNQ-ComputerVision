@@ -141,7 +141,7 @@ int main ( int argc, char** argv )
 	std::cout << "running hardware LUT" << std::endl;
 	timer.StartTimer();
 	for (int i = 0; i < numberOfIterations; i++){ 
-		LUT(srcHLS, lookUpTable, dstHLS);
+		xF::LUT(srcHLS, lookUpTable, dstHLS);
 	}
 	timer.StopTimer();	
 	std::cout << "Elapsed time over " << numberOfIterations << "PL call(s): " << timer.GetElapsedUs() << " us or " << (float)timer.GetElapsedUs() / (float)numberOfIterations << "us per frame" << std::endl;

@@ -138,7 +138,7 @@ int main ( int argc, char** argv )
 	std::cout << "running hardware integral" << std::endl;
 	timer.StartTimer();
 	for (int i = 0; i < numberOfIterations; i++){ 
-		xF_integral(srcHLS, dstHLS, CV_32S);
+		xF::integral(srcHLS, dstHLS, CV_32S);
 	}
 	timer.StopTimer();	
 	std::cout << "Elapsed time over " << numberOfIterations << "PL call(s): " << timer.GetElapsedUs() << " us or " << (float)timer.GetElapsedUs() / (float)numberOfIterations << "us per frame" << std::endl;
