@@ -4,11 +4,17 @@
 
 | Image Arithmetic      | Filters       |   Geometric Transform | Flow and Depts|   Features    | Input Processing	| Analysis 	|
 | ---------             | ---------     |   ---------           |    ---------  |    ---------  |  ---------  		|--------- 	|
-| bitwise_and           |   filter2D   	|         remap         |   stereoBM    |   canny       | 					|			|
-| bitwise_or            |   erode       |         resize        |               |               |					|			|
-| bitwise_xor           |   dilate      |                       |               |               |					|			|
-| threshold             |   medianBlur  |                       |               |               |					|			|
-| subtract              |   boxFilter   |                       |               |               |					|			|
+| bitwise_and           |   filter2D   	|         remap         |   stereoBM    |   canny       | split 	 	      |	histogram		    |
+| bitwise_or            |   erode       |         resize        |   optical     |   Harris corner |	combine       |	histogram eq.		|
+| bitwise_xor           |   dilate      |  warp affine          |               |   fast corner |				          | integral		  	|
+| threshold             |   medianBlur  |  warp perspective     |               |               |			            | mean & std dev	|
+| subtract              |   boxFilter   |                       |               |               |					        | min/ max loc		|
+| accumulate            |   pyramid up   |                      |               |               |                 | lookup          |
+| accumulate weighted   |   pyramid down |                      |               |               | ||
+| accumualte weighted   |            |                      |               |               | ||
+| pixel-wise mult       |    ||||||
+| magnitude             |    ||||||
+| phase                 |    ||||||
 ## Setup Environment on Host
 
   + clone [Pynq-ComputerVision](https://github.com/Xilinx/PYNQ-ComputerVision) repository:
