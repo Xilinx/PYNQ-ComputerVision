@@ -321,6 +321,11 @@ endif()
 set(componentNameCapLocalForRule "CornerHarris")
 setDefaultParameters1In1OutModule(${componentNameCapLocalForRule})
 
+
+#EqualizeHist 
+set(componentNameCapLocalForRule "EqualizeHist")
+setDefaultParameters1In1OutModule(${componentNameCapLocalForRule})
+
 #Canny
 set(componentNameCapLocalForRule "Canny")
 setDefaultParameters1In1OutModule(${componentNameCapLocalForRule})
@@ -486,6 +491,11 @@ function(buildSDxCompilerFlags componentList SDxCompileFlags)
 		elseif (${componentNameLocal} STREQUAL "cornerHarris")
 			message(STATUS "generating flags for cornerHarris") 		
 			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocal}<${filterSizeCMakeParamCornerHarris},${blockWidthCMakeParamCornerHarris},${NMSRadiusCMakeParamCornerHarris},${srcTypeCMakeParamCornerHarris},${maxHeightCMakeParamCornerHarris},${maxWidthCMakeParamCornerHarris},${NPCCMakeParamCornerHarris}>\" xf${componentNameLocalCap}CoreForVivadoHLS.cpp -files ${xfOpenCV_INCLUDE_DIRS}/features/xf_harris.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}")		
+		elseif (${componentNameLocal} STREQUAL "equalizeHist")
+			message(STATUS "generating flags for equalizeHist") 
+			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocal}<${srcTypeCMakeParamEqualizeHist},${maxHeightCMakeParamEqualizeHist},${maxWidthCMakeParamEqualizeHist},${NPCCMakeParamEqualizeHist}>\" xf${componentNameLocalCap}CoreForVivadoHLS.cpp -files ${xfOpenCV_INCLUDE_DIRS}/imgproc/xf_hist_equalize.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}")
+		
+
 
 		elseif (${componentNameLocal} STREQUAL "magnitude")
 			message(STATUS "generating flags for magnitude")
@@ -502,9 +512,6 @@ elseif (${componentNameLocal} STREQUAL "phase")
  		elseif (${componentNameLocal} STREQUAL "boxFilter")
 			message(STATUS "generating flags for boxFilter") 
 			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocal}<${borderTypeCMakeParamBoxFilter},${kernelSizeCMakeParamBoxFilter},${srcTypeCMakeParamBoxFilter},${maxHeightCMakeParamBoxFilter},${maxWidthCMakeParamBoxFilter},${NPCCMakeParamBoxFilter}>\" xf${componentNameLocalCap}CoreForVivadoHLS.cpp -files ${xfOpenCV_INCLUDE_DIRS}/imgproc/xf_box_filter.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}") 		
-		elseif (${componentNameLocal} STREQUAL "equalizeHist")
-			message(STATUS "generating flags for equalizeHist") 
-			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocal}<${srcTypeCMakeParam},${maxHeightCMakeParam},${maxWidthCMakeParam},${NPCCMakeParam}>\" xf${componentNameLocalCap}.cpp -files ${xfOpenCV_INCLUDE_DIRS}/imgproc/xf_hist_equalize.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}")
 		elseif (${componentNameLocal} STREQUAL "integral")
 			message(STATUS "generating flags for integral") 
 			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocal}<${srcTypeCMakeParam},${dstTypeCMakeParam},${maxHeightCMakeParam},${maxWidthCMakeParam},${NPCCMakeParam}>\" xf${componentNameLocalCap}.cpp -files ${xfOpenCV_INCLUDE_DIRS}/imgproc/xf_integral_image.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}")		
