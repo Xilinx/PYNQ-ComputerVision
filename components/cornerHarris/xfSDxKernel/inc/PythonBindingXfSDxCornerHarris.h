@@ -62,7 +62,7 @@ static PyObject* pyopencv_cv_cornerHarris(PyObject* , PyObject* args, PyObject* 
         pyopencv_to(pyobj_src, src, ArgInfo("src", 0)) &&
         pyopencv_to(pyobj_dst, dst, ArgInfo("dst", 1)) )
     {
-        ERRWRAP2(xF_cornerHarris(src, dst, blockSize, ksize, k, borderType));
+        ERRWRAP2(xF::cornerHarris(src, dst, blockSize, ksize, k, borderType));
         return pyopencv_from(dst);
     }
     }

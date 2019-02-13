@@ -41,20 +41,11 @@
 #ifndef _XFSDXCORNERHARRIS_H_
 #define _XFSDXCORNERHARRIS_H_
 
-///SDx temporal fix for Clang issue
-#ifdef __SDSCC__
-#undef __ARM_NEON__
-#undef __ARM_NEON
-#include <opencv2/core/core.hpp>
-#define __ARM_NEON__
-#define __ARM_NEON
-#else
-#include <opencv2/core/core.hpp>
-#endif 
+#include "common/xf_common.h"
 
-
-namespace xF { 
-void cornerHarris(cv::Mat &src, cv::Mat &dst, int blockSize, int ksize, double k, int borderType=cv::BORDER_DEFAULT);
-}
-
+void xF_cornerHarris(
+xf::Mat<${srcTypeCMakeParamCornerHarris}, ${maxHeightCMakeParamCornerHarris}, ${maxWidthCMakeParamCornerHarris}, ${NPCCMakeParamCornerHarris}>* imgInput,  
+xf::Mat<${dstTypeCMakeParamCornerHarris}, ${maxHeightCMakeParamCornerHarris}, ${maxWidthCMakeParamCornerHarris}, ${NPCCMakeParamCornerHarris}>* imgOutput,
+unsigned short Thresh, unsigned short kHLS);
+ 
 #endif

@@ -308,6 +308,18 @@ endif()
 set(componentNameCapLocalForRule "AccumulateWeighted")
 setDefaultParameters1In1OutModule(${componentNameCapLocalForRule})
 
+#CornerHarris
+if(NOT DEFINED filterSizeCMakeParamCornerHarris)
+	set(filterSizeCMakeParamCornerHarris 3 CACHE STRING "Filter size (3,5 and 7 supported)")
+endif()
+if(NOT DEFINED blockWidthCMakeParamCornerHarris)
+	set(blockWidthCMakeParamCornerHarris 3 CACHE STRING "Block width (3,5 and 7 supported)")
+endif()
+if(NOT DEFINED NMSRadiusCMakeParamCornerHarris)
+	set(NMSRadiusCMakeParamCornerHarris 1 CACHE STRING "Radius for non-maximum suppression (1 and 2 supported)")
+endif()
+set(componentNameCapLocalForRule "CornerHarris")
+setDefaultParameters1In1OutModule(${componentNameCapLocalForRule})
 
 #Canny
 set(componentNameCapLocalForRule "Canny")
@@ -380,16 +392,6 @@ if(NOT DEFINED maxDownScaleCMakeParam${componentNameCapLocalForRule})
 	set(maxDownScaleCMakeParam${componentNameCapLocalForRule} 2 CACHE STRING "maximum height")
 endif()
 
-#CornerHarris
-if(NOT DEFINED filterSizeCMakeParam)
-	set(filterSizeCMakeParam 3 CACHE STRING "Filter size (3,5 and 7 supported)")
-endif()
-if(NOT DEFINED blockWidthCMakeParam)
-	set(blockWidthCMakeParam 3 CACHE STRING "Block width (3,5 and 7 supported)")
-endif()
-if(NOT DEFINED NMSRadiusCMakeParam)
-	set(NMSRadiusCMakeParam 1 CACHE STRING "Radius for non-maximum suppression (1 and 2 supported)")
-endif()
 
 #Normalization
 if(NOT DEFINED ID0)
@@ -481,7 +483,9 @@ function(buildSDxCompilerFlags componentList SDxCompileFlags)
 		elseif (${componentNameLocal} STREQUAL "accumulateWeighted")
 			message(STATUS "generating flags for accumulateWeighted")  
 			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocal}<${srcTypeCMakeParamAccumulateWeighted},${dstTypeCMakeParamAccumulateWeighted},${maxHeightCMakeParamAccumulateWeighted},${maxWidthCMakeParamAccumulateWeighted},${NPCCMakeParamAccumulateWeighted}>\" xf${componentNameLocalCap}CoreForVivadoHLS.cpp -files ${xfOpenCV_INCLUDE_DIRS}/imgproc/xf_accumulate_weighted.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}")			
-		
+		elseif (${componentNameLocal} STREQUAL "cornerHarris")
+			message(STATUS "generating flags for cornerHarris") 		
+			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocal}<${filterSizeCMakeParamCornerHarris},${blockWidthCMakeParamCornerHarris},${NMSRadiusCMakeParamCornerHarris},${srcTypeCMakeParamCornerHarris},${maxHeightCMakeParamCornerHarris},${maxWidthCMakeParamCornerHarris},${NPCCMakeParamCornerHarris}>\" xf${componentNameLocalCap}CoreForVivadoHLS.cpp -files ${xfOpenCV_INCLUDE_DIRS}/features/xf_harris.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}")		
 
 		elseif (${componentNameLocal} STREQUAL "magnitude")
 			message(STATUS "generating flags for magnitude")
@@ -528,9 +532,7 @@ elseif (${componentNameLocal} STREQUAL "phase")
 		elseif (${componentNameLocal} STREQUAL "fast")
 			message(STATUS "generating flags for fast") 		
 			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocal}<${NMSCMakeParam},${srcTypeCMakeParam},${maxHeightCMakeParam},${maxWidthCMakeParam},${NPCCMakeParam}>\" xf${componentNameLocalCap}.cpp -files ${xfOpenCV_INCLUDE_DIRS}/features/xf_fast.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}")			
-		elseif (${componentNameLocal} STREQUAL "cornerHarris")
-			message(STATUS "generating flags for cornerHarris") 		
-			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocal}<${filterSizeCMakeParam},${blockWidthCMakeParam},${NMSRadiusCMakeParam},${srcTypeCMakeParam},${maxHeightCMakeParam},${maxWidthCMakeParam},${NPCCMakeParam}>\" xf${componentNameLocalCap}.cpp -files ${xfOpenCV_INCLUDE_DIRS}/features/xf_harris.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}")
+
  	 
  			
 	else (${CMAKE_C_COMPILER_ID} STREQUAL "SDSCC") #native compilation
