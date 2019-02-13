@@ -326,6 +326,13 @@ setDefaultParameters1In1OutModule(${componentNameCapLocalForRule})
 set(componentNameCapLocalForRule "EqualizeHist")
 setDefaultParameters1In1OutModule(${componentNameCapLocalForRule})
 
+#Fast 
+if(NOT DEFINED NMSCMakeParamFast)
+	set(NMSCMakeParamFast 1 CACHE STRING "Non-maximum suppression")
+endif()
+set(componentNameCapLocalForRule "Fast")
+setDefaultParameters1In1OutModule(${componentNameCapLocalForRule})
+
 #Canny
 set(componentNameCapLocalForRule "Canny")
 setDefaultParameters1In1OutModule(${componentNameCapLocalForRule})
@@ -494,6 +501,9 @@ function(buildSDxCompilerFlags componentList SDxCompileFlags)
 		elseif (${componentNameLocal} STREQUAL "equalizeHist")
 			message(STATUS "generating flags for equalizeHist") 
 			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocal}<${srcTypeCMakeParamEqualizeHist},${maxHeightCMakeParamEqualizeHist},${maxWidthCMakeParamEqualizeHist},${NPCCMakeParamEqualizeHist}>\" xf${componentNameLocalCap}CoreForVivadoHLS.cpp -files ${xfOpenCV_INCLUDE_DIRS}/imgproc/xf_hist_equalize.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}")
+		elseif (${componentNameLocal} STREQUAL "fast")
+			message(STATUS "generating flags for fast") 		
+			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocal}<${NMSCMakeParamFast},${srcTypeCMakeParamFast},${maxHeightCMakeParamFast},${maxWidthCMakeParamFast},${NPCCMakeParamFast}>\" xf${componentNameLocalCap}CoreForVivadoHLS.cpp -files ${xfOpenCV_INCLUDE_DIRS}/features/xf_fast.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}")			
 		
 
 
@@ -536,9 +546,6 @@ elseif (${componentNameLocal} STREQUAL "phase")
 		elseif (${componentNameLocal} STREQUAL "LUT")
 			message(STATUS "generating flags for LUT") 		
 			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocal}<${srcTypeCMakeParam},${maxHeightCMakeParam},${maxWidthCMakeParam},${NPCCMakeParam}>\" xf${componentNameLocalCap}.cpp -files ${xfOpenCV_INCLUDE_DIRS}/imgproc/xf_lut.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}")
-		elseif (${componentNameLocal} STREQUAL "fast")
-			message(STATUS "generating flags for fast") 		
-			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocal}<${NMSCMakeParam},${srcTypeCMakeParam},${maxHeightCMakeParam},${maxWidthCMakeParam},${NPCCMakeParam}>\" xf${componentNameLocalCap}.cpp -files ${xfOpenCV_INCLUDE_DIRS}/features/xf_fast.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}")			
 
  	 
  			

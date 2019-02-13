@@ -135,7 +135,7 @@ int main ( int argc, char** argv )
 	std::cout << "running hardware dilate" << std::endl;
 	timer.StartTimer();
 	for (int i = 0; i < numberOfIterations; i++){
-		xF_fast (srcHLS, keypointHW, threshold, nonMaxSupression);
+		xF::fast (srcHLS, keypointHW, threshold, nonMaxSupression);
 	}
 	timer.StopTimer();	
 	std::cout << "Elapsed time over " << numberOfIterations << "PL call(s): " << timer.GetElapsedUs() << " us or " << (float)timer.GetElapsedUs() / (float)numberOfIterations << "us per frame" << std::endl;

@@ -36,65 +36,20 @@
 *     Date:   2018/01/22
 *
 *****************************************************************************/
-
-///SDx temporal fix for Clang issue
-#ifdef __SDSCC__
-#undef __ARM_NEON__
-#undef __ARM_NEON
-#include <opencv2/core/core.hpp>
-#define __ARM_NEON__
-#define __ARM_NEON
-#else
-#include <opencv2/core/core.hpp>
-#endif 
-
-#include <Utils/inc/UtilsForXfOpenCV.h>
-#include "xfFastCoreForVivadoHLS.h"
-
-namespace xF { 
  
-	void fast(cv::Mat &image, std::vector<cv::KeyPoint> &keypoints, int threshold, bool nonmaxSuppression)
-	{
-		const int NMSTP 		= ${NMSCMakeParamFast}; 	// non-maximum suppression	
-		const int maxWidthTP 	= ${maxWidthCMakeParamFast};
-		const int maxHeightTP 	= ${maxHeightCMakeParamFast};
-		const int srcTypeTP 	= ${srcTypeCMakeParamFast};
-		const int dstTypeTP 	= ${srcTypeCMakeParamFast}; 	
-		const int NPCTP	 		= ${NPCCMakeParamFast};
+#include "features/xf_fast.hpp"  
+#include "xfFastCoreForVivadoHLS.h"
+ 
+void xF_fast(
+xf::Mat<${srcTypeCMakeParamFast}, ${maxHeightCMakeParamFast}, ${maxWidthCMakeParamFast}, ${NPCCMakeParamFast}>* imgInput, 
+xf::Mat<${srcTypeCMakeParamFast}, ${maxHeightCMakeParamFast}, ${maxWidthCMakeParamFast}, ${NPCCMakeParamFast}>* imgOutput, 
+unsigned char thresholdHLS)
+{ 
 	
-		//check for limitations of xfOpenCV module
-		//run-time
-		assert(image.channels() == 1); 
+	// call xf::FAST
+	xf::fast<${NMSCMakeParamFast},${srcTypeCMakeParamFast},${maxHeightCMakeParamFast},${maxWidthCMakeParamFast},${NPCCMakeParamFast}>(*imgInput, *imgOutput, thresholdHLS);
+ 
 	
-		xf::Mat<srcTypeTP, maxHeightTP, maxWidthTP, NPCTP>* imgInput;
-		xf::Mat<dstTypeTP, maxHeightTP, maxWidthTP, NPCTP>* imgOutput;
-
-		// perform some checks on the src type
-		cvToXfSource(image,imgInput);
-			        
-		unsigned char thresholdHLS= (unsigned char) threshold;
-		cv::Mat dst = cv::Mat::zeros(cv::Size(maxHeightTP,maxWidthTP), CV_8UC1);
-		
-		// perform some checks on the dst type
-		bool dstPostConversion = cvToXfDestination(dst, imgOutput, image); 
-	
-		// call xf::FAST
-		xF_fast(imgInput, imgOutput, thresholdHLS);
-
-		// locations of non-zero pixels
-		std::vector<cv::Point> Locations; 
-	
-		// find list of keypoints in imgOutput
-		cv::findNonZero(dst, Locations);
-			
-		//copy points to keypoints
-		for( int i=0; i< Locations.size(); i++){
-		  	keypoints.push_back(cv::KeyPoint(Locations[i], 1.f));
-		}
-		delete imgInput;
-		delete imgOutput;
-	
-		return;
-	}
+	return;
 }
  

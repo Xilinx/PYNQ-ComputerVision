@@ -40,21 +40,12 @@
 
 #ifndef _XFSDXFAST_H_
 #define _XFSDXFAST_H_
+  
+#include "common/xf_common.h"
 
-///SDx temporal fix for Clang issue
-#ifdef __SDSCC__
-#undef __ARM_NEON__
-#undef __ARM_NEON
-#include <opencv2/core/core.hpp> 
-#define __ARM_NEON__
-#define __ARM_NEON
-#else
-#include <opencv2/core/core.hpp>
-#endif 
- 
- 
-namespace xF {  
+void xF_fast(
+xf::Mat<${srcTypeCMakeParamFast}, ${maxHeightCMakeParamFast}, ${maxWidthCMakeParamFast}, ${NPCCMakeParamFast}>* imgInput, 
+xf::Mat<${srcTypeCMakeParamFast}, ${maxHeightCMakeParamFast}, ${maxWidthCMakeParamFast}, ${NPCCMakeParamFast}>* imgOuput, 
+unsigned char thresholdHLS);
 
-	void fast(cv::Mat &image, std::vector<cv::KeyPoint> &keypoints, int threshold, bool nonmaxSuppression = true);  
-}
 #endif
