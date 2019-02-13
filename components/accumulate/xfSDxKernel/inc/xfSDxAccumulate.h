@@ -38,8 +38,8 @@
 *
 *****************************************************************************/
 
-#ifndef _XFSDXACCUMUKATE_H_
-#define _XFSDXACCUMUKATE_H_
+#ifndef _XFSDXACCUMULATE_H_
+#define _XFSDXACCUMULATE_H_
 
 ///SDx temporal fix for Clang issue
 #ifdef __SDSCC__

@@ -35,61 +35,20 @@
 *     Date:   2018/05/11
 *
 *****************************************************************************/
-
-///SDx temporal fix for Clang issue
-#ifdef __SDSCC__
-#undef __ARM_NEON__
-#undef __ARM_NEON
-#include <opencv2/core/core.hpp>
-#define __ARM_NEON__
-#define __ARM_NEON
-#else
-#include <opencv2/core/core.hpp>
-#endif 
  
-#include <Utils/inc/UtilsForXfOpenCV.h>
+#include "imgproc/xf_accumulate_squared.hpp"  
 #include "xfAccumulateSquareCoreForVivadoHLS.h"
- 
-namespace xF {  
- 
-void accumulateSquare(cv::Mat &src, cv::Mat &dst, cv::Mat mask)
-{  	
-	const int srcTypeTP 	= ${srcTypeCMakeParamAccumulateSquare};  
-	const int dstTypeTP 	= ${dstTypeCMakeParamAccumulateSquare};  
-	const int maxWidthTP 	= ${maxWidthCMakeParamAccumulateSquare};
-	const int maxHeightTP	= ${maxHeightCMakeParamAccumulateSquare};	
-	const int NPCTP			= ${NPCCMakeParamAccumulateSquare};
-	
-	//check for limitations of xfOpenCV module
-	//run-time
-	assert(src.channels() 	== 1);	// must be one channel 
-	assert(dst.channels() 	== 1); 	// must be one channel
-	//assert(dst.type() 	== 2); 		// must be XF_16U 
-	
-	xf::Mat<srcTypeTP, maxHeightTP, maxWidthTP, NPCTP>* imgInput1;
-	xf::Mat<srcTypeTP, maxHeightTP, maxWidthTP, NPCTP>* imgInput2;
-	xf::Mat<dstTypeTP, maxHeightTP, maxWidthTP, NPCTP>* imgOutput;
-
-	// perform some checks on the src type
-	cvToXfSource(src, imgInput1);	 
-	cvToXfSource(dst, imgInput2);
-          
-	// perform some checks on the dst type
-	bool dstPostConversion = cvToXfDestination(dst, imgOutput, src,2); 
+  
+void xF_accumulateSquare(
+xf::Mat<${srcTypeCMakeParamAccumulateSquare}, ${maxHeightCMakeParamAccumulateSquare}, ${maxWidthCMakeParamAccumulateSquare}, ${NPCCMakeParamAccumulateSquare}>* imgInput1, 
+xf::Mat<${srcTypeCMakeParamAccumulateSquare}, ${maxHeightCMakeParamAccumulateSquare}, ${maxWidthCMakeParamAccumulateSquare}, ${NPCCMakeParamAccumulateSquare}>* imgInput2, 
+xf::Mat<${dstTypeCMakeParamAccumulateSquare}, ${maxHeightCMakeParamAccumulateSquare}, ${maxWidthCMakeParamAccumulateSquare}, ${NPCCMakeParamAccumulateSquare}>* imgOutput)
+{  	 
 	 
-	// call xF::accumulateSquare
-	xF_accumulateSquare(imgInput1,imgInput2,imgOutput);
-
-	//perform checks on the dst type
-	if (dstPostConversion) {
-		xfMatDepthPostConversion(dst,imgOutput);
-	}
-	
-	delete imgInput1;	
-	delete imgInput2;
-	delete imgOutput;
+	// call xf::accumulateSquare
+	xf::accumulateSquare<${srcTypeCMakeParamAccumulateSquare},${dstTypeCMakeParamAccumulateSquare},${maxHeightCMakeParamAccumulateSquare},${maxWidthCMakeParamAccumulateSquare},${NPCCMakeParamAccumulateSquare}>(*imgInput1,*imgInput2,*imgOutput);
+ 
 	
 	return;
-}
 }
 

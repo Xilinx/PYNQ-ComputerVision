@@ -38,24 +38,16 @@
 *
 *****************************************************************************/
 
-#ifndef _XFSDXACCUMULATESQUARE_H_
-#define _XFSDXACCUMULATESQUARE_H_
-
-///SDx temporal fix for Clang issue
-#ifdef __SDSCC__
-#undef __ARM_NEON__
-#undef __ARM_NEON
-#include <opencv2/core/core.hpp>
-#define __ARM_NEON__
-#define __ARM_NEON
-#else
-#include <opencv2/core/core.hpp>
-#endif 
+#ifndef _XFSDXACCUMULATECOREFORVIVADOHLS_H_
+#define _XFSDXACCUMULATECOREFORVIVADOHLS_H_
 
 
-namespace xF {
+#include "common/xf_common.h" 
+
+void xF_accumulateSquare(
+xf::Mat<${srcTypeCMakeParamAccumulateSquare}, ${maxHeightCMakeParamAccumulateSquare}, ${maxWidthCMakeParamAccumulateSquare}, ${NPCCMakeParamAccumulateSquare}>* imgInput1, 
+xf::Mat<${srcTypeCMakeParamAccumulateSquare}, ${maxHeightCMakeParamAccumulateSquare}, ${maxWidthCMakeParamAccumulateSquare}, ${NPCCMakeParamAccumulateSquare}>* imgInput2, 
+xf::Mat<${dstTypeCMakeParamAccumulateSquare}, ${maxHeightCMakeParamAccumulateSquare}, ${maxWidthCMakeParamAccumulateSquare}, ${NPCCMakeParamAccumulateSquare}>* imgOutput);
  
-	void accumulateSquare(cv::Mat &src, cv::Mat &dst, cv::Mat mask= cv::Mat());  
-}
  
 #endif

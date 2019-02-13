@@ -38,8 +38,8 @@
 *
 *****************************************************************************/
 
-#ifndef PYOPENCV_CV_FILTER2D
-#define PYOPENCV_CV_FILTER2D
+#ifndef PYOPENCV_CV_ACCUMULATESQUARED
+#define PYOPENCV_CV_ACCUMULATESQUARED
 
 #include "xfSDxAccumulateSquare.h"
 
@@ -61,7 +61,7 @@ static PyObject* pyopencv_cv_accumulateSquare(PyObject* , PyObject* args, PyObje
         pyopencv_to(pyobj_dst, dst, ArgInfo("dst", 1)) &&
         pyopencv_to(pyobj_mask, mask, ArgInfo("mask", 0)) )
     {
-        ERRWRAP2(xF_accumulateSquare(src, dst, mask));
+        ERRWRAP2(xF::accumulateSquare(src, dst, mask));
         return pyopencv_from(dst);
     }
     }
