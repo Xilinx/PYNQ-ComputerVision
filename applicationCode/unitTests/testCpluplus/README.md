@@ -1,0 +1,94 @@
+# Building C++ Unit Tests for PYNQ: CMake based sds++ cross-compilation
+
+## List of Supported Components 
+
+| Image Arithmetic      | Filters       |   Geometric Transform | Flow and Depts|   Features    | Input Processing	| Analysis 	|
+| ---------             | ---------     |   ---------           |    ---------  |    ---------  |  ---------  		|--------- 	|
+| bitwise_and           |   filter2D   	|         remap         |   stereoBM    |   canny       | split 	 	      |	histogram		    |
+| bitwise_or            |   erode       |         resize        |   optical     |   Harris corner |	combine       |	histogram eq.		|
+| bitwise_xor           |   dilate      |  warp affine          |               |   fast corner |				          | integral		  	|
+| threshold             |   medianBlur  |  warp perspective     |               |               |			            | mean & std dev	|
+| subtract              |   boxFilter   |                       |               |               |					        | min/ max loc		|
+| accumulate            |   pyramid up   |                      |               |               |                 | lookup          |
+| accumulate weighted   |   pyramid down |                      |               |               | ||
+| accumualte weighted   |            |                      |               |               | ||
+| pixel-wise mult       |    ||||||
+| magnitude             |    ||||||
+| phase                 |    ||||||
+## Setup Environment on Host
+
+  + clone [Pynq-ComputerVision](https://github.com/Xilinx/PYNQ-ComputerVision) repository:
+    ```commandline
+    $ git clone https://github.com/Xilinx/PYNQ-ComputerVision.git <your_pynqcv_folder>
+    ``` 
+  + clone [xfOpenCV](https://github.com/Xilinx/xfopencv) repository and checkout the correct version (e.g. 2018.2_release):
+    ```commandline
+    $ git clone https://github.com/Xilinx/xfopencv.git <your_xfopencv_folder>
+    $ cd <your_xfopencv_folder>
+    $ git checkout <release_number>
+    ``` 
+  + Prepare the Ultra96 bare platform package in /your_PynqPlatform_folder. 
+    + download [ultra96_platform_sysroot_2018.2.tar.gz](https://www.xilinx.com/member/forms/download/xef.html?filename=ultra96_platform_sysroot_2018.2.tar.gz) in /your_PynqPlatform_folder
+    + untar the package. This will create an ultra subfolder in /your_PynqPlatform_folder
+      ```commandline
+      $ tar -zxvf ultra96_platform_sysroot_2018.2.tar.gz
+      ```
+    + Note that you can adapt /your_PynqPlatform_folder to your preference, but the deepest subfolder should match the platform name, in this case 'ultra'. 
+  + set an environmental variable to xfOpenCV
+    ```commandline
+    $ setenv XFOPENCV_PATH <your_xfopencv_folder>
+    ```
+  + set up Xilinx SDx tools, version 2018.2 by running its setup script
+
+
+## Building unit tests
+  ### Individual unit tests
+  + For an indidivual unit test, navigate to the the test you wish to build (e.g. testXfFilter2D), create a folder there and run cmake.
+    ```commandline
+    $ cd /<your_pynqcv_folder>/applicationCode/unitTests/testCplusplus/testXfFilter2D
+    $ mkdir build; cd build
+    $ cmake .. -DCMAKE_TOOLCHAIN_FILE=../../../frameworks/cmakeModules/toolchain_sdx2018.2.cmake -DSDxPlatform=/your_PynqPlatform_folder/ultra -DSDxClockID=1 -DusePL=ON -DnoBitstream=OFF -DnoSDCardImage=ON -DSDxArch=arm64
+    ```
+  + Note that the clock ID for the platform selects the desired clock frequency for the design. In the case of the Ultra96 platform, the following IDs are available: 0=100MHz, 1=150MHz, 2=250MHz, 3=300MHz.
+  + run make for the unit test
+    ```commandline
+    $ make testSDxXfFiter2D
+    ```
+  + The bitstream needs to be reformatted to the format used to program the FPGA on the board. This is done by first creating a simple .bif file (conv.bif) as shown below: 
+    ```commandline
+    all:
+    {
+         [destination_device = pl] testSDxXfFilter2D.bit
+    }
+    ```
+    Then you run bootgen as follows:
+    ```commandline
+    $ bootgen -image conv.bif -arch zynqmp -o ./testSDxXfFilter2D.bit.bin -w
+    ```
+  + Copy the reformatted bitstream and executable to a test folder (for instance ~/proj/test) on your pynq board:
+    ```commandline
+    $  scp testSDxXfFilter2D.bit.bin xilinx@<pynq-board-ip>:/home/xilinx/proj/test
+    $  scp testSDxXfFilter2D xilinx@<pynq-board-ip>:/home/xilinx/proj/test
+    ```
+  ### Entire unit test suite
+  + To build all the available tests, you can run the build script under applicationCode/unitTests/testCpluscplus. Be sure to edit the buildUnitTest.py so the platform points to <your platform folder>/ultra.
+    ```commandline
+    $  cd /<your_pynqcv_folder>/applicationCode/unitTests/testCplusplus/
+    $  ./buildUnitTest.py
+    ```
+  + This creates individual reformatted bitstream and executables for each test and copies them to applicationCode/unitTests/testCplusplus/unitTestFiles. You can then the files onto the board using the same method as in the individual test case
+  
+    
+## Running unit test on Board
+
+  + To run the unit tests, program the FPGA with the target bitstream (.bin) and execute the test with the sudo command on the board
+    ```commandline
+    $ cd ~/proj/test
+    $ su
+    $ echo 0 > /sys/class/fpga_manager/fpga0/flags
+    $ cp testSDxXfFilter2D.bit.bin /lib/firmware
+    $ echo testSDxXfFilter2D.bit.bin > /sys/class/fpga_manager/fpga0/firmware
+    $ ./testSDxXfFilter2D 
+    ```
+    you should see ~140fps measured result as well as an outline of big bunny pop up on your terminal.
+ 
