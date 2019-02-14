@@ -32,29 +32,18 @@
  
 /*****************************************************************************
 *
-*
 *     Author: Kristof Denolf <kristof@xilinx.com>
 *     Date:   2017/11/22
 *
 *****************************************************************************/
 
-#ifndef _XFSDXPHASE_H_
-#define _XFSDXPHASE_H_
+#ifndef _XFSDXPYRDOWN_H_
+#define _XFSDXPYRDOWN_H_
 
-///SDx temporal fix for Clang issue
-#ifdef __SDSCC__
-#undef __ARM_NEON__
-#undef __ARM_NEON
-#include <opencv2/core/core.hpp>
-#define __ARM_NEON__
-#define __ARM_NEON
-#else
-#include <opencv2/core/core.hpp>
-#endif
- 
-namespace xF 
-{
-	void phase(cv::Mat &srcx, cv::Mat &srcy, cv::Mat &dst, bool angleInDegrees=false);   
-}
+#include "common/xf_common.h"
+
+void xF_pyrDown(
+	xf::Mat<${srcTypeCMakeParamPyrDown},${maxHeightCMakeParamPyrDown},${maxWidthCMakeParamPyrDown},${NPCCMakeParamPyrDown}>* imgInput,
+	xf::Mat<${srcTypeCMakeParamPyrDown},${maxHeightCMakeParamPyrDown},${maxWidthCMakeParamPyrDown},${NPCCMakeParamPyrDown}>* imgOutput);
 
 #endif

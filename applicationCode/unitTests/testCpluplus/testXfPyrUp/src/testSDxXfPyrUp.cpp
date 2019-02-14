@@ -137,7 +137,7 @@ int main ( int argc, char** argv )
 	std::cout << "running hardware pyrDown" << std::endl;
 	timer.StartTimer();
 	for (int i = 0; i < numberOfIterations; i++){
-		xF_pyrUp(srcHLS, dstHLS0);
+		xF::pyrUp(srcHLS, dstHLS0);
 		//xF_pyrUp(dstHLS0, dstHLS1);
 	}
 	timer.StopTimer();	

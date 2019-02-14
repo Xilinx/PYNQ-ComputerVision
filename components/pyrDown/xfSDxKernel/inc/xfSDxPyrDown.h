@@ -37,8 +37,8 @@
 *
 *****************************************************************************/
 
-#ifndef _XFSDXDILATE_H_
-#define _XFSDXDILATE_H_
+#ifndef _XFSDXPYRDOWN_H_
+#define _XFSDXPYRDOWN_H_
 
 ///SDx temporal fix for Clang issue
 #ifdef __SDSCC__
@@ -51,6 +51,8 @@
 #include <opencv2/core/core.hpp>
 #endif 
 
-void xF_pyrDown(cv::Mat &src, cv::Mat &dst, cv::Size dstsize=cv::Size(), int borderType=0); //BORDER_DEFAULT
-
+namespace xF 
+{  
+	void pyrDown(cv::Mat &src, cv::Mat &dst, cv::Size dstsize=cv::Size(), int borderType=0); //BORDER_DEFAULT
+}
 #endif

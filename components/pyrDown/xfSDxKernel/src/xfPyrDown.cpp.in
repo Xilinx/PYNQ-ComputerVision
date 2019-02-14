@@ -46,45 +46,44 @@
 #else
 #include <opencv2/core/core.hpp>
 #endif 
-
-#include "common/xf_common.h"
-#include <hls_video.h>
-#include "imgproc/xf_pyr_down.hpp" 
-#include <Utils/inc/UtilsForXfOpenCV.h>
-
-#include "xfSDxPyrDown.h"
  
-void xF_pyrDown(cv::Mat &src, cv::Mat &dst, cv::Size dstsize, int borderType)
+#include <Utils/inc/UtilsForXfOpenCV.h>
+#include "xfPyrDownCoreForVivadoHLS.h"
+ 
+namespace xF 
 {
-	const int maxWidthTP	= ${maxWidthCMakeParam};
-	const int maxHeightTP	= ${maxHeightCMakeParam};
-	const int srcTypeTP 	= ${srcTypeCMakeParam}; 
-	const int NPCTP 		= ${NPCCMakeParam};
+	void pyrDown(cv::Mat &src, cv::Mat &dst, cv::Size dstsize, int borderType)
+	{
+		const int maxWidthTP	= ${maxWidthCMakeParamPyrDown};
+		const int maxHeightTP	= ${maxHeightCMakeParamPyrDown};
+		const int srcTypeTP 	= ${srcTypeCMakeParamPyrDown}; 
+		const int NPCTP 		= ${NPCCMakeParamPyrDown};
 	
-	//check for limitations of xfOpenCV module
-	//run-time
-	assert(src.channels() == 1);  
+		//check for limitations of xfOpenCV module
+		//run-time
+		assert(src.channels() == 1);  
+		 	
+		xf::Mat<srcTypeTP,maxHeightTP,maxWidthTP,NPCTP>* imgInput; 
+		xf::Mat<srcTypeTP,maxHeightTP,maxWidthTP,NPCTP>* imgOutput; 	
+
+		// perform some checks on the src type
+		cvToXfSource(src,imgInput);
+			  
+		// perform some checks on the dst type
+		bool dstPostConversion = cvToXfDestination(dst, imgOutput, src);
 	 	
-	xf::Mat<srcTypeTP,maxHeightTP,maxWidthTP,NPCTP>* imgInput; 
-	xf::Mat<srcTypeTP,maxHeightTP,maxWidthTP,NPCTP>* imgOutput; 	
+		// call xf::pyrDown
+		xF_pyrDown(imgInput, imgOutput);
 
-	// perform some checks on the src type
-	cvToXfSource(src,imgInput);
-	    
-	// perform some checks on the dst type
-	bool dstPostConversion = cvToXfDestination(dst, imgOutput, src);
- 	
-	// call xf::pyrDown
-	xf::pyrDown<${srcTypeCMakeParam},${maxHeightCMakeParam},${maxWidthCMakeParam},${NPCCMakeParam}>(*imgInput, *imgOutput);
-
-   // If SW post conversion required, we do it here
-   if (dstPostConversion) {
-		xfMatDepthPostConversion(dst,imgOutput);
-   }   
+		 // If SW post conversion required, we do it here
+		 if (dstPostConversion) {
+			xfMatDepthPostConversion(dst,imgOutput);
+		 }   
 	
-	delete imgInput;
-	delete imgOutput;
+		delete imgInput;
+		delete imgOutput;
 	
-	return;
+		return;
+	}
 }
 

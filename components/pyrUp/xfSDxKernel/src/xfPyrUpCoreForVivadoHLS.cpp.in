@@ -35,54 +35,19 @@
  *     Date:   2018/01/22
  *
 *****************************************************************************/
-
-///SDx temporal fix for Clang issue
-#ifdef __SDSCC__
-#undef __ARM_NEON__
-#undef __ARM_NEON
-#include <opencv2/core/core.hpp>
-#define __ARM_NEON__
-#define __ARM_NEON
-#else
-#include <opencv2/core/core.hpp>
-#endif  
-#include <Utils/inc/UtilsForXfOpenCV.h>
+ 
+#include "imgproc/xf_pyr_up.hpp"  
 #include "xfPyrUpCoreForVivadoHLS.h"
  
-namespace xF 
-{  
-	void pyrUp(cv::Mat &src, cv::Mat &dst, cv::Size dstsize, int borderType)
-	{
-		const int maxWidthTP	= ${maxWidthCMakeParamPyrUp};
-		const int maxHeightTP	= ${maxHeightCMakeParamPyrUp};
-		const int srcTypeTP 	= ${srcTypeCMakeParamPyrUp}; 
-		const int NPCTP 		= ${NPCCMakeParamPyrUp};
-	
-		//check for limitations of xfOpenCV module
-		//run-time
-		assert(src.channels() == 1);  
-		 	
-		xf::Mat<srcTypeTP,maxHeightTP,maxWidthTP,NPCTP>* imgInput; 
-		xf::Mat<srcTypeTP,maxHeightTP,maxWidthTP,NPCTP>* imgOutput; 	
-
-		// perform some checks on the src type
-		cvToXfSource(src,imgInput);
-			  
-		// perform some checks on the dst type
-		bool dstPostConversion = cvToXfDestination(dst, imgOutput, src);
-	 	
-		// call xf::pyrUp
-		xF_pyrUp(imgInput, imgOutput);
-
-		 // If SW post conversion required, we do it here
-		 if (dstPostConversion) {
-			xfMatDepthPostConversion(dst,imgOutput);
-		 }   
-	
-		delete imgInput;
-		delete imgOutput;
-	
-		return;
-	}
-
+void xF_pyrUp(
+	xf::Mat<${srcTypeCMakeParamPyrUp},${maxHeightCMakeParamPyrUp},${maxWidthCMakeParamPyrUp},${NPCCMakeParamPyrUp}>* imgInput,
+	xf::Mat<${srcTypeCMakeParamPyrUp},${maxHeightCMakeParamPyrUp},${maxWidthCMakeParamPyrUp},${NPCCMakeParamPyrUp}>* imgOutput)
+{
+ 
+	// call xf::pyrUp
+	xf::pyrUp<${srcTypeCMakeParamPyrUp},${maxHeightCMakeParamPyrUp},${maxWidthCMakeParamPyrUp},${NPCCMakeParamPyrUp}>(*imgInput, *imgOutput);
+ 
+	return;
 }
+
+//}

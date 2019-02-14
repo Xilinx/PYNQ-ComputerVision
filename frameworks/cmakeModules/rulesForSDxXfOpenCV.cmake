@@ -355,6 +355,19 @@ endif()
 set(componentNameCapLocalForRule "Magnitude")
 setDefaultParameters1In1OutModule(${componentNameCapLocalForRule})
 
+#Phase
+if(NOT DEFINED retTypeCMakeParamPhase)
+	set(retTypeCMakeParamPhase ${XF_DEGREES} CACHE STRING "Angle format")
+endif()
+if(NOT DEFINED srcTypeCMakeParamPhase)
+	set(srcTypeCMakeParamPhase ${XF_16SC1} CACHE STRING "Input pixel type")
+endif()
+if(NOT DEFINED dstTypeCMakeParamPhase)
+	set(dstTypeCMakeParamPhase ${XF_16SC1} CACHE STRING "Output pixel type")
+endif()
+set(componentNameCapLocalForRule "Phase")
+setDefaultParameters1In1OutModule(${componentNameCapLocalForRule})
+
 #Merge  
 if(NOT DEFINED dstTypeCMakeParamMerge)
 	set(dstTypeCMakeParamMerge ${XF_8UC4} CACHE STRING "Output pixel type")
@@ -370,10 +383,17 @@ setDefaultParameters1In1OutModule(${componentNameCapLocalForRule})
 set(componentNameCapLocalForRule "MinMaxLoc")
 setDefaultParameters1In1OutModule(${componentNameCapLocalForRule})
 
+#PyrDown
+set(componentNameCapLocalForRule "PyrDown")
+setDefaultParameters1In1OutModule(${componentNameCapLocalForRule})
+
+#PyrDown
+set(componentNameCapLocalForRule "PyrUp")
+setDefaultParameters1In1OutModule(${componentNameCapLocalForRule})
+
 #Canny
 set(componentNameCapLocalForRule "Canny")
 setDefaultParameters1In1OutModule(${componentNameCapLocalForRule})
-
  
 if(NOT DEFINED apertureSizeCMakeParamCanny)
 	set(apertureSizeCMakeParamCanny 3 CACHE STRING "Sobel aperture size")
@@ -455,11 +475,7 @@ endif()
 if(NOT DEFINED interpolationTypeCMakeParam)
 	set(interpolationTypeCMakeParam 0 CACHE STRING "interpolation Type") # NN or Bilinear
 endif()
-
-# phase 
-if(NOT DEFINED retTypeCMakeParam)
-	set(retTypeCMakeParam ${XF_RADIANS} CACHE STRING "phase format Type") # XF_RADIANs or XF_DEGREES
-endif()
+ 
   
 #arithmatic ops
 set(policyTypeCMakeParam ${XF_CONVERT_POLICY_SATURATE})
@@ -560,14 +576,20 @@ function(buildSDxCompilerFlags componentList SDxCompileFlags)
 		elseif (${componentNameLocal} STREQUAL "minMaxLoc")
 			message(STATUS "generating flags for minMaxLoc") 
 			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocal}<${srcTypeCMakeParamMinMaxLoc},${maxHeightCMakeParamMinMaxLoc},${maxWidthCMakeParamMinMaxLoc},${NPCCMakeParamMinMaxLoc}>\" xf${componentNameLocalCap}CoreForVivadoHLS.cpp -files ${xfOpenCV_INCLUDE_DIRS}/core/xf_min_max_loc.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}")		
-				
+elseif (${componentNameLocal} STREQUAL "phase")
+			message(STATUS "generating flags for phase") 
+ 			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocal}<${retTypeCMakeParamPhase},${srcTypeCMakeParamPhase},${dstTypeCMakeParamPhase},${maxHeightCMakeParamPhase},${maxWidthCMakeParamPhase},${NPCCMakeParamPhase}>\" xf${componentNameLocalCap}CoreForVivadoHLS.cpp -files ${xfOpenCV_INCLUDE_DIRS}/core/xf_phase.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}")
+		elseif (${componentNameLocal} STREQUAL "pyrDown")
+			message(STATUS "generating flags for pyrDown")   		
+			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocal}<${srcTypeCMakeParamPyrDown},${maxHeightCMakeParamPyrDown},${maxWidthCMakeParamPyrDown},${NPCCMakeParamPyrDown}>\" xf${componentNameLocalCap}CoreForVivadoHLS.cpp -files ${xfOpenCV_INCLUDE_DIRS}/imgproc/xf_pyr_down.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}")
+ 		elseif (${componentNameLocal} STREQUAL "pyrUp")
+			message(STATUS "generating flags for pyrUp")   		
+			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocal}<${srcTypeCMakeParamPyrUp},${maxHeightCMakeParamPyrUp},${maxWidthCMakeParamPyrUp},${NPCCMakeParamPyrUp}>\" xf${componentNameLocalCap}CoreForVivadoHLS.cpp -files ${xfOpenCV_INCLUDE_DIRS}/imgproc/xf_pyr_up.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}")
+						
 
 		elseif (${componentNameLocal} STREQUAL "multiply")
 			message(STATUS "generating flags for multiply") 
 			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocal}<${policyTypeCMakeParam},${srcTypeCMakeParam},${maxHeightCMakeParam},${maxWidthCMakeParam},${NPCCMakeParam}>\" xf${componentNameLocalCap}.cpp -files ${xfOpenCV_INCLUDE_DIRS}/core/xf_arithm.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}")				
-elseif (${componentNameLocal} STREQUAL "phase")
-			message(STATUS "generating flags for phase") 
- 			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocal}<${retTypeCMakeParam},${srcTypeCMakeParam},${dstTypeCMakeParam},${maxHeightCMakeParam},${maxWidthCMakeParam},${NPCCMakeParam}>\" xf${componentNameLocalCap}.cpp -files ${xfOpenCV_INCLUDE_DIRS}/core/xf_phase.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}")
  		elseif (${componentNameLocal} STREQUAL "boxFilter")
 			message(STATUS "generating flags for boxFilter") 
 			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocal}<${borderTypeCMakeParamBoxFilter},${kernelSizeCMakeParamBoxFilter},${srcTypeCMakeParamBoxFilter},${maxHeightCMakeParamBoxFilter},${maxWidthCMakeParamBoxFilter},${NPCCMakeParamBoxFilter}>\" xf${componentNameLocalCap}CoreForVivadoHLS.cpp -files ${xfOpenCV_INCLUDE_DIRS}/imgproc/xf_box_filter.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}") 		
@@ -577,12 +599,6 @@ elseif (${componentNameLocal} STREQUAL "warpAffine")
 		elseif (${componentNameLocal} STREQUAL "resize")
 			message(STATUS "generating flags for resize")
 			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocal}<${interpolationTypeCMakeParamResize},${srcTypeCMakeParamResize},${srcMaxHeightCMakeParamResize},${srcMaxWidthCMakeParamResize},${dstMaxHeightCMakeParamResize},${dstMaxWidthCMakeParamResize},${NPCCMakeParamResize},${maxDownScaleCMakeParamResize}>\" xf${componentNameLocalCap}CoreForVivadoHLS.cpp -files ${xfOpenCV_INCLUDE_DIRS}/imgproc/xf_resize.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}")
-		elseif (${componentNameLocal} STREQUAL "pyrUp")
-			message(STATUS "generating flags for pyrUp")   		
-			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocal}<${srcTypeCMakeParam},${maxHeightCMakeParam},${maxWidthCMakeParam},${NPCCMakeParam}>\" xf${componentNameLocalCap}.cpp -files ${xfOpenCV_INCLUDE_DIRS}/imgproc/xf_pyr_up.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}")
-		elseif (${componentNameLocal} STREQUAL "pyrDown")
-			message(STATUS "generating flags for pyrDown")   		
-			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocal}<${srcTypeCMakeParam},${maxHeightCMakeParam},${maxWidthCMakeParam},${NPCCMakeParam}>\" xf${componentNameLocalCap}.cpp -files ${xfOpenCV_INCLUDE_DIRS}/imgproc/xf_pyr_down.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}")
 
  			
 	else (${CMAKE_C_COMPILER_ID} STREQUAL "SDSCC") #native compilation

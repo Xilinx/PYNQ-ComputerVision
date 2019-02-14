@@ -46,54 +46,50 @@
 #define __ARM_NEON
 #else
 #include <opencv2/core/core.hpp>
-#endif
-//#include <opencv2/core/core.hpp>
-
-#include "common/xf_common.h"
-#include <hls_video.h>
-#include "core/xf_phase.hpp" 
+#endif 
 #include <Utils/inc/UtilsForXfOpenCV.h>
-
-#include "xfSDxPhase.h"
+#include "xfPhaseCoreForVivadoHLS.h"
   
-
-void xF_phase(cv::Mat &srcx, cv::Mat &srcy, cv::Mat &dst, bool angleInDegrees)  
+namespace xF 
 {
-	const int retTypeTP 	= ${retTypeCMakeParam};
-	const int maxWidthTP 	= ${maxWidthCMakeParam};
-	const int maxHeightTP 	= ${maxHeightCMakeParam};
-	const int srcTypeTP 	= ${srcTypeCMakeParam};
-	const int dstTypeTP		= ${dstTypeCMakeParam};
-	const int NPCTP			= ${NPCCMakeParam};
+	void phase(cv::Mat &srcx, cv::Mat &srcy, cv::Mat &dst, bool angleInDegrees)  
+	{
+		const int retTypeTP 	= ${retTypeCMakeParamPhase};
+		const int maxWidthTP 	= ${maxWidthCMakeParamPhase};
+		const int maxHeightTP 	= ${maxHeightCMakeParamPhase};
+		const int srcTypeTP 	= ${srcTypeCMakeParamPhase};
+		const int dstTypeTP		= ${dstTypeCMakeParamPhase};
+		const int NPCTP			= ${NPCCMakeParamPhase};
 	
-	//check for limitations of xfOpenCV module 
-	//assert(srcTypeTP == 2); // XF_16SC1
-	//assert(dstTypeTP == 2);  // XF_16SC1 
-	//assert(retTypeTP == angleInDegrees);
+		//check for limitations of xfOpenCV module 
+		//assert(srcTypeTP == 2); // XF_16SC1
+		//assert(dstTypeTP == 2);  // XF_16SC1 
+		//assert(retTypeTP == angleInDegrees);
 	
-	xf::Mat<srcTypeTP, maxHeightTP, maxWidthTP, NPCTP>* imgInputX;
-	xf::Mat<srcTypeTP, maxHeightTP, maxWidthTP, NPCTP>* imgInputY;
-	xf::Mat<dstTypeTP, maxHeightTP, maxWidthTP, NPCTP>* imgOutput;
+		xf::Mat<srcTypeTP, maxHeightTP, maxWidthTP, NPCTP>* imgInputX;
+		xf::Mat<srcTypeTP, maxHeightTP, maxWidthTP, NPCTP>* imgInputY;
+		xf::Mat<dstTypeTP, maxHeightTP, maxWidthTP, NPCTP>* imgOutput;
 
-	// perform some checks on the src type
-	cvToXfSource(srcx, imgInputX);	
-	cvToXfSource(srcy, imgInputY);
-          
-	// perform some checks on the dst type
-	bool dstPostConversion = cvToXfDestination(dst, imgOutput, srcx);
-	  
-	// call xf::phase
-	xf::phase<${retTypeCMakeParam},${srcTypeCMakeParam},${srcTypeCMakeParam},${maxHeightCMakeParam},${maxWidthCMakeParam},${NPCCMakeParam}>(*imgInputX, *imgInputY, *imgOutput);
+		// perform some checks on the src type
+		cvToXfSource(srcx, imgInputX);	
+		cvToXfSource(srcy, imgInputY);
+		        
+		// perform some checks on the dst type
+		bool dstPostConversion = cvToXfDestination(dst, imgOutput, srcx);
+			
+		// call xf::phase
+		xF_phase(imgInputX, imgInputY, imgOutput);
 
-	//perform checks on the dst type
-	if (dstPostConversion) {
-		xfMatDepthPostConversion(dst,imgOutput);
+		//perform checks on the dst type
+		if (dstPostConversion) {
+			xfMatDepthPostConversion(dst,imgOutput);
+		}
+	
+		delete imgInputX;
+		delete imgInputY;
+		delete imgOutput;
+	
+		return;
 	}
-	
-	delete imgInputX;
-	delete imgInputY;
-	delete imgOutput;
-	
-	return;
 }
 

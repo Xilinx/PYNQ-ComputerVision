@@ -38,23 +38,14 @@
 *
 *****************************************************************************/
 
-#ifndef _XFSDXPHASE_H_
-#define _XFSDXPHASE_H_
+#ifndef _XFSDXPURUP_H_
+#define _XFSDXPURUP_H_
 
-///SDx temporal fix for Clang issue
-#ifdef __SDSCC__
-#undef __ARM_NEON__
-#undef __ARM_NEON
-#include <opencv2/core/core.hpp>
-#define __ARM_NEON__
-#define __ARM_NEON
-#else
-#include <opencv2/core/core.hpp>
-#endif
- 
-namespace xF 
-{
-	void phase(cv::Mat &srcx, cv::Mat &srcy, cv::Mat &dst, bool angleInDegrees=false);   
-}
+
+#include "common/xf_common.h"
+
+void xF_pyrUp(
+	xf::Mat<${srcTypeCMakeParamPyrUp},${maxHeightCMakeParamPyrUp},${maxWidthCMakeParamPyrUp},${NPCCMakeParamPyrUp}>* imgInput,
+	xf::Mat<${srcTypeCMakeParamPyrUp},${maxHeightCMakeParamPyrUp},${maxWidthCMakeParamPyrUp},${NPCCMakeParamPyrUp}>* imgOutput);
 
 #endif

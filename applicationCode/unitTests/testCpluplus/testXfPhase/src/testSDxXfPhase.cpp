@@ -115,17 +115,17 @@ int main ( int argc, char** argv )
 	//convert 3-channel image into 1-channel image
 	cvtColor(srcIn, grayIn, CV_BGR2GRAY, 1);	   
   	
-  	//Sobel variables
-  	Mat gx,gy;
-  	int scale = 1;
-  	int delta = 0;
-  	int filter_size = 3;   
+  //Sobel variables
+	Mat gx,gy;
+  int scale = 1;
+  int delta = 0;
+  int filter_size = 3;   
 	Sobel(grayIn, gx, CV_32F, 1, 0, filter_size, scale, delta, cv::BORDER_CONSTANT );
 	Sobel(grayIn, gy, CV_32F, 0, 1, filter_size, scale, delta, cv::BORDER_CONSTANT );
-  	Mat dstSW(gx.size(), gx.type());  
+  Mat dstSW(gx.size(), gx.type());  
   	
   	
-  	bool angleInDegrees=false;	 	
+  bool angleInDegrees=false;	 	
 	// Declare variables used for HW-SW interface to achieve good performance
 	xF::Mat gxHLS(height, width, CV_16SC1);
 	xF::Mat gyHLS(height, width, CV_16SC1);
@@ -153,7 +153,7 @@ int main ( int argc, char** argv )
 	 
 	timer.StartTimer();
 	for (int i = 0; i < numberOfIterations; i++){ 
-		xF_phase(gxHLS, gyHLS, dstHLS, angleInDegrees);
+		xF::phase(gxHLS, gyHLS, dstHLS, angleInDegrees);
 	}
 	timer.StopTimer();	
 	std::cout << "Elapsed time over " << numberOfIterations << "PL call(s): " << timer.GetElapsedUs() << " us or " << (float)timer.GetElapsedUs() / (float)numberOfIterations << "us per frame" << std::endl;

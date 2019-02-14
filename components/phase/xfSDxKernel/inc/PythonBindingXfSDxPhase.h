@@ -38,8 +38,8 @@
 *
 *****************************************************************************/
 
-#ifndef PYOPENCV_CV_REMAP
-#define PYOPENCV_CV_REMAP
+#ifndef PYOPENCV_CV_PHASE
+#define PYOPENCV_CV_PHASE
 
 #include "xfSDxPhase.h"
 
@@ -62,7 +62,7 @@ static PyObject* pyopencv_cv_phase(PyObject* , PyObject* args, PyObject* kw)
         pyopencv_to(pyobj_y, y, ArgInfo("y", 0)) &&
         pyopencv_to(pyobj_angle, angle, ArgInfo("angle", 1)) )
     {
-        ERRWRAP2(xF_phase(x, y, angle, angleInDegrees));
+        ERRWRAP2(xF::phase(x, y, angle, angleInDegrees));
         return pyopencv_from(angle);
     }
     }

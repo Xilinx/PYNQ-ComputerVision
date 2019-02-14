@@ -41,20 +41,13 @@
 #ifndef _XFSDXPHASE_H_
 #define _XFSDXPHASE_H_
 
-///SDx temporal fix for Clang issue
-#ifdef __SDSCC__
-#undef __ARM_NEON__
-#undef __ARM_NEON
-#include <opencv2/core/core.hpp>
-#define __ARM_NEON__
-#define __ARM_NEON
-#else
-#include <opencv2/core/core.hpp>
-#endif
+
+#include "common/xf_common.h"
  
-namespace xF 
-{
-	void phase(cv::Mat &srcx, cv::Mat &srcy, cv::Mat &dst, bool angleInDegrees=false);   
-}
+void xF_phase(
+	xf::Mat<${srcTypeCMakeParamPhase}, ${maxHeightCMakeParamPhase}, ${maxWidthCMakeParamPhase}, ${NPCCMakeParamPhase}>* imgInputX,
+	xf::Mat<${srcTypeCMakeParamPhase}, ${maxHeightCMakeParamPhase}, ${maxWidthCMakeParamPhase}, ${NPCCMakeParamPhase}>* imgInputY,
+	xf::Mat<${dstTypeCMakeParamPhase}, ${maxHeightCMakeParamPhase}, ${maxWidthCMakeParamPhase}, ${NPCCMakeParamPhase}>* imgOutput);
+
 
 #endif

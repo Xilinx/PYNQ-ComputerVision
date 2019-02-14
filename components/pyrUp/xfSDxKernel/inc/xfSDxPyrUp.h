@@ -38,8 +38,8 @@
 *
 *****************************************************************************/
 
-#ifndef _XFSDXDILATE_H_
-#define _XFSDXDILATE_H_
+#ifndef _XFSDXPYRUP_H_
+#define _XFSDXPYRUP_H_
 
 ///SDx temporal fix for Clang issue
 #ifdef __SDSCC__
@@ -52,6 +52,8 @@
 #include <opencv2/core/core.hpp>
 #endif 
 
-void xF_pyrUp(cv::Mat &src, cv::Mat &dst, cv::Size dstsize=cv::Size(), int borderType=0); //BORDER_DEFAULT
-
+namespace xF 
+{  
+	void pyrUp(cv::Mat &src, cv::Mat &dst, cv::Size dstsize=cv::Size(), int borderType=0); //BORDER_DEFAULT
+}
 #endif

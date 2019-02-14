@@ -38,8 +38,8 @@
 *
 *****************************************************************************/
 
-#ifndef PYOPENCV_CV_DILATE
-#define PYOPENCV_CV_DILATE
+#ifndef PYOPENCV_CV_PYRUP
+#define PYOPENCV_CV_PYRUP
 
 #include "xfSDxPyrUp.h"
 
@@ -62,7 +62,7 @@ static PyObject* pyopencv_cv_pyrUp(PyObject* , PyObject* args, PyObject* kw)
         pyopencv_to(pyobj_dst, dst, ArgInfo("dst", 1)) &&
         pyopencv_to(pyobj_dstsize, dstsize, ArgInfo("dstsize", 0)) )
     {
-        ERRWRAP2(xF_pyrUp(src, dst, dstsize, borderType));
+        ERRWRAP2(xF::pyrUp(src, dst, dstsize, borderType));
         return pyopencv_from(dst);
     }
     }
