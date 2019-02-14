@@ -36,7 +36,7 @@
 # cmake needs this line
 cmake_minimum_required(VERSION 2.8)
 
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/../../../frameworks/cmakeModules/cmakeModulesXilinx ${CMAKE_CURRENT_SOURCE_DIR}/../../../frameworks/cmakeModules)
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/../../../../frameworks/cmakeModules/cmakeModulesXilinx ${CMAKE_CURRENT_SOURCE_DIR}/../../../../frameworks/cmakeModules)
 include(rulesForSDxXfOpenCV)
 SET(componentName merge)
 

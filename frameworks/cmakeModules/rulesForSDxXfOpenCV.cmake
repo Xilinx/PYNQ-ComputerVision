@@ -355,14 +355,25 @@ endif()
 set(componentNameCapLocalForRule "Magnitude")
 setDefaultParameters1In1OutModule(${componentNameCapLocalForRule})
 
+#Merge  
+if(NOT DEFINED dstTypeCMakeParamMerge)
+	set(dstTypeCMakeParamMerge ${XF_8UC4} CACHE STRING "Output pixel type")
+endif()
+set(componentNameCapLocalForRule "Merge")
+setDefaultParameters1In1OutModule(${componentNameCapLocalForRule})
 
 #MeanStdDev
 set(componentNameCapLocalForRule "MeanStdDev")
 setDefaultParameters1In1OutModule(${componentNameCapLocalForRule})
 
+#MinMaxLoc
+set(componentNameCapLocalForRule "MinMaxLoc")
+setDefaultParameters1In1OutModule(${componentNameCapLocalForRule})
+
 #Canny
 set(componentNameCapLocalForRule "Canny")
 setDefaultParameters1In1OutModule(${componentNameCapLocalForRule})
+
  
 if(NOT DEFINED apertureSizeCMakeParamCanny)
 	set(apertureSizeCMakeParamCanny 3 CACHE STRING "Sobel aperture size")
@@ -543,24 +554,24 @@ function(buildSDxCompilerFlags componentList SDxCompileFlags)
 		elseif (${componentNameLocal} STREQUAL "meanStdDev")
 			message(STATUS "generating flags for meanStdDev") 
 			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocal}<${srcTypeCMakeParamMeanStdDev},${maxHeightCMakeParamMeanStdDev},${maxWidthCMakeParamMeanStdDev},${NPCCMakeParamMeanStdDev}>\" xf${componentNameLocalCap}CoreForVivadoHLS.cpp -files ${xfOpenCV_INCLUDE_DIRS}/core/xf_mean_stddev.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}")		
-		
+		elseif (${componentNameLocal} STREQUAL "merge")
+			message(STATUS "generating flags for merge") 
+			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocal}<${srcTypeCMakeParamMerge},${dstTypeCMakeParamMerge},${maxHeightCMakeParamMerge},${maxWidthCMakeParamMerge},${NPCCMakeParamMerge}>\" xf${componentNameLocalCap}CoreForVivadoHLS.cpp -files ${xfOpenCV_INCLUDE_DIRS}/imgproc/xf_channel_combine.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}")
+		elseif (${componentNameLocal} STREQUAL "minMaxLoc")
+			message(STATUS "generating flags for minMaxLoc") 
+			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocal}<${srcTypeCMakeParamMinMaxLoc},${maxHeightCMakeParamMinMaxLoc},${maxWidthCMakeParamMinMaxLoc},${NPCCMakeParamMinMaxLoc}>\" xf${componentNameLocalCap}CoreForVivadoHLS.cpp -files ${xfOpenCV_INCLUDE_DIRS}/core/xf_min_max_loc.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}")		
+				
 
 		elseif (${componentNameLocal} STREQUAL "multiply")
 			message(STATUS "generating flags for multiply") 
 			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocal}<${policyTypeCMakeParam},${srcTypeCMakeParam},${maxHeightCMakeParam},${maxWidthCMakeParam},${NPCCMakeParam}>\" xf${componentNameLocalCap}.cpp -files ${xfOpenCV_INCLUDE_DIRS}/core/xf_arithm.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}")				
-		elseif (${componentNameLocal} STREQUAL "merge")
-			message(STATUS "generating flags for merge") 
-			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocal}<${srcTypeCMakeParam},${dstTypeCMakeParam},${maxHeightCMakeParam},${maxWidthCMakeParam},${NPCCMakeParam}>\" xf${componentNameLocalCap}.cpp -files ${xfOpenCV_INCLUDE_DIRS}/imgproc/xf_channel_combine.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}")
 elseif (${componentNameLocal} STREQUAL "phase")
 			message(STATUS "generating flags for phase") 
  			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocal}<${retTypeCMakeParam},${srcTypeCMakeParam},${dstTypeCMakeParam},${maxHeightCMakeParam},${maxWidthCMakeParam},${NPCCMakeParam}>\" xf${componentNameLocalCap}.cpp -files ${xfOpenCV_INCLUDE_DIRS}/core/xf_phase.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}")
  		elseif (${componentNameLocal} STREQUAL "boxFilter")
 			message(STATUS "generating flags for boxFilter") 
 			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocal}<${borderTypeCMakeParamBoxFilter},${kernelSizeCMakeParamBoxFilter},${srcTypeCMakeParamBoxFilter},${maxHeightCMakeParamBoxFilter},${maxWidthCMakeParamBoxFilter},${NPCCMakeParamBoxFilter}>\" xf${componentNameLocalCap}CoreForVivadoHLS.cpp -files ${xfOpenCV_INCLUDE_DIRS}/imgproc/xf_box_filter.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}") 		
-elseif (${componentNameLocal} STREQUAL "minMaxLoc")
-			message(STATUS "generating flags for minMaxLoc") 
-			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocal}<${srcTypeCMakeParam},${maxHeightCMakeParam},${maxWidthCMakeParam},${NPCCMakeParam}>\" xf${componentNameLocalCap}.cpp -files ${xfOpenCV_INCLUDE_DIRS}/core/xf_min_max_loc.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}")		
-		elseif (${componentNameLocal} STREQUAL "warpAffine")
+elseif (${componentNameLocal} STREQUAL "warpAffine")
 			message(STATUS "generating flags for warpAffine")  
 			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocal}<${interpolationTypeCMakeParam},${srcTypeCMakeParam},${maxHeightCMakeParam},${maxWidthCMakeParam},${NPCCMakeParam}>\" xf${componentNameLocalCap}.cpp -files ${xfOpenCV_INCLUDE_DIRS}/imgproc/xf_warpaffine.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}")		
 		elseif (${componentNameLocal} STREQUAL "resize")

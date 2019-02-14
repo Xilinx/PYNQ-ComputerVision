@@ -38,8 +38,8 @@
 *
 *****************************************************************************/
 
-#ifndef _XFSDXERODE_H_
-#define _XFSDXERODE_H_
+#ifndef _XFSDXMERGE_H_
+#define _XFSDXMERGE_H_
 
 ///SDx temporal fix for Clang issue
 #ifdef __SDSCC__
@@ -52,8 +52,9 @@
 #include <opencv2/core/core.hpp>
 #endif 
 
-void xF_merge(std::vector<cv::Mat> &src, cv::Mat &dst);
+namespace xF 
+{  
+	void merge(std::vector<cv::Mat> &src, cv::Mat &dst);
+} 
  
- 
-
 #endif

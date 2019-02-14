@@ -36,8 +36,8 @@
 *
 *****************************************************************************/
 
-#ifndef _XFSDXERODE_H_
-#define _XFSDXERODE_H_
+#ifndef _XFSDXMINMAXLOC_H_
+#define _XFSDXMINMAXLOC_H_
 
 ///SDx temporal fix for Clang issue
 #ifdef __SDSCC__
@@ -50,6 +50,9 @@
 #include <opencv2/core/core.hpp>
 #endif 
 
-void xF_minMaxLoc(cv::Mat &src, double* minVal, double* maxVal=0, cv::Point* minLoc= 0, cv::Point* maxLoc= 0, cv::Mat mask =cv::Mat());
- 
+namespace xF 
+{  
+	void minMaxLoc(cv::Mat &src, double* minVal, double* maxVal=0, cv::Point* minLoc= 0, cv::Point* maxLoc= 0, cv::Mat mask =cv::Mat());
+} 
+
 #endif

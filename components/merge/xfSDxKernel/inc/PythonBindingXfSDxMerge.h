@@ -58,7 +58,7 @@ static PyObject* pyopencv_cv_merge(PyObject* , PyObject* args, PyObject* kw)
         pyopencv_to(pyobj_mv, mv, ArgInfo("mv", 0)) &&
         pyopencv_to(pyobj_dst, dst, ArgInfo("dst", 1)) )
     {
-        ERRWRAP2(xF_merge(mv, dst));
+        ERRWRAP2(xF::merge(mv, dst));
         return pyopencv_from(dst);
     }
     }
