@@ -143,7 +143,7 @@ int main ( int argc, char** argv )
 	std::cout << "running hardware split" << std::endl;
 	timer.StartTimer();
 	for (int i = 0; i < numberOfIterations; i++){  
-		xF_split(srcHLS, channelsHLS);
+		xF::split(srcHLS, channelsHLS);
 	}
 	timer.StopTimer();	
 	std::cout << "Elapsed time over " << numberOfIterations << "PL call(s): " << timer.GetElapsedUs() << " us or " << (float)timer.GetElapsedUs() / (float)numberOfIterations << "us per frame" << std::endl;

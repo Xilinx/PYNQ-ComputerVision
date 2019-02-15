@@ -40,20 +40,14 @@
 #ifndef _XFSDXSPLIT_H_
 #define _XFSDXSPLIT_H_
 
-///SDx temporal fix for Clang issue
-#ifdef __SDSCC__
-#undef __ARM_NEON__
-#undef __ARM_NEON
-#include <opencv2/core/core.hpp>
-#define __ARM_NEON__
-#define __ARM_NEON
-#else
-#include <opencv2/core/core.hpp>
-#endif 
 
-namespace xF 
-{  
-	void split(cv::Mat &src, std::vector<cv::Mat> &dst); 
-}
+#include "common/xf_common.h"
+
+void xF_split(	
+	xf::Mat<${srcTypeCMakeParamSplit}, ${maxHeightCMakeParamSplit}, ${maxWidthCMakeParamSplit}, ${NPCCMakeParamSplit}>* imgInput,		
+	xf::Mat<${dstTypeCMakeParamSplit}, ${maxHeightCMakeParamSplit}, ${maxWidthCMakeParamSplit}, ${NPCCMakeParamSplit}>* imgOutput0,
+	xf::Mat<${dstTypeCMakeParamSplit}, ${maxHeightCMakeParamSplit}, ${maxWidthCMakeParamSplit}, ${NPCCMakeParamSplit}>* imgOutput1,
+	xf::Mat<${dstTypeCMakeParamSplit}, ${maxHeightCMakeParamSplit}, ${maxWidthCMakeParamSplit}, ${NPCCMakeParamSplit}>* imgOutput2,
+	xf::Mat<${dstTypeCMakeParamSplit}, ${maxHeightCMakeParamSplit}, ${maxWidthCMakeParamSplit}, ${NPCCMakeParamSplit}>* imgOutput3);
 
 #endif

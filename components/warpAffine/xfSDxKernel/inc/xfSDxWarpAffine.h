@@ -38,8 +38,8 @@
 *
 *****************************************************************************/
 
-#ifndef _XFSDXDILATE_H_
-#define _XFSDXDILATE_H_
+#ifndef _XFSDXWARPAFFINE_H_
+#define _XFSDXWARPAFFINE_H_
 
 ///SDx temporal fix for Clang issue
 #ifdef __SDSCC__
@@ -53,7 +53,10 @@
 #endif
 //#include <opencv2/core/core.hpp>
   
-void xF_warpAffine(cv::Mat &src, cv::Mat &dst, cv::Mat &M, cv::Size dsize, int flags=0, int borderType=cv::BORDER_CONSTANT, const cv::Scalar& borderValue=cv::Scalar());
-  
+
+namespace xF 
+{  
+	void warpAffine(cv::Mat &src, cv::Mat &dst, cv::Mat &M, cv::Size dsize, int flags=0, int borderType=cv::BORDER_CONSTANT, const cv::Scalar& borderValue=cv::Scalar());
+}  
 
 #endif

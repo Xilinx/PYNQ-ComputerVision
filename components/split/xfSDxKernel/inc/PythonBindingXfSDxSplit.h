@@ -58,7 +58,7 @@ static PyObject* pyopencv_cv_split(PyObject* , PyObject* args, PyObject* kw)
         pyopencv_to(pyobj_m, m, ArgInfo("m", 0)) &&
         pyopencv_to(pyobj_mv, mv, ArgInfo("mv", 1)) )
     {
-        ERRWRAP2(xF_split(m, mv));
+        ERRWRAP2(xF::split(m, mv));
         return pyopencv_from(mv);
     }
     }

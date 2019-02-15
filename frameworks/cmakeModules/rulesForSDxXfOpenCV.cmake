@@ -375,6 +375,13 @@ endif()
 set(componentNameCapLocalForRule "Merge")
 setDefaultParameters1In1OutModule(${componentNameCapLocalForRule})
 
+#Split  
+if(NOT DEFINED dsrcTypeCMakeParamSplit)
+	set(srcTypeCMakeParamSplit ${XF_8UC4} CACHE STRING "Input pixel type")
+endif()
+set(componentNameCapLocalForRule "Split")
+setDefaultParameters1In1OutModule(${componentNameCapLocalForRule})
+
 #MeanStdDev
 set(componentNameCapLocalForRule "MeanStdDev")
 setDefaultParameters1In1OutModule(${componentNameCapLocalForRule})
@@ -390,6 +397,28 @@ setDefaultParameters1In1OutModule(${componentNameCapLocalForRule})
 #PyrDown
 set(componentNameCapLocalForRule "PyrUp")
 setDefaultParameters1In1OutModule(${componentNameCapLocalForRule})
+
+
+# wrapAffine 
+if(NOT DEFINED interpolationTypeCMakeParamWarpPerspective)
+	set(interpolationTypeCMakeParamWarpPerspective ${XF_INTERPOLATION_NN} CACHE STRING "interpolation Type") # NN or Bilinear
+endif()
+if(NOT DEFINED NPCCMakeParamWarpPerspective)
+	set(NPCCMakeParamWarpPerspective ${XF_NPPC8} CACHE STRING "Number of pixels to be processed per cycle") 
+endif()
+set(componentNameCapLocalForRule "WarpPerspective")
+setDefaultParameters1In1OutModule(${componentNameCapLocalForRule})
+
+# wrapAffine 
+if(NOT DEFINED interpolationTypeCMakeParamWarpAffine)
+	set(interpolationTypeCMakeParamWarpAffine ${XF_INTERPOLATION_NN} CACHE STRING "interpolation Type") # NN or Bilinear
+endif()
+if(NOT DEFINED NPCCMakeParamWarpAffine)
+	set(NPCCMakeParamWarpAffine ${XF_NPPC8} CACHE STRING "Number of pixels to be processed per cycle") 
+endif()
+set(componentNameCapLocalForRule "WarpAffine")
+setDefaultParameters1In1OutModule(${componentNameCapLocalForRule})
+
 
 #Canny
 set(componentNameCapLocalForRule "Canny")
@@ -471,12 +500,6 @@ if(NOT DEFINED ID1)
 	set(ID1 1 CACHE STRING "normalization type")
 endif()
 
-# wrapAffine 
-if(NOT DEFINED interpolationTypeCMakeParam)
-	set(interpolationTypeCMakeParam 0 CACHE STRING "interpolation Type") # NN or Bilinear
-endif()
- 
-  
 #arithmatic ops
 set(policyTypeCMakeParam ${XF_CONVERT_POLICY_SATURATE})
 
@@ -585,18 +608,27 @@ elseif (${componentNameLocal} STREQUAL "phase")
  		elseif (${componentNameLocal} STREQUAL "pyrUp")
 			message(STATUS "generating flags for pyrUp")   		
 			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocal}<${srcTypeCMakeParamPyrUp},${maxHeightCMakeParamPyrUp},${maxWidthCMakeParamPyrUp},${NPCCMakeParamPyrUp}>\" xf${componentNameLocalCap}CoreForVivadoHLS.cpp -files ${xfOpenCV_INCLUDE_DIRS}/imgproc/xf_pyr_up.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}")
-						
+		elseif (${componentNameLocal} STREQUAL "warpAffine")
+			message(STATUS "generating flags for warpAffine")  
+			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocal}<${interpolationTypeCMakeParamWarpAffine},${srcTypeCMakeParamWarpAffine},${maxHeightCMakeParamWarpAffine},${maxWidthCMakeParamWarpAffine},${NPCCMakeParamWarpAffine}>\" xf${componentNameLocalCap}CoreForVivadoHLS.cpp -files ${xfOpenCV_INCLUDE_DIRS}/imgproc/xf_warpaffine.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}")		
+		elseif (${componentNameLocal} STREQUAL "warpPerspective")
+			message(STATUS "generating flags for warpPerspective")  
+			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocal}<${interpolationTypeCMakeParamWarpPerspective},${srcTypeCMakeParamWarpPerspective},${maxHeightCMakeParamWarpPerspective},${maxWidthCMakeParamWarpPerspective},${NPCCMakeParamWarpPerspective}>\" xf${componentNameLocalCap}CoreForVivadoHLS.cpp -files ${xfOpenCV_INCLUDE_DIRS}/imgproc/xf_warpperspective.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}")		
+ 		elseif (${componentNameLocal} STREQUAL "boxFilter")
+			message(STATUS "generating flags for boxFilter") 
+			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocal}<${borderTypeCMakeParamBoxFilter},${kernelSizeCMakeParamBoxFilter},${srcTypeCMakeParamBoxFilter},${maxHeightCMakeParamBoxFilter},${maxWidthCMakeParamBoxFilter},${NPCCMakeParamBoxFilter}>\" xf${componentNameLocalCap}CoreForVivadoHLS.cpp -files ${xfOpenCV_INCLUDE_DIRS}/imgproc/xf_box_filter.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}") 	
+ 		elseif (${componentNameLocal} STREQUAL "split")
+			message(STATUS "generating flags for split") 
+			SET(SDxCompileFlagsLocal "-sds-hw \"xf::extractChannel<${srcTypeCMakeParamSplit},${dstTypeCMakeParamSplit},${maxHeightCMakeParamSplit},${maxWidthCMakeParamSplit},${NPCCMakeParamSplit}>\" xf${componentNameLocalCap}CoreForVivadoHLS.cpp -files ${xfOpenCV_INCLUDE_DIRS}/imgproc/xf_channel_extract.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}") 
+
+ 
+
 
 		elseif (${componentNameLocal} STREQUAL "multiply")
 			message(STATUS "generating flags for multiply") 
 			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocal}<${policyTypeCMakeParam},${srcTypeCMakeParam},${maxHeightCMakeParam},${maxWidthCMakeParam},${NPCCMakeParam}>\" xf${componentNameLocalCap}.cpp -files ${xfOpenCV_INCLUDE_DIRS}/core/xf_arithm.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}")				
- 		elseif (${componentNameLocal} STREQUAL "boxFilter")
-			message(STATUS "generating flags for boxFilter") 
-			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocal}<${borderTypeCMakeParamBoxFilter},${kernelSizeCMakeParamBoxFilter},${srcTypeCMakeParamBoxFilter},${maxHeightCMakeParamBoxFilter},${maxWidthCMakeParamBoxFilter},${NPCCMakeParamBoxFilter}>\" xf${componentNameLocalCap}CoreForVivadoHLS.cpp -files ${xfOpenCV_INCLUDE_DIRS}/imgproc/xf_box_filter.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}") 		
-elseif (${componentNameLocal} STREQUAL "warpAffine")
-			message(STATUS "generating flags for warpAffine")  
-			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocal}<${interpolationTypeCMakeParam},${srcTypeCMakeParam},${maxHeightCMakeParam},${maxWidthCMakeParam},${NPCCMakeParam}>\" xf${componentNameLocalCap}.cpp -files ${xfOpenCV_INCLUDE_DIRS}/imgproc/xf_warpaffine.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}")		
-		elseif (${componentNameLocal} STREQUAL "resize")
+	
+elseif (${componentNameLocal} STREQUAL "resize")
 			message(STATUS "generating flags for resize")
 			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocal}<${interpolationTypeCMakeParamResize},${srcTypeCMakeParamResize},${srcMaxHeightCMakeParamResize},${srcMaxWidthCMakeParamResize},${dstMaxHeightCMakeParamResize},${dstMaxWidthCMakeParamResize},${NPCCMakeParamResize},${maxDownScaleCMakeParamResize}>\" xf${componentNameLocalCap}CoreForVivadoHLS.cpp -files ${xfOpenCV_INCLUDE_DIRS}/imgproc/xf_resize.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}")
 

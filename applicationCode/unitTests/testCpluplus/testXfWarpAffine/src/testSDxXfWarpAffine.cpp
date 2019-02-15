@@ -144,7 +144,7 @@ int main ( int argc, char** argv )
 	std::cout << "running hardware warpAffine" << std::endl;
 	timer.StartTimer();
 	for (int i = 0; i < numberOfIterations; i++){
-	  xF_warpAffine(srcHLS, dstHLS, warp_mat, srcHLS.size());
+	  xF::warpAffine(srcHLS, dstHLS, warp_mat, srcHLS.size());
 	}
 	timer.StopTimer();
 	std::cout << "Elapsed time over " << numberOfIterations << "PL call(s): " << timer.GetElapsedUs() << " us or " << (float)timer.GetElapsedUs() / (float)numberOfIterations << "us per frame" << std::endl;

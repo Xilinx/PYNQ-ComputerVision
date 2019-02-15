@@ -32,28 +32,22 @@
  
 /*****************************************************************************
 *
+*
 *     Author: Kristof Denolf <kristof@xilinx.com>
 *     Date:   2017/11/22
 *
 *****************************************************************************/
 
-#ifndef _XFSDXSPLIT_H_
-#define _XFSDXSPLIT_H_
+#ifndef _XFSDXDWRAPAFFINE_H_
+#define _XFSDXDWRAPAFFINE_H_
 
-///SDx temporal fix for Clang issue
-#ifdef __SDSCC__
-#undef __ARM_NEON__
-#undef __ARM_NEON
-#include <opencv2/core/core.hpp>
-#define __ARM_NEON__
-#define __ARM_NEON
-#else
-#include <opencv2/core/core.hpp>
-#endif 
 
-namespace xF 
-{  
-	void split(cv::Mat &src, std::vector<cv::Mat> &dst); 
-}
+#include "common/xf_common.h"
+ 
+
+void xF_warpAffine(
+	xf::Mat<${srcTypeCMakeParamWarpAffine}, ${maxHeightCMakeParamWarpAffine}, ${maxWidthCMakeParamWarpAffine}, ${NPCCMakeParamWarpAffine}>* imgInput,
+	xf::Mat<${dstTypeCMakeParamWarpAffine}, ${maxHeightCMakeParamWarpAffine}, ${maxWidthCMakeParamWarpAffine}, ${NPCCMakeParamWarpAffine}>* imgOutput, float *transform_matrix);
+  
 
 #endif

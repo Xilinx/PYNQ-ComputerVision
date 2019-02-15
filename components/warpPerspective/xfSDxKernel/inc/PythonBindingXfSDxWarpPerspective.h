@@ -38,8 +38,8 @@
 *
 *****************************************************************************/
 
-#ifndef PYOPENCV_CV_DILATE
-#define PYOPENCV_CV_DILATE
+#ifndef PYOPENCV_CV_WARPPERSPECTIVE
+#define PYOPENCV_CV_WARPPERSPECTIVE
 
 #include "xfSDxWarpPerspective.h"
 
@@ -69,7 +69,7 @@ static PyObject* pyopencv_cv_warpPerspective(PyObject* , PyObject* args, PyObjec
         pyopencv_to(pyobj_dsize, dsize, ArgInfo("dsize", 0)) &&
         pyopencv_to(pyobj_borderValue, borderValue, ArgInfo("borderValue", 0)) )
     {
-        ERRWRAP2(xF_warpPerspective(src, dst, M, dsize, flags, borderMode, borderValue));
+        ERRWRAP2(xF::warpPerspective(src, dst, M, dsize, flags, borderMode, borderValue));
         return pyopencv_from(dst);
     }
     }
