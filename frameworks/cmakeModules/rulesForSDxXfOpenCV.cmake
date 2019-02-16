@@ -264,6 +264,15 @@ if(NOT DEFINED policyTypeCMakeParam${componentNameCapLocalForRule})
 	set(policyTypeCMakeParam${componentNameCapLocalForRule} ${XF_CONVERT_POLICY_SATURATE} CACHE STRING "overflow")
 endif()
 
+#Add
+set(componentNameCapLocalForRule "Add")
+setDefaultParameters1In1OutModule(${componentNameCapLocalForRule})
+
+if(NOT DEFINED policyTypeCMakeParam${componentNameCapLocalForRule})
+	set(policyTypeCMakeParam${componentNameCapLocalForRule} ${XF_CONVERT_POLICY_SATURATE} CACHE STRING "overflow")
+endif()
+
+
 #Absdiff
 set(componentNameCapLocalForRule "Absdiff")
 setDefaultParameters1In1OutModule(${componentNameCapLocalForRule})
