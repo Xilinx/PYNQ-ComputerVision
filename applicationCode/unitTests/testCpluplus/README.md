@@ -81,14 +81,17 @@
     
 ## Running unit test on Board
 
-  + To run the unit tests, program the FPGA with the target bitstream (.bin) and execute the test with the sudo command on the board
+  + To run the unit tests, program the FPGA with the target bitstream (.bin) with the sudo command on the board
     ```commandline
     $ cd ~/proj/test
     $ su
     $ echo 0 > /sys/class/fpga_manager/fpga0/flags
     $ cp testSDxXfFilter2D.bit.bin /lib/firmware
     $ echo testSDxXfFilter2D.bit.bin > /sys/class/fpga_manager/fpga0/firmware
-    $ ./testSDxXfFilter2D 
+    ```
+  + Prior to running the tests, the required image files must first be present (e.g. bigBunny_1080.png). These files can be copied to the local directory on the board such as ~/proj/images. Then, the individual tests can be executed in sudo mode or while still under su mode from before.
+    ```commandline
+    $ sudo ./testSDxXfFilter2D ~/proj/images/bigBunny_1080.png
     ```
     you should see ~140fps measured result as well as an outline of big bunny pop up on your terminal.
  
