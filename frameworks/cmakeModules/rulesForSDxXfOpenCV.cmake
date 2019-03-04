@@ -256,6 +256,14 @@ if(NOT DEFINED thresholdTypeCMakeParam${componentNameCapLocalForRule})
 	set(thresholdTypeCMakeParam${componentNameCapLocalForRule} ${XF_THRESHOLD_TYPE_BINARY} CACHE STRING "Threshold Type")
 endif()
 
+#Multiply
+set(componentNameCapLocalForRule "Multiply")
+setDefaultParameters1In1OutModule(${componentNameCapLocalForRule})
+
+if(NOT DEFINED policyTypeCMakeParam${componentNameCapLocalForRule})
+	set(policyTypeCMakeParam${componentNameCapLocalForRule} ${XF_CONVERT_POLICY_SATURATE} CACHE STRING "overflow")
+endif()
+
 #Subtract
 set(componentNameCapLocalForRule "Subtract")
 setDefaultParameters1In1OutModule(${componentNameCapLocalForRule})

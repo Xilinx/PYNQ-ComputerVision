@@ -41,4 +41,6 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/../../../
 include(rulesForSDxXfOpenCV)
 SET(componentName remap)
 
+add_subdirectory(${PROJECT_SOURCE_DIR}/../../../../frameworks/utilities/makeMapForRemap ${CMAKE_CURRENT_BINARY_DIR}/makeMapForRemap)
+link_libraries(makeMapForRemap)
 createXfOpenCVUnitTestPL("../../../.." ${componentName})

@@ -145,7 +145,7 @@ int main ( int argc, char** argv )
 	std::cout << "running hardware multiply" << std::endl;
 	timer.StartTimer();
 	for (int i = 0; i < numberOfIterations; i++){  
-		xF_multiply(src1HLS, src2HLS, dstHLS, scale);
+		xF::multiply(src1HLS, src2HLS, dstHLS, scale);
 	}
 	timer.StopTimer();	
 	std::cout << "Elapsed time over " << numberOfIterations << "PL call(s): " << timer.GetElapsedUs() << " us or " << (float)timer.GetElapsedUs() / (float)numberOfIterations << "us per frame" << std::endl;
