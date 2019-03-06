@@ -71,6 +71,7 @@ static PyObject* pyopencv_cv_initUndistortRectifyMap(PyObject* , PyObject* args,
         pyopencv_to(pyobj_R, R, ArgInfo("R", 0)) &&
         pyopencv_to(pyobj_newCameraMatrix, newCameraMatrix, ArgInfo("newCameraMatrix", 0)) &&
         pyopencv_to(pyobj_size, size, ArgInfo("size", 0)) &&
+		pyopencv_to(pyobj_size, size, ArgInfo("m1type", 0)) &&
         pyopencv_to(pyobj_map1, map1, ArgInfo("map1", 1)) &&
         pyopencv_to(pyobj_map2, map2, ArgInfo("map2", 1)) )
     {
