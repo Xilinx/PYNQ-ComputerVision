@@ -637,13 +637,9 @@ elseif (${componentNameLocal} STREQUAL "phase")
  		elseif (${componentNameLocal} STREQUAL "split")
 			message(STATUS "generating flags for split") 
 			SET(SDxCompileFlagsLocal "-sds-hw \"xf::extractChannel<${srcTypeCMakeParamSplit},${dstTypeCMakeParamSplit},${maxHeightCMakeParamSplit},${maxWidthCMakeParamSplit},${NPCCMakeParamSplit}>\" xf${componentNameLocalCap}CoreForVivadoHLS.cpp -files ${xfOpenCV_INCLUDE_DIRS}/imgproc/xf_channel_extract.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}") 
-
- 
-
-
 		elseif (${componentNameLocal} STREQUAL "multiply")
 			message(STATUS "generating flags for multiply") 
-			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocal}<${policyTypeCMakeParam},${srcTypeCMakeParam},${maxHeightCMakeParam},${maxWidthCMakeParam},${NPCCMakeParam}>\" xf${componentNameLocalCap}.cpp -files ${xfOpenCV_INCLUDE_DIRS}/core/xf_arithm.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}")				
+			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocal}<${policyTypeCMakeParamMultiply},${srcTypeCMakeParamMultiply},${maxHeightCMakeParamMultiply},${maxWidthCMakeParamMultiply},${NPCCMakeParamMultiply}>\" xf${componentNameLocalCap}.cpp -files ${xfOpenCV_INCLUDE_DIRS}/core/xf_arithm.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}")
 	
 elseif (${componentNameLocal} STREQUAL "resize")
 			message(STATUS "generating flags for resize")
