@@ -133,7 +133,7 @@ int main ( int argc, char** argv )
 	std::cout << "Elapsed time over " << numberOfIterations << "SW call(s): " << timer.GetElapsedUs() << " us or " << (float)timer.GetElapsedUs() / (float)numberOfIterations << "us per frame" << std::endl;
 
 	// Call wrapper for xf::cornerHarris
-	std::cout << "running hardware cornerHarris" << std::endl;
+	std::cout << "running hardware calcHist" << std::endl;
 	timer.StartTimer();
 	for (int i = 0; i < numberOfIterations; i++){
 		xF::calcHist( &srcHLS, 1, 0, cv::Mat(), histogramHLS, 1, &histSize, &histRange, 1, 0 );

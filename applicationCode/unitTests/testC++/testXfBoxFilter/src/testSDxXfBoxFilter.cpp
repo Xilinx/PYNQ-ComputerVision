@@ -136,7 +136,7 @@ int main ( int argc, char** argv )
 	std::cout << "Elapsed time over " << numberOfIterations << "SW call(s): " << timer.GetElapsedUs() << " us or " << (float)timer.GetElapsedUs() / (float)numberOfIterations << "us per frame" << std::endl;
 
 	// Call wrapper for native hls compilation, designer responsible for proper instantiation parameters, like max image size, data format, ...
-	std::cout << "running hardware filter" << std::endl;
+	std::cout << "running hardware boxfilter" << std::endl;
 	timer.StartTimer();
 	for (int i = 0; i < numberOfIterations; i++){ 
 		xF::boxFilter(srcHLS, dstHLS, ddepth, kernelSize, anchor, normalize, cv::BORDER_CONSTANT);  

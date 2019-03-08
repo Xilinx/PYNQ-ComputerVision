@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 
 #*****************************************************************************
 #  Copyright (c) 2018, Xilinx, Inc.
@@ -40,80 +40,149 @@
 #*****************************************************************************
 
 import sys
+import argparse
 import os
 import glob
 import errno
 from distutils.dir_util import mkpath
 import shutil
 
-toolchain_file = "../../../../../frameworks/cmakeModules/toolchain_sdx2018.2.cmake"
-arch           = "arm64"
-clockID        = "1"
-platform       = "/platforms/Ultra96/bare/2018.2/ultra"
-usePL          = "ON"
-noBitstream    = "OFF"
-noSDCardImage  = "ON"
+toolchain_file  = "../../../../../frameworks/cmakeModules/toolchain_sdx2018.2.cmake"
+arch            = "arm64"
+clockID         = "1"
+platform        = "/platforms/Ultra96/bare/2018.2/ultra"
+usePL           = "ON"
+noBitstream     = "OFF"
+noSDCardImage   = "ON"
 unitTestFileDir = "unitTestFiles"
+buildDir        = "build_test"
 
-def buildOverlay(component):
-    target = component.replace("test","testSDx")
-    print("Building "+target+"...")
-    mkpath("build")
-    os.chdir("build")
-    #run cmake here
-    os.system("time cmake .. -DCMAKE_TOOLCHAIN_FILE="+toolchain_file+" -DSDxArch="+arch+" -DSDxClockID="+clockID+" -DSDxPlatform="+platform+" -DusePL="+usePL+" -DnoBitstream="+noBitstream+" -DnoSDCardImage="+noSDCardImage+" |& tee cmake.log")
-    #run make
-    os.system("time make "+target+"|& tee make.log")
-    bitstream = target+".bit"
-    createConvBif(bitstream)
-    os.system("bootgen -image conv.bif -arch zynqmp -o "+bitstream+".bin -w")
-    #cp bitstream and elf file to unitTestFiles
-    shutil.copy2(target, '../../unitTestFiles')
-    shutil.copy2(bitstream+".bin", '../../unitTestFiles')
-    os.chdir("..")
 
+#*****************************************************************************
+# Create a conversion .bif file
+#*****************************************************************************
 def createConvBif(component):
-    with open("conv.bif","w") as file:
+    #with open("conv.bif","w") as file:
+    file = open("conv.bif","w")
+    if(file):
         file.write("all:\n")
         file.write("{\n")
         file.write("    [destination_device = pl] "+component+"\n")
         file.write("}\n")
+        return 0 # to match shell return code
+    else:
+        return 1 # to match shell return code
+
+#*****************************************************************************
+# Build HW unit test via SDx
+#*****************************************************************************
+def buildUnitTest(component):
+    target = component.replace("test","testSDx")
+    print('Building {0:32s} ... '.format(target), end='', flush=True)
+    #print("Building "+target+" ...", end='')
+    if (os.path.exists("./"+buildDir)):
+        shutil.rmtree('./'+buildDir)
+    mkpath(buildDir)
+    os.chdir(buildDir)
+    #run cmake here
+    os.system("cmake .. -DCMAKE_TOOLCHAIN_FILE="+toolchain_file+" -DSDxArch="+arch+" -DSDxClockID="+clockID+" -DSDxPlatform="+platform+" -DusePL="+usePL+" -DnoBitstream="+noBitstream+" -DnoSDCardImage="+noSDCardImage+" >& cmake.log") 
+    if '-- Build files have been written to' in open('cmake.log').read():
+        print("\t CMake OK", end='')
+    else:
+        print("\t CMake FAIL", end='')
+    #run make
+    os.system("make "+target+" >&  make.log")
+    if '[100%] Built target' in open('make.log').read():
+        print("\t build OK")
+    else:
+        print("\t build FAIL")
+        os.chdir("..")
+        return
+    #convert bitstream
+    bitstream = target+".bit"
+    res = createConvBif(bitstream)
+    if(res):
+        print("ERROR: Could not create .bif file.")
+        os.chdir("..")
+        return
+    res = os.system("bootgen -image conv.bif -arch zynqmp -o "+bitstream+".bin -w >& bootgen.log")
+    if(res):
+        print("ERROR: bootgen error.")
+        os.chdir("..")
+        return
+    #cp bitstream and elf file to unitTestFiles
+    shutil.copy2(target, '../../'+unitTestFileDir)
+    shutil.copy2(bitstream+".bin", '../../'+unitTestFileDir)
+    os.chdir("..")
+
+
+#*****************************************************************************
+# Build SW unit test via SDx (C simulation)
+#*****************************************************************************
+def buildUnitTestCSim(component):
+    target = component.replace("test","testSDx")
+    print('Building {0:32s} ... '.format(target), end='', flush=True)
+    #print("Building "+target+" ...", end='')
+    if (os.path.exists("./"+buildDir)):
+        shutil.rmtree('./'+buildDir)
+    mkpath(buildDir)
+    os.chdir(buildDir)
+    #run cmake here
+    os.system("cmake .. >& cmake.log")
+    if '-- Build files have been written to' in open('cmake.log').read():
+        print("\t CMake OK", end='')
+    else:
+        print("\t CMake FAIL", end='')
+    #run make
+    os.system("make "+target+" >&  make.log")
+    if '[100%] Built target' in open('make.log').read():
+        print("\t build OK")
+    else:
+        print("\t build FAIL")
         
+    os.chdir("..")
 
+
+#*****************************************************************************
 # Main function
+#*****************************************************************************
+desc = "Script to run build on test directories."
+parser = argparse.ArgumentParser(description = desc)
+parser.add_argument("-c","--csim", help="build for C simulation only", action="store_true")
+parser.add_argument("-l","--list", help="file of tests diretories to build.")
+args = parser.parse_args()
 
-if(len(sys.argv) == 1):
+if(not args.list):
     path = './*'
     dirs = glob.glob(path)
     removePath = True
-elif(len(sys.argv) == 2):
+else:
     removePath = False
     try:
-        with open(sys.argv[1],'r') as myfile:
+        with open(args.list,'r') as myfile:
             dirs = myfile.readlines()
     except IOError as e:
         if e.errno == errno.EACCES:
             print("file exists, but isn't readable")
         elif e.errno == errno.ENOENT:
-            print("files isn't readable because it isn't there")
-else:
-    print("buildUnitTest.py [text file list of unitTests to build]")
-    quit()
+            print("file isn't readable because it isn't there")
 
 print("DIRS:"+str(dirs))
 if not os.path.exists(unitTestFileDir):
     os.mkdir(unitTestFileDir)
 for fullComponent in dirs:
-    try:
-        component = fullComponent.rstrip()
+    component = fullComponent.rstrip()
+    if(os.path.isdir(component)):
         os.chdir(component)
         if(removePath):
             componentName = os.path.basename(component)
         else:
             componentName = component 
-        buildOverlay(componentName)
+        if(args.csim):
+            buildUnitTestCSim(componentName)
+        else:
+            buildUnitTest(componentName)
         os.chdir("..")
-    except IOError as exc:
-        if exc.errno != errno.EISDIR:
-            raise
+    else:
+        print("ERROR: Directory "+component+" doesn't exist.")
 

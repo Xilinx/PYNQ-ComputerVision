@@ -132,7 +132,7 @@ int main ( int argc, char** argv )
 	std::cout << "Elapsed time over " << numberOfIterations << "SW call(s): " << timer.GetElapsedUs() << " us or " << (float)timer.GetElapsedUs() / (float)numberOfIterations << "us per frame" << std::endl;
  
 	// Call wrapper for xf::add
-	std::cout << "running hardware threshold" << std::endl;
+	std::cout << "running hardware bitwise_not" << std::endl;
 	timer.StartTimer();
 	for (int i = 0; i < numberOfIterations; i++){  
 		xF::bitwise_not(srcHLS, dstHLS);

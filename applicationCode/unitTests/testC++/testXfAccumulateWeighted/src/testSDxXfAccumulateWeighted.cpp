@@ -132,7 +132,7 @@ int main ( int argc, char** argv )
 	dstSW.convertTo(dstSW, CV_8U);
  
 	// Call wrapper for xf::Accumulate
-	std::cout << "running hardware Accumulate" << std::endl;
+	std::cout << "running hardware AccumulateWeighted" << std::endl;
 	timer.StartTimer();
 	for (int i = 0; i < numberOfIterations; i++){  
 		xF::accumulateWeighted(srcHLS, dstHLS, alpha);
@@ -153,7 +153,6 @@ int main ( int argc, char** argv )
 		writeImage(filenameSW, dstSW);
 	if (writePLResult)
 		writeImage(filenamePL, dstHLS);
-imShowOn=1;
 	// Output input and filter output
 	if (imShowOn) {
 		imshow("Input image #1", srcHLS);		

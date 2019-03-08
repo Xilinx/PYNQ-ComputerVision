@@ -139,7 +139,7 @@ int main ( int argc, char** argv )
 
  
 	// Call wrapper for xf::add
-	std::cout << "running hardware threshold" << std::endl;
+	std::cout << "running hardware bitwise_or" << std::endl;
 	timer.StartTimer();
 	for (int i = 0; i < numberOfIterations; i++){  
 		xF::bitwise_or(src1HLS, src2HLS, dstHLS);

@@ -139,7 +139,7 @@ int main ( int argc, char** argv )
 
  
 	// Call wrapper for xf::meanStdDev
-	std::cout << "running hardware meanStdDev" << std::endl;
+	std::cout << "running hardware minMaxLoc" << std::endl;
 	timer.StartTimer();
 	for (int i = 0; i < numberOfIterations; i++){ 
 		xF::minMaxLoc(srcHLS, &minHW, &maxHW, &minLocHW, &maxLocHW);

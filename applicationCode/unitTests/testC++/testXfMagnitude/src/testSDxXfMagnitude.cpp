@@ -153,7 +153,7 @@ int main ( int argc, char** argv )
 	std::cout << "Elapsed time over " << numberOfIterations << "SW call(s): " << timer.GetElapsedUs() << " us or " << (float)timer.GetElapsedUs() / (float)numberOfIterations << "us per frame" << std::endl;
 
 	// Call wrapper for xf::thresh
-	std::cout << "running hardware threshold" << std::endl;	
+	std::cout << "running hardware magnitude" << std::endl;	
 	std::cout << "gxHLS.type()"<<gxHLS.type()<< std::endl;
 	 
 	timer.StartTimer();

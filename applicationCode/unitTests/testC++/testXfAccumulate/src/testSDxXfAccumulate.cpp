@@ -153,7 +153,6 @@ int main ( int argc, char** argv )
 		writeImage(filenameSW, dstSW);
 	if (writePLResult)
 		writeImage(filenamePL, dstHLS);
-imShowOn=1;
 	// Output input and filter output
 	if (imShowOn) {
 		imshow("Input image #1", srcHLS);		

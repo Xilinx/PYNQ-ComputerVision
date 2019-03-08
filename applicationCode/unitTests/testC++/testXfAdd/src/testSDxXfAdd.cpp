@@ -137,7 +137,7 @@ int main ( int argc, char** argv )
 
  
 	// Call wrapper for xf::subtract
-	std::cout << "running hardware add" << std::endl;
+	std::cout << "running hardware Add" << std::endl;
 	timer.StartTimer();
 	for (int i = 0; i < numberOfIterations; i++){  
 		xF::add(src1HLS, src2HLS, dstHLS);
