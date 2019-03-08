@@ -49,6 +49,7 @@
 #endif 
 
 #include <Utils/inc/UtilsForXfOpenCV.h>
+#include <Mat/inc/mat.hpp> 
 #include "xfFastCoreForVivadoHLS.h"
 
 namespace xF { 
@@ -68,12 +69,14 @@ namespace xF {
 	
 		xf::Mat<srcTypeTP, maxHeightTP, maxWidthTP, NPCTP>* imgInput;
 		xf::Mat<dstTypeTP, maxHeightTP, maxWidthTP, NPCTP>* imgOutput;
-
+		
+		//need to create a tmp full image for results and then extract keypoints
+		xF::Mat dst(image.rows, image.cols, CV_8UC1);
+		
 		// perform some checks on the src type
 		cvToXfSource(image,imgInput);
 			        
 		unsigned char thresholdHLS= (unsigned char) threshold;
-		cv::Mat dst = cv::Mat::zeros(cv::Size(maxHeightTP,maxWidthTP), CV_8UC1);
 		
 		// perform some checks on the dst type
 		bool dstPostConversion = cvToXfDestination(dst, imgOutput, image); 
