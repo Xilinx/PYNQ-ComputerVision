@@ -105,7 +105,7 @@ int main ( int argc, char** argv )
 	}
 
 	// Initialize
-	Mat srcIn, dstSW;
+	Mat srcIn, srcInY, dstSW;
 	initializeSingleImageTest(filenameIn, srcIn);
 
 	int width = srcIn.size().width;
@@ -119,6 +119,7 @@ int main ( int argc, char** argv )
 	
 	//convert 3-channel image into 1-channel image
 	cvtColor(srcIn, srcHLS, CV_BGR2GRAY, 1);
+	cvtColor(srcIn, srcInY, CV_BGR2GRAY, 1); //to avoid alignment issues 
 
 	// Initialize arguments for the filter
   	cv::Point anchor = cv::Point( -1, -1 );	
@@ -130,13 +131,13 @@ int main ( int argc, char** argv )
 	std::cout << "running golden model" << std::endl;
 	timer.StartTimer();
 	for (int i = 0; i < numberOfIterations; i++){
-	   cv::boxFilter(srcHLS, dstSW, ddepth, kernelSize, anchor, normalize, cv::BORDER_CONSTANT);  
+	   cv::boxFilter(srcInY, dstSW, ddepth, kernelSize, anchor, normalize, cv::BORDER_CONSTANT);  
 	}
 	timer.StopTimer();
 	std::cout << "Elapsed time over " << numberOfIterations << "SW call(s): " << timer.GetElapsedUs() << " us or " << (float)timer.GetElapsedUs() / (float)numberOfIterations << "us per frame" << std::endl;
 
 	// Call wrapper for native hls compilation, designer responsible for proper instantiation parameters, like max image size, data format, ...
-	std::cout << "running hardware boxfilter" << std::endl;
+	std::cout << "running hardware filter" << std::endl;
 	timer.StartTimer();
 	for (int i = 0; i < numberOfIterations; i++){ 
 		xF::boxFilter(srcHLS, dstHLS, ddepth, kernelSize, anchor, normalize, cv::BORDER_CONSTANT);  
