@@ -38,8 +38,8 @@
 *
 *****************************************************************************/
 
-#ifndef _XFSDXERODE_H_
-#define _XFSDXERODE_H_
+#ifndef _XFSDXMULTIPLY_H_
+#define _XFSDXMULTIPLY_H_
 
 ///SDx temporal fix for Clang issue
 #ifdef __SDSCC__

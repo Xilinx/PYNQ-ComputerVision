@@ -38,8 +38,8 @@
 *
 *****************************************************************************/
 
-#ifndef PYOPENCV_CV_FILTER2D
-#define PYOPENCV_CV_FILTER2D
+#ifndef PYOPENCV_CV_MULTIPLY
+#define PYOPENCV_CV_MULTIPLY
 
 #include "xfSDxMultiply.h"
 
