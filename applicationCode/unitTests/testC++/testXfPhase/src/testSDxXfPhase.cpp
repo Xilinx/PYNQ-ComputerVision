@@ -115,35 +115,29 @@ int main ( int argc, char** argv )
 	//convert 3-channel image into 1-channel image
 	cvtColor(srcIn, grayIn, CV_BGR2GRAY, 1);	   
   	
-  //Sobel variables
+	//Sobel variables
 	Mat gx,gy;
-  int scale = 1;
-  int delta = 0;
-  int filter_size = 3;   
-	Sobel(grayIn, gx, CV_32F, 1, 0, filter_size, scale, delta, cv::BORDER_CONSTANT );
-	Sobel(grayIn, gy, CV_32F, 0, 1, filter_size, scale, delta, cv::BORDER_CONSTANT );
-  Mat dstSW(gx.size(), gx.type());  
-  	
-  	
-  bool angleInDegrees=false;	 	
+	int scale = 1;
+	int delta = 0;
+	int filter_size = 3;   
+	cv::Sobel(grayIn, gx, CV_32F, 1, 0, filter_size, scale, delta, cv::BORDER_CONSTANT );
+	cv::Sobel(grayIn, gy, CV_32F, 0, 1, filter_size, scale, delta, cv::BORDER_CONSTANT );
+	Mat dstSW(gx.size(), gx.type());  
+  
+  	bool angleInDegrees=false;	 	
 	// Declare variables used for HW-SW interface to achieve good performance
 	xF::Mat gxHLS(height, width, CV_16SC1);
 	xF::Mat gyHLS(height, width, CV_16SC1);
 	xF::Mat dstHLS(height, width, CV_16SC1);	
-	//copy to gHLS 
-	gx.copyTo(gxHLS);	
-	gy.copyTo(gyHLS);
-	//convert dataTpe	 
-	gxHLS.convertTo(gxHLS, CV_16SC1);	
-	gyHLS.convertTo(gyHLS, CV_16SC1);
 	
-
-	   
+	gx.convertTo(gxHLS, CV_16SC1);
+	gy.convertTo(gyHLS, CV_16SC1);
+   
 	// Apply OpenCV reference threshold
 	std::cout << "running golden model" << std::endl;
 	timer.StartTimer();
 	for (int i = 0; i < numberOfIterations; i++){
-    	phase(gx, gy, dstSW, angleInDegrees);
+    	cv::phase(gx, gy, dstSW, angleInDegrees);
 	}
 	timer.StopTimer();
 	std::cout << "Elapsed time over " << numberOfIterations << "SW call(s): " << timer.GetElapsedUs() << " us or " << (float)timer.GetElapsedUs() / (float)numberOfIterations << "us per frame" << std::endl;
