@@ -107,7 +107,7 @@ int main ( int argc, char** argv )
 	}
 
 	// Initialize
-	Mat srcIn, dstSW0, dstSW1;
+	Mat srcIn, srcInY, dstSW0, dstSW1;
 	initializeSingleImageTest(filenameIn, srcIn);
 	cv::resize(srcIn, srcIn, cv::Size(200,200));
 	int width = srcIn.size().width;
@@ -122,12 +122,13 @@ int main ( int argc, char** argv )
 
 	//convert 3-channel image into 1-channel image
 	cvtColor(srcIn, srcHLS, CV_BGR2GRAY, 1); 
+	cvtColor(srcIn, srcInY, CV_BGR2GRAY, 1); 
 	
 	// Apply OpenCV reference dilate
 	std::cout << "running golden model" << std::endl;
 	timer.StartTimer();
 	for (int i = 0; i < numberOfIterations; i++){
-		pyrUp(srcHLS, dstSW0);		
+		cv::pyrUp(srcInY, dstSW0);		
 		//pyrUp(dstSW0, dstSW1);
 	}
 	timer.StopTimer();

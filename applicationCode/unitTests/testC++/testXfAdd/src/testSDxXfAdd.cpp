@@ -107,7 +107,7 @@ int main ( int argc, char** argv )
 		return(-1);
 	}
 	// Declare variables
-  	Mat src1, src2;  
+  	Mat src1, src2, src1InY, src2InY;  
   	Mat dstSW;
 	
 	// Initialize
@@ -125,12 +125,14 @@ int main ( int argc, char** argv )
 	//convert 3-channel image into 1-channel image
 	cvtColor(src1, src1HLS, CV_BGR2GRAY, 1);	
 	cvtColor(src2, src2HLS, CV_BGR2GRAY, 1);
+	cvtColor(src1, src1InY, CV_BGR2GRAY, 1);	
+	cvtColor(src2, src2InY, CV_BGR2GRAY, 1);
 
 	// Apply OpenCV reference subtract
 	std::cout << "running golden model" << std::endl;
 	timer.StartTimer();
 	for (int i = 0; i < numberOfIterations; i++){
-		add(src1HLS, src2HLS, dstSW);
+		cv::add(src1InY, src2InY, dstSW);
 	}
 	timer.StopTimer();
 	std::cout << "Elapsed time over " << numberOfIterations << "SW call(s): " << timer.GetElapsedUs() << " us or " << (float)timer.GetElapsedUs() / (float)numberOfIterations << "us per frame" << std::endl;

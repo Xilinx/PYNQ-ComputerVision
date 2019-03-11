@@ -110,7 +110,7 @@ int main ( int argc, char** argv )
 	}
 
 	// Initialize
-	Mat srcIn;
+	Mat srcIn, srcInY;
 	
 	double minSW = 0, maxSW = 0;
   	cv::Point minLocSW(-1, -1), maxLocSW(-1, -1);
@@ -127,12 +127,13 @@ int main ( int argc, char** argv )
 	
 	//convert 3-channel image into 1-channel image
 	cvtColor(srcIn, srcHLS, CV_BGR2GRAY, 1); 
+	cvtColor(srcIn, srcInY, CV_BGR2GRAY, 1); 
 	
 	// Apply OpenCV reference threshold
 	std::cout << "running golden model" << std::endl;
 	timer.StartTimer();
 	for (int i = 0; i < numberOfIterations; i++){
-		cv::minMaxLoc(srcHLS, &minSW, &maxSW, &minLocSW, &maxLocSW);
+		cv::minMaxLoc(srcInY, &minSW, &maxSW, &minLocSW, &maxLocSW);
 	}
 	timer.StopTimer();
 	std::cout << "Elapsed time over " << numberOfIterations << "SW call(s): " << timer.GetElapsedUs() << " us or " << (float)timer.GetElapsedUs() / (float)numberOfIterations << "us per frame" << std::endl;

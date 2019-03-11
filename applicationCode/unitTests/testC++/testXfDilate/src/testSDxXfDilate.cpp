@@ -135,7 +135,7 @@ int main ( int argc, char** argv )
 	std::cout << "running golden model" << std::endl;
 	timer.StartTimer();
 	for (int i = 0; i < numberOfIterations; i++){
-	   dilate(srcInY, dstSW, kernelD);
+	   cv::dilate(srcInY, dstSW, kernelD);
 	}
 	timer.StopTimer();
 	std::cout << "Elapsed time over " << numberOfIterations << "SW call(s): " << timer.GetElapsedUs() << " us or " << (float)timer.GetElapsedUs() / (float)numberOfIterations << "us per frame" << std::endl;

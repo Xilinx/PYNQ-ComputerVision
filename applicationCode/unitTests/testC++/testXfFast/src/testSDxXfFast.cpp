@@ -108,7 +108,7 @@ int main ( int argc, char** argv )
   	bool nonMaxSupression= true;
 
 	// Initialize
-	Mat srcIn, dstSW, dstHW;
+	Mat srcIn, srcInY, dstSW, dstHW;
 	std::vector<KeyPoint> keypointSW; 
 	initializeSingleImageTest(filenameIn, srcIn);
 
@@ -121,12 +121,13 @@ int main ( int argc, char** argv )
   	
 	//convert 3-channel image into 1-channel image
 	cvtColor(srcIn, srcHLS, CV_BGR2GRAY, 1);	
+	cvtColor(srcIn, srcInY, CV_BGR2GRAY, 1);	
   	
 	// Apply OpenCV reference canny
 	std::cout << "running golden model" << std::endl;
 	timer.StartTimer();
 	for (int i = 0; i < numberOfIterations; i++){
-		cv::FAST (srcHLS, keypointSW, threshold, nonMaxSupression);
+		cv::FAST (srcInY, keypointSW, threshold, nonMaxSupression);
 	}
 	timer.StopTimer();
 	std::cout << "Elapsed time over " << numberOfIterations << "SW call(s): " << timer.GetElapsedUs() << " us or " << (float)timer.GetElapsedUs() / (float)numberOfIterations << "us per frame" << std::endl;

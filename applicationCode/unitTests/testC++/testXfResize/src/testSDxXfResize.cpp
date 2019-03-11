@@ -106,7 +106,7 @@ int main ( int argc, char** argv )
 		return(-1);
 	}
 	// Declare variables
-	Mat src, dstSW;
+	Mat src, srcInY, dstSW;
 	
 	// Initialize
 	initializeSingleImageTest(fileName, src); 
@@ -122,12 +122,13 @@ int main ( int argc, char** argv )
 	
 	//convert 3-channel image into 1-channel image
 	cvtColor(src, srcHLS, CV_BGR2GRAY, 1);	
+	cvtColor(src, srcInY, CV_BGR2GRAY, 1);	
 
 	// Apply OpenCV reference Absdiff
 	std::cout << "running golden model" << std::endl;
 	timer.StartTimer();
 	for (int i = 0; i < numberOfIterations; i++){
-		cv::resize(srcHLS, dstSW, cv::Size(dstWidth,dstHeight));
+		cv::resize(srcInY, dstSW, cv::Size(dstWidth,dstHeight));
 	}
 	timer.StopTimer();
 	std::cout << "Elapsed time over " << numberOfIterations << "SW call(s): " << timer.GetElapsedUs() << " us or " << (float)timer.GetElapsedUs() / (float)numberOfIterations << "us per frame" << std::endl;

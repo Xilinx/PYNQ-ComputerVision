@@ -106,7 +106,7 @@ int main ( int argc, char** argv )
 		return(-1);
 	}
 	// Declare variables
-	Mat src, gray, dstSW;  
+	Mat src, srcInY, gray, dstSW;  
 	
 	// Initialize
 	initializeSingleImageTest(fileName, src); 
@@ -120,6 +120,7 @@ int main ( int argc, char** argv )
 
 	//convert 3-channel image into 4-channel image
 	cv::cvtColor(src, srcHLS, CV_BGR2RGBA);	   
+	cv::cvtColor(src, srcInY, CV_BGR2RGBA);	   
 	 
 	//src.copyTo(src1HLS);
 	std::vector<cv::Mat> channels;   
@@ -134,7 +135,7 @@ int main ( int argc, char** argv )
 	std::cout << "running golden model" << std::endl;
 	timer.StartTimer();
 	for (int i = 0; i < numberOfIterations; i++){
-		split(srcHLS, channels);
+		cv::split(srcInY, channels);
 	}
 	timer.StopTimer();
 	std::cout << "Elapsed time over " << numberOfIterations << "SW call(s): " << timer.GetElapsedUs() << " us or " << (float)timer.GetElapsedUs() / (float)numberOfIterations << "us per frame" << std::endl;

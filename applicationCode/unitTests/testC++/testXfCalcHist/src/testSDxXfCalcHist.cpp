@@ -105,7 +105,7 @@ int main ( int argc, char** argv )
 	}
 
 	// Initialize
-	cv::Mat srcIn, gray, histogramSW;  	
+	cv::Mat srcIn, gray, histogramSW, srcInY;  	
   	int histSize = 256;
 
 	/// Set the ranges ( for B,G,R) )
@@ -122,12 +122,13 @@ int main ( int argc, char** argv )
 	
 	//convert 3-channel image into 1-channel image
 	cvtColor(srcIn, srcHLS, CV_BGR2GRAY, 1);
+	cvtColor(srcIn, srcInY, CV_BGR2GRAY, 1);
 
 	// Apply OpenCV reference calcHist
 	std::cout << "running golden model" << std::endl;
 	timer.StartTimer();
 	for (int i = 0; i < numberOfIterations; i++){
-		cv::calcHist( &srcHLS, 1, 0, cv::Mat(), histogramSW, 1, &histSize, &histRange, 1, 0 );
+		cv::calcHist( &srcInY, 1, 0, cv::Mat(), histogramSW, 1, &histSize, &histRange, 1, 0 );
 	}
 	timer.StopTimer();
 	std::cout << "Elapsed time over " << numberOfIterations << "SW call(s): " << timer.GetElapsedUs() << " us or " << (float)timer.GetElapsedUs() / (float)numberOfIterations << "us per frame" << std::endl;

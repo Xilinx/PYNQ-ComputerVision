@@ -115,7 +115,7 @@ int main ( int argc, char** argv )
 	}
 
 	// Initialize
-	Mat srcIn, dstSW;
+	Mat srcIn, dstSW, srcInY;
 	initializeSingleImageTest(filenameIn, srcIn);
 
 	int width = srcIn.size().width;
@@ -127,12 +127,13 @@ int main ( int argc, char** argv )
 	
 	//convert 3-channel image into 1-channel image
 	cvtColor(srcIn, srcHLS, CV_BGR2GRAY, 1);
+	cvtColor(srcIn, srcInY, CV_BGR2GRAY, 1);
 
 	// Apply OpenCV reference canny
 	std::cout << "running golden model" << std::endl;
 	timer.StartTimer();
 	for (int i = 0; i < numberOfIterations; i++){
-	   cv::Canny(srcHLS, dstSW, threshold1, threshold2, apertureSize, L2gradient);
+	   cv::Canny(srcInY, dstSW, threshold1, threshold2, apertureSize, L2gradient);
 	}
 	timer.StopTimer();
 	std::cout << "Elapsed time over " << numberOfIterations << "SW call(s): " << timer.GetElapsedUs() << " us or " << (float)timer.GetElapsedUs() / (float)numberOfIterations << "us per frame" << std::endl;

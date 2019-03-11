@@ -107,12 +107,15 @@ int main ( int argc, char** argv )
 	}
 
 	// Initialize
-	Mat srcIn, dstSW; 
+	Mat srcIn, srcInY, dstSW; 
 	
 	Mat lookUpTable(1, 256, CV_8U);	// color reduction
-	uchar* p = lookUpTable.data;
   	for( int i = 0; i < 256; ++i)
-  		p[i] = 16 * (i/16);	
+  		lookUpTable.data[i] = 16 * (i/16);  
+  
+    xF::Mat lookUpTableHLS(1, 256, CV_8U);  // color reduction
+    for( int i = 0; i < 256; ++i)
+        lookUpTableHLS.data[i] = 16 * (i/16);
   	
 	initializeSingleImageTest(filenameIn, srcIn);
 
@@ -126,12 +129,13 @@ int main ( int argc, char** argv )
 	
 	//convert 3-channel image into 1-channel image
 	cvtColor(srcIn, srcHLS, CV_BGR2GRAY, 1); 
+	cvtColor(srcIn, srcInY, CV_BGR2GRAY, 1); 
 	
 	// Apply OpenCV reference threshold
 	std::cout << "running golden model" << std::endl;
 	timer.StartTimer();
 	for (int i = 0; i < numberOfIterations; i++){
-		LUT(srcHLS, lookUpTable, dstSW);
+		cv::LUT(srcInY, lookUpTable, dstSW);
 	}
 	timer.StopTimer();
 	std::cout << "Elapsed time over " << numberOfIterations << "SW call(s): " << timer.GetElapsedUs() << " us or " << (float)timer.GetElapsedUs() / (float)numberOfIterations << "us per frame" << std::endl;

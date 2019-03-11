@@ -109,7 +109,7 @@ int main ( int argc, char** argv )
 	}
 
 	// Initialize
-	Mat srcIn;
+	Mat srcIn, srcInY;
 	initializeSingleImageTest(filenameIn, srcIn);
 
 	int width = srcIn.size().width;
@@ -121,6 +121,7 @@ int main ( int argc, char** argv )
 	
 	//convert 3-channel image into 1-channel image
 	cvtColor(srcIn, srcHLS, CV_BGR2GRAY, 1);
+	cvtColor(srcIn, srcInY, CV_BGR2GRAY, 1);
 	
    	/// Initialize warp_mat 
   	cv::Mat warp_mat(2,3,CV_64F, cvScalar(0.0));
@@ -135,7 +136,7 @@ int main ( int argc, char** argv )
 	std::cout << "running golden model" << std::endl;
 	timer.StartTimer();
 	for (int i = 0; i < numberOfIterations; i++){
-	   warpAffine(srcHLS, dstSW, warp_mat, srcIn.size());
+	   cv::warpAffine(srcInY, dstSW, warp_mat, srcIn.size());
 	}
 	timer.StopTimer();
 	std::cout << "Elapsed time over " << numberOfIterations << "SW call(s): " << timer.GetElapsedUs() << " us or " << (float)timer.GetElapsedUs() / (float)numberOfIterations << "us per frame" << std::endl;
