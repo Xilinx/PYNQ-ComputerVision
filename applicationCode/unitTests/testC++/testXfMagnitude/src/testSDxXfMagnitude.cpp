@@ -129,16 +129,8 @@ int main ( int argc, char** argv )
 	xF::Mat gyHLS(height, width, CV_16SC1);
 	xF::Mat dstHLS(height, width, CV_16SC1);	
 	 
-	gx.convertTo(grayIn, CV_16SC1);	
-	gy.convertTo(grayIn, CV_16SC1);
-	
-	gx.copyTo(gxHLS);	
-	gy.copyTo(gyHLS);
-	 
-		
-	imshow("gxHLS", gxHLS);
-	imshow("gyHLS", gyHLS);
-	waitKey(0);	 
+	gx.convertTo(gxHLS, CV_16SC1);
+	gy.convertTo(gyHLS, CV_16SC1);	 
 	
 	std::cout<<"gxHLS.type()="<<gxHLS.type()<<std::endl;
 	std::cout<<"gyHLS.type()="<<gyHLS.type()<<std::endl;
@@ -179,6 +171,8 @@ int main ( int argc, char** argv )
 	// Output input and filter output
 	if (imShowOn) {
 		imshow("Input image", srcIn);
+		imshow("gxHLS", gxHLS);
+		imshow("gyHLS", gyHLS);
 		imshow("Processed (SW)", dstSW);
 		imshow("Processed (PL)", dstHLS);
 		waitKey(0);
