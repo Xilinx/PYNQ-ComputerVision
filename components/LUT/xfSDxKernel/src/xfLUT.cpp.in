@@ -56,26 +56,32 @@ namespace xF {
 
 	void LUT(cv::Mat &src, cv::Mat &LUT, cv::Mat &dst)
 	{
-		const int maxWidthTP 	= ${maxWidthCMakeParam};
-		const int maxHeightTP 	= ${maxHeightCMakeParam};
-		const int srcTypeTP 	= ${srcTypeCMakeParam}; 
-		const int NPCTP 		= ${NPCCMakeParam};
+		const int maxWidthTP 	= ${maxWidthCMakeParamLUT};
+		const int maxHeightTP 	= ${maxHeightCMakeParamLUT};
+		const int srcTypeTP 	= ${srcTypeCMakeParamLUT}; 
+		const int NPCTP 		= ${NPCCMakeParamLUT};
 	
 		//check for limitations of xfOpenCV module
-		assert(src.channels() == 1); 
+		assert(src.channels() == 1);
 	
 		xf::Mat<srcTypeTP, maxHeightTP, maxWidthTP, NPCTP>* imgInput; 	
 		xf::Mat<srcTypeTP, maxHeightTP, maxWidthTP, NPCTP>* imgOutput; 
 
 		// perform some checks on the src type
-		cvToXfSource(src, imgInput);           
+		cvToXfSource(src, imgInput);
+
+		// perform some checks on the dst type
+		bool dstPostConversion = cvToXfDestination(dst, imgOutput, src);		
 	 
-		 unsigned char* p = LUT.ptr(); 
+		unsigned char* p = (unsigned char *) LUT.data; 
 	
 		// call xf::LUT
 		xF_LUT(imgInput, imgOutput, p);
+		
+		// If SW post conversion required, we do it here
+		if (dstPostConversion) 
+			xfMatDepthPostConversion(dst,imgOutput);
 		 
-	
 		delete imgInput; 	
 		delete imgOutput; 
 		 
