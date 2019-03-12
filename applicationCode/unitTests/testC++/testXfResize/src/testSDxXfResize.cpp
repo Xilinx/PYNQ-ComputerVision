@@ -113,8 +113,8 @@ int main ( int argc, char** argv )
 
 	int srcWidth  = src.size().width;
 	int srcHeight = src.size().height;
-	int dstWidth = 50;
-	int dstHeight = 50;
+	int dstWidth = src.size().width/2;
+	int dstHeight = src.size().height/2;
 	 
 	// Declare variables used for HW-SW interface to achieve good performance
 	xF::Mat srcHLS(srcHeight, srcWidth, CV_8UC1); 
