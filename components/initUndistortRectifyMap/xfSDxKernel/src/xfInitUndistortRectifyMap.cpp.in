@@ -69,10 +69,12 @@ void initUndistortRectifyMap(cv::Mat &cameraMatrix, cv::Mat &distCoeffs, cv::Mat
 	const int NPCTP = ${NPCCMakeParamInitUndistortRectifyMap};
 	
 	//check for limitations of xfOpenCV module
+	//compile-time checks
+	static_assert(mapTypeTP == XF_32FC1, "XF only supports 32FC1");
+	static_assert((distortionCoefficentSizeTP == 4 || distortionCoefficentSizeTP == 5 || distortionCoefficentSizeTP == 8), "XF only supports 4, 5 or 8 distortion coefficients");
+	//run-time
 	assert(m1type == CV_32FC1); //TODO: check m1type directly to mapTypeTP through proper conversion of XF_TYPE to CV_TYPE
-	assert(mapTypeTP == XF_32FC1);
 	assert(cameraMatrixSizeTP == 3);
-	assert(distortionCoefficentSizeTP == 4 || distortionCoefficentSizeTP == 5 || distortionCoefficentSizeTP == 8);
 	
 	xf::Mat<mapTypeTP, maxHeightTP, maxWidthTP, NPCTP> *mapX;
 	xf::Mat<mapTypeTP, maxHeightTP, maxWidthTP, NPCTP> *mapY;
@@ -94,8 +96,20 @@ void initUndistortRectifyMap(cv::Mat &cameraMatrix, cv::Mat &distCoeffs, cv::Mat
 	const CvMat cvCameraMatrix = cameraMatrix;
 	const CvMat cvIRA = iRA;
 	
-	parameterTypeTP cameraMatrixHLS[cameraMatrixSizeTP*cameraMatrixSizeTP];
-	parameterTypeTP iRnewCameraMatrixHLS[cameraMatrixSizeTP*cameraMatrixSizeTP];
+	parameterTypeTP *cameraMatrixHLS, *iRnewCameraMatrixHLS, *distCoeffsHLS;
+	
+	#if __SDSCC__
+		cameraMatrixHLS=(parameterTypeTP*)sds_alloc(cameraMatrixSizeTP*cameraMatrixSizeTP*sizeof(parameterTypeTP));
+		iRnewCameraMatrixHLS=(parameterTypeTP*)sds_alloc(cameraMatrixSizeTP*cameraMatrixSizeTP*sizeof(parameterTypeTP));
+		distCoeffsHLS=(parameterTypeTP*)sds_alloc(distortionCoefficentSizeTP*sizeof(parameterTypeTP));
+	#else
+		cameraMatrixHLS=(parameterTypeTP*)malloc(cameraMatrixSizeTP*cameraMatrixSizeTP*sizeof(parameterTypeTP));
+		iRnewCameraMatrixHLS=(parameterTypeTP*)malloc(cameraMatrixSizeTP*cameraMatrixSizeTP*sizeof(parameterTypeTP));
+		distCoeffsHLS=(parameterTypeTP*)malloc(distortionCoefficentSizeTP*sizeof(parameterTypeTP));
+	#endif
+	
+	//parameterTypeTP cameraMatrixHLS[cameraMatrixSizeTP*cameraMatrixSizeTP];
+	//parameterTypeTP iRnewCameraMatrixHLS[cameraMatrixSizeTP*cameraMatrixSizeTP];
 
 	for(int i=0; i<cameraMatrixSizeTP; i++) {
 		for(int j=0; j<cameraMatrixSizeTP; j++) {
@@ -104,7 +118,7 @@ void initUndistortRectifyMap(cv::Mat &cameraMatrix, cv::Mat &distCoeffs, cv::Mat
 		}
 	}
 	
-	parameterTypeTP distCoeffsHLS[distortionCoefficentSizeTP];
+	//parameterTypeTP distCoeffsHLS[distortionCoefficentSizeTP];
 	const CvMat cvDistCoeffs = distCoeffs;
 
 	for (int i=0; i<distortionCoefficentSizeTP; i++) {
@@ -124,6 +138,16 @@ void initUndistortRectifyMap(cv::Mat &cameraMatrix, cv::Mat &distCoeffs, cv::Mat
 	if (dstPostConversionY) {
 		xfMatDepthPostConversion(map2,mapY);		
 	}	
+	
+	#if __SDSCC__
+		sds_free(cameraMatrixHLS);
+		sds_free(iRnewCameraMatrixHLS);
+		sds_free(distCoeffsHLS);
+	#else
+		free(cameraMatrixHLS);
+		free(iRnewCameraMatrixHLS);
+		free(distCoeffsHLS);
+	#endif
 	
 	delete mapX;
 	delete mapY;
