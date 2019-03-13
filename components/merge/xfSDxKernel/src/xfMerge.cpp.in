@@ -78,7 +78,7 @@ namespace xF
 		cvToXfSource(src[3], imgInput[3]);
 		        
 		// perform some checks on the dst type
-		bool dstPostConversion = cvToXfDestination(dst, imgOutput, src[0]); 
+		bool dstPostConversion = cvToXfDestination(dst, imgOutput, src[0].size(),dst.type()); 
 		 
 		// call xf::merge 
 		xF_merge(imgInput[0],imgInput[1],imgInput[2],imgInput[3], imgOutput);

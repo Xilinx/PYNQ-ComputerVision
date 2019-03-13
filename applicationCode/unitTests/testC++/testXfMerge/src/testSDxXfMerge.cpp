@@ -106,8 +106,8 @@ int main ( int argc, char** argv )
 		return(-1);
 	}
 	// Declare variables
-	Mat src, srcInY, gray; 
-	Mat dstSW;
+	cv::Mat src, srcInRGBA; 
+	cv::Mat dstSW;
 	
 	// Initialize
 	initializeSingleImageTest(fileName1, src); 
@@ -119,21 +119,18 @@ int main ( int argc, char** argv )
 	xF::Mat src1HLS(height, width, CV_8UC1); 
 	xF::Mat dstHLS(height, width, CV_8UC4);
 
-	//convert 3-channel image into 1-channel image
-	cvtColor(src, src1HLS, CV_BGR2GRAY, 1);	 
-	cvtColor(src, srcInY, CV_BGR2GRAY, 1);	 
+	//convert 3-channel image 4-channel to and then split to generate test channels
+	cv::cvtColor(src, srcInRGBA, CV_BGR2RGBA);
 	
 	std::vector<cv::Mat> channels; 
-	channels.push_back(srcInY); 
-	channels.push_back(srcInY); 
-	channels.push_back(srcInY); 
-	channels.push_back(srcInY); 
+	cv::split(srcInRGBA, channels);
 	
 	std::vector<cv::Mat> channelsHLS; 
-	channelsHLS.push_back(src1HLS); 
-	channelsHLS.push_back(src1HLS); 
-	channelsHLS.push_back(src1HLS); 
-	channelsHLS.push_back(src1HLS); 
+	channelsHLS.push_back(xF::Mat(height, width, CV_8UC1)); 
+	channelsHLS.push_back(xF::Mat(height, width, CV_8UC1)); 
+	channelsHLS.push_back(xF::Mat(height, width, CV_8UC1)); 
+	channelsHLS.push_back(xF::Mat(height, width, CV_8UC1));
+	cv::split(srcInRGBA, channelsHLS);
 	
 	// Apply OpenCV reference merge
 	std::cout << "running golden model" << std::endl;
