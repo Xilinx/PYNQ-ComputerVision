@@ -106,7 +106,7 @@ int main ( int argc, char** argv )
 		return(-1);
 	}
 	// Declare variables
-	Mat src, srcInY, gray, dstSW;  
+	Mat src, srcInRGBA;  
 	
 	// Initialize
 	initializeSingleImageTest(fileName, src); 
@@ -116,26 +116,25 @@ int main ( int argc, char** argv )
 	  
 	// Declare variables used for HW-SW interface to achieve good performance
 	xF::Mat srcHLS(height, width, CV_8UC4); 
-	xF::Mat dstHLS(height, width, CV_8UC1);
 
 	//convert 3-channel image into 4-channel image
 	cv::cvtColor(src, srcHLS, CV_BGR2RGBA);	   
-	cv::cvtColor(src, srcInY, CV_BGR2RGBA);	   
+	cv::cvtColor(src, srcInRGBA, CV_BGR2RGBA);	   
 	 
 	//src.copyTo(src1HLS);
 	std::vector<cv::Mat> channels;   
 	
 	std::vector<cv::Mat> channelsHLS;     
-	channelsHLS.push_back(cv::Mat::zeros(height,width, CV_8UC1)); 
-	channelsHLS.push_back(cv::Mat::zeros(height,width, CV_8UC1)); 
-	channelsHLS.push_back(cv::Mat::zeros(height,width, CV_8UC1)); 
-	channelsHLS.push_back(cv::Mat::zeros(height,width, CV_8UC1)); 
-	 	
+	channelsHLS.push_back(xF::Mat(height,width, CV_8UC1)); 
+	channelsHLS.push_back(xF::Mat(height,width, CV_8UC1)); 
+	channelsHLS.push_back(xF::Mat(height,width, CV_8UC1)); 
+	channelsHLS.push_back(xF::Mat(height,width, CV_8UC1)); 
+	
 	// Apply OpenCV reference merge
 	std::cout << "running golden model" << std::endl;
 	timer.StartTimer();
 	for (int i = 0; i < numberOfIterations; i++){
-		cv::split(srcInY, channels);
+		cv::split(srcInRGBA, channels);
 	}
 	timer.StopTimer();
 	std::cout << "Elapsed time over " << numberOfIterations << "SW call(s): " << timer.GetElapsedUs() << " us or " << (float)timer.GetElapsedUs() / (float)numberOfIterations << "us per frame" << std::endl;
@@ -164,9 +163,9 @@ int main ( int argc, char** argv )
 	 
 	//write back images in files
 	if (writeSWResult)
-		writeImage(filenameSW, dstSW);
+		writeImage(filenameSW, channels[0]);
 	if (writePLResult)
-		writeImage(filenamePL, dstHLS);
+		writeImage(filenamePL, channelsHLS[0]);
 
 	// Output input and filter output
 	if (imShowOn) {

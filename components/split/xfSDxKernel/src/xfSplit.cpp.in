@@ -73,11 +73,10 @@ namespace xF
 		cvToXfSource(src, imgInput);  
 	 
 		// perform some checks on the dst type
-		bool dstPostConversion0 = cvToXfDestination(dst[0], imgOutput[0], src); 	
-		bool dstPostConversion1 = cvToXfDestination(dst[1], imgOutput[1], src); 	
-		bool dstPostConversion2 = cvToXfDestination(dst[2], imgOutput[2], src); 
-		bool dstPostConversion3 = cvToXfDestination(dst[3], imgOutput[3], src); 
-		// bool dstPostConversion = cvToXfDestination(dst, imgOutput, src);  
+		bool dstPostConversion0 = cvToXfDestination(dst[0], imgOutput[0], src.size(),src.depth()); 	
+		bool dstPostConversion1 = cvToXfDestination(dst[1], imgOutput[1], src.size(),src.depth()); 	
+		bool dstPostConversion2 = cvToXfDestination(dst[2], imgOutput[2], src.size(),src.depth()); 
+		bool dstPostConversion3 = cvToXfDestination(dst[3], imgOutput[3], src.size(),src.depth()); 
 			  
 		// call xf::extractChannel 
 		xF_split(imgInput, imgOutput[0],imgOutput[1],imgOutput[2],imgOutput[3]);	 
