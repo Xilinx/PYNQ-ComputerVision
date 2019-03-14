@@ -110,8 +110,8 @@ int main ( int argc, char** argv )
 	}
 
 	// Initialize
-	Mat srcIn, srcInY, grayscale;
-  	Mat mean, stddev;
+	cv::Mat srcIn, srcInY;
+  	cv::Mat mean, stddev;
 	initializeSingleImageTest(filenameIn, srcIn);
 
 	int width = srcIn.size().width;
@@ -120,7 +120,7 @@ int main ( int argc, char** argv )
 
 	// Declare variables used for HW-SW interface to achieve good performance
 	xF::Mat srcHLS(height, width, CV_8UC1); 
-	Mat meanHLS, stddevHLS;
+	cv::Mat meanHLS, stddevHLS;
 	
 	//convert 3-channel image into 1-channel image
 	cvtColor(srcIn, srcHLS, CV_BGR2GRAY, 1); 

@@ -46,7 +46,7 @@ unsigned short *meanHLS, unsigned short *stddevHLS)
 {
 	
 	// call xf::meanStdDev
-	xf::meanStdDev<${srcTypeCMakeParam},${maxHeightCMakeParam},${maxWidthCMakeParam},${NPCCMakeParam}>(*imgInput, meanHLS, stddevHLS);
+	xf::meanStdDev<${srcTypeCMakeParamMeanStdDev},${maxHeightCMakeParamMeanStdDev},${maxWidthCMakeParamMeanStdDev},${NPCCMakeParamMeanStdDev}>(*imgInput, meanHLS, stddevHLS);
  
 	return;
 	 

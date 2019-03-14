@@ -71,14 +71,14 @@ namespace xF {
 		cvToXfSource(src, imgInput);
 		         
 	 
-		unsigned short * meanHLS; 	
-		unsigned short * stddevHLS;  
+		unsigned short meanHLS[4]; 	
+		unsigned short stddevHLS[4];  
 	
 		// call xf::meanStdDev
 		xF_meanStdDev(imgInput, meanHLS, stddevHLS);
 	
-	 	mean= cv::Mat(1, 1, CV_32F, cv::Scalar((float)*meanHLS/256));
-	 	stddev=cv::Mat(1, 1, CV_32F, cv::Scalar((float)*stddevHLS/256));
+	 	mean= cv::Mat(1, 1, CV_32F, cv::Scalar((float)meanHLS[0]/256)); //xfOpenCV uses fixed point 8.8
+	 	stddev=cv::Mat(1, 1, CV_32F, cv::Scalar((float)stddevHLS[0]/256)); //xfOpenCV uses fixed point 8.8
 		 
 	
 		delete imgInput; 
