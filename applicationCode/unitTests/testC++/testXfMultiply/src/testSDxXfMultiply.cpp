@@ -77,7 +77,7 @@ int main ( int argc, char** argv )
 		;
 
 	CommandLineParser parser(argc, argv, keys.c_str());
-	if (parser.has("help") || argc < 2)
+	if (parser.has("help") || argc < 3)
 	{
 		parser.printMessage();
 		std::cout << "\nhit enter to quit...";
@@ -158,8 +158,6 @@ int main ( int argc, char** argv )
 	double errorPerPixel = 0;
 	imageCompare(dstHLS, dstSW, numberOfDifferences, errorPerPixel, true, false);
 	std::cout << "number of differences: " << numberOfDifferences << " average L2 error: " << errorPerPixel << std::endl;
-	std::cout<< (double) dstSW.at<unsigned char>(150,100)<<std::endl;
-	std::cout<< (double) dstHLS.at<unsigned char>(150,100)<<std::endl;
 	
 	//write back images in files
 	if (writeSWResult)

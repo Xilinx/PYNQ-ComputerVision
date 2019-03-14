@@ -60,18 +60,17 @@ namespace xF {
   
 void multiply(cv::Mat &src1, cv::Mat &src2, cv::Mat &dst, double scale, int dtype)
 { 
-	const int policyTypeTP 	= ${policyTypeCMakeParam}; 	
-	const int srcTypeTP 	= ${srcTypeCMakeParam};  
-	const int maxWidthTP 	= ${maxWidthCMakeParam};
-	const int maxHeightTP 	= ${maxHeightCMakeParam};	
-	const int NPCTP = ${NPCCMakeParam};
+	const int policyTypeTP 	= ${policyTypeCMakeParamMultiply}; 	
+	const int srcTypeTP 	= ${srcTypeCMakeParamMultiply};  
+	const int maxWidthTP 	= ${maxWidthCMakeParamMultiply};
+	const int maxHeightTP 	= ${maxHeightCMakeParamMultiply};	
+	const int NPCTP = ${NPCCMakeParamMultiply};
 	
 	//check for limitations of xfOpenCV module
 	//run-time
 	assert(src1.channels() == 1);
 	assert(src2.channels() == 1);
 	assert(dst.channels() == 1); 	
-	assert(dtype == -1); 
 	
 	xf::Mat<srcTypeTP, maxHeightTP, maxWidthTP, NPCTP>* imgInput1;
 	xf::Mat<srcTypeTP, maxHeightTP, maxWidthTP, NPCTP>* imgInput2;
@@ -85,8 +84,7 @@ void multiply(cv::Mat &src1, cv::Mat &src2, cv::Mat &dst, double scale, int dtyp
 	bool dstPostConversion = cvToXfDestination(dst, imgOutput, src1); 
 	 
 	float scaleHLS=(float) scale;
-	// call xf::multiply
-	//xf::multiply<${policyTypeCMakeParam},${srcTypeCMakeParam},${maxHeightCMakeParam},${maxWidthCMakeParam},${NPCCMakeParam}>(*imgInput1,*imgInput2,*imgOutput, scaleHLS);
+	// call wrapper for xf::multiply
 	xF_multiply(imgInput1,imgInput2,imgOutput, scaleHLS);
 
 	//perform checks on the dst type
