@@ -45,7 +45,7 @@
   ### Individual unit tests
   + For an indidivual unit test, navigate to the the test you wish to build (e.g. testXfFilter2D), create a folder there and run cmake.
     ```commandline
-    $ cd /<your_pynqcv_folder>/applicationCode/unitTests/testCplusplus/testXfFilter2D
+    $ cd /<your_pynqcv_folder>/applicationCode/unitTests/testC++/testXfFilter2D
     $ mkdir build; cd build
     $ cmake .. -DCMAKE_TOOLCHAIN_FILE=../../../frameworks/cmakeModules/toolchain_sdx2018.2.cmake -DSDxPlatform=/your_PynqPlatform_folder/ultra -DSDxClockID=1 -DusePL=ON -DnoBitstream=OFF -DnoSDCardImage=ON -DSDxArch=arm64
     ```
@@ -71,12 +71,12 @@
     $  scp testSDxXfFilter2D xilinx@<pynq-board-ip>:/home/xilinx/proj/test
     ```
   ### Entire unit test suite
-  + To build all the available tests, you can run the build script under applicationCode/unitTests/testCpluscplus. Be sure to edit the buildUnitTest.py so the platform points to <your platform folder>/ultra.
+  + To build all the available tests, you can run the build script under applicationCode/unitTests/testC++. Be sure to edit the buildUnitTest.py so the platform points to <your platform folder>/ultra.
     ```commandline
-    $  cd /<your_pynqcv_folder>/applicationCode/unitTests/testCplusplus/
+    $  cd /<your_pynqcv_folder>/applicationCode/unitTests/testC++/
     $  ./buildUnitTest.py
     ```
-  + This creates individual reformatted bitstream and executables for each test and copies them to applicationCode/unitTests/testCplusplus/unitTestFiles. You can then the files onto the board using the same method as in the individual test case
+  + This creates individual reformatted bitstream and executables for each test and copies them to applicationCode/unitTests/testC++/unitTestFiles. You can then the files onto the board using the same method as in the individual test case
   
     
 ## Running unit test on Board
