@@ -109,7 +109,7 @@ int main ( int argc, char** argv )
 	// Initialize
 	Mat srcIn, srcInY, dstSW0, dstSW1;
 	initializeSingleImageTest(filenameIn, srcIn);
-	cv::resize(srcIn, srcIn, cv::Size(200,200));
+	cv::resize(srcIn, srcIn, cv::Size(srcIn.size().width/2,srcIn.size().height/2));
 	int width = srcIn.size().width;
 	int height = srcIn.size().height;
 	 
@@ -117,9 +117,7 @@ int main ( int argc, char** argv )
 	// Declare variables used for HW-SW interface to achieve good performance
 	xF::Mat srcHLS(height, width, CV_8UC1);
 	xF::Mat dstHLS0(2*height, 2*width, CV_8UC1); 	
-	xF::Mat dstHLS1(2*height, 2*width, CV_8UC1); 
 	
-
 	//convert 3-channel image into 1-channel image
 	cvtColor(srcIn, srcHLS, CV_BGR2GRAY, 1); 
 	cvtColor(srcIn, srcInY, CV_BGR2GRAY, 1); 
@@ -129,7 +127,6 @@ int main ( int argc, char** argv )
 	timer.StartTimer();
 	for (int i = 0; i < numberOfIterations; i++){
 		cv::pyrUp(srcInY, dstSW0);		
-		//pyrUp(dstSW0, dstSW1);
 	}
 	timer.StopTimer();
 	std::cout << "Elapsed time over " << numberOfIterations << "SW call(s): " << timer.GetElapsedUs() << " us or " << (float)timer.GetElapsedUs() / (float)numberOfIterations << "us per frame" << std::endl;
@@ -139,7 +136,6 @@ int main ( int argc, char** argv )
 	timer.StartTimer();
 	for (int i = 0; i < numberOfIterations; i++){
 		xF::pyrUp(srcHLS, dstHLS0);
-		//xF_pyrUp(dstHLS0, dstHLS1);
 	}
 	timer.StopTimer();	
 	std::cout << "Elapsed time over " << numberOfIterations << "PL call(s): " << timer.GetElapsedUs() << " us or " << (float)timer.GetElapsedUs() / (float)numberOfIterations << "us per frame" << std::endl;
@@ -161,9 +157,7 @@ int main ( int argc, char** argv )
 	if (imShowOn) {
 		imshow("Input image", srcHLS);
 		imshow("Processed (SW0)", dstSW0);		
-		//imshow("Processed (SW1)", dstSW1);
 		imshow("Processed (PL0)", dstHLS0);
-		//imshow("Processed (PL1)", dstHLS1);
 		waitKey(0);
 	}
 

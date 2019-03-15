@@ -60,8 +60,12 @@ namespace xF
 	
 		//check for limitations of xfOpenCV module
 		//run-time
-		assert(src.channels() == 1);  
-		 	
+		assert(src.channels() == 1);
+
+		//check dstsize
+		if (dstsize == cv::Size(0,0))
+			dstsize=src.size()*2;
+			
 		xf::Mat<srcTypeTP,maxHeightTP,maxWidthTP,NPCTP>* imgInput; 
 		xf::Mat<srcTypeTP,maxHeightTP,maxWidthTP,NPCTP>* imgOutput; 	
 
@@ -69,10 +73,12 @@ namespace xF
 		cvToXfSource(src,imgInput);
 			  
 		// perform some checks on the dst type
-		bool dstPostConversion = cvToXfDestination(dst, imgOutput, src);
+		bool dstPostConversion = cvToXfDestination(dst, imgOutput, dstsize, src.type()); 
 	 	
+		std::cout << "starting xf::pyrUp" << std::endl;
 		// call xf::pyrUp
 		xF_pyrUp(imgInput, imgOutput);
+		std::cout << "done xf::pyrUp" << std::endl;
 
 		 // If SW post conversion required, we do it here
 		 if (dstPostConversion) {
