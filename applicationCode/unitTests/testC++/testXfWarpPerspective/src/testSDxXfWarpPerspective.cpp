@@ -126,7 +126,7 @@ int main ( int argc, char** argv )
    	/// Initialize warp_mat 
   	cv::Mat warp_mat(3,3,CV_64F, cvScalar(0.0));
  	warp_mat.at<double>(0,0) = 1;    
- 	warp_mat.at<double>(0,1) = 0.5; 
+ 	warp_mat.at<double>(0,1) = 0; 
   	warp_mat.at<double>(0,2) = 0; 
   	warp_mat.at<double>(1,0) = 0;    
   	warp_mat.at<double>(1,1) = 1; 

@@ -75,7 +75,11 @@ namespace xF
 		 
 		cv::Mat temp_matrix = M.inv();		
 		 
-		transform_matrix=(float*)malloc(9*sizeof(float));
+		#if __SDSCC__
+			transform_matrix=(float*)sds_alloc(9*sizeof(float));
+		#else
+			transform_matrix=(float*)malloc(9*sizeof(float));
+		#endif
 		transform_matrix[0] = (float) temp_matrix.at<double>(0,0); //Af
 		transform_matrix[1] = (float) temp_matrix.at<double>(0,1); //Bf
 		transform_matrix[2] = (float) temp_matrix.at<double>(0,2); //x_constf
@@ -102,7 +106,13 @@ namespace xF
 	
 		delete imgInput;
 		delete imgOutput;
-		delete transform_matrix; 
+		
+		#if __SDSCC__
+			sds_free(transform_matrix);
+		#else
+			free(transform_matrix);
+		#endif
+		
 	
 		return;
 	}
