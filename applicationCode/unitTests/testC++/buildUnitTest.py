@@ -49,13 +49,13 @@ import shutil
 
 toolchain_file  = "../../../../../frameworks/cmakeModules/toolchain_sdx2018.2.cmake"
 arch            = "arm64"
-clockID         = "1"
+clockID         = "3"
 platform        = "/platforms/Ultra96/bare/2018.2/ultra"
 usePL           = "ON"
 noBitstream     = "OFF"
 noSDCardImage   = "ON"
 unitTestFileDir = "unitTestFiles"
-buildDir        = "build_test"
+buildDir        = "build"
 
 
 #*****************************************************************************
@@ -153,7 +153,7 @@ parser.add_argument("-l","--list", help="file of tests diretories to build.")
 args = parser.parse_args()
 
 if(not args.list):
-    path = './*'
+    path = './test*'
     dirs = glob.glob(path)
     removePath = True
 else:
