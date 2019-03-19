@@ -20,7 +20,7 @@
 | magnitude             |||||||
 | phase                 |||||||
 
-* These designs require a patch to xfopencv (tag: 2018.2_release) in order to build properly. Please see clone https://github.com/denolf/xfopencv.git
+\* These designs require a patch to xfopencv (tag: 2018.2_release) in order to build properly. Please see clone https://github.com/denolf/xfopencv.git
 
 ## Setup Environment on Host
 
