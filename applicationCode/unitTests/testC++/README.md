@@ -2,25 +2,24 @@
 
 ## List of Supported Components 
 
-| Image Arithmetic      | Filters       |   Geometric Transform | Flow and Depts|   Features    | Input Processing	| Analysis 	   |
-| ---------             | ---------     |   ---------           |    ---------  |    ---------  |  ---------  		  |--------- 	   |
-| absdiff               |  filter2D     |   remap               |   stereoBM    |   canny       | * split 	 	      |	calcHist     |  
-| bitwise_and           |  dilate    	  |   resize  | calcOpticalFlowDenseNonPyrLK | cornerHarris |	* merge         |	equalizeHist |   
-| bitwise_or            |   erode       |   warpAffine          |               |   fast        |	combine	          | integral	   |
-| bitwise_xor           |   medianBlur  |  warpPerspective      |               |               |			              | meanStdDev	 | 
-| bitwise_not           |   boxFilter   |                       |               |               |					          | minMaxLoc		 |   
-| threshold             |   pyrUp       |                       |               |               |                   | LUT          |
-| add                   |   pyrDown     |                       |               |               |                   |              | 
+| Image Arithmetic      | Filters       |   Geometric Transform |    Features    | Input Processing	| Analysis 	   | Flow and Depts|
+| ---------             | ---------     |   ---------           |    ---------   |    ---------     |  ---------   | --------- 	   |
+| absdiff               |  filter2D     |   remap               |      canny     | * split 	 	      |	calcHist     | stereoBM      |  
+| bitwise_and           |  dilate    	  |   resize         | cornerHarris |	* merge |	equalizeHist | calcOpticalFlowDenseNonPyrLK  |
+| bitwise_or            |   erode       |   warpAffine          |     fast       |	      	        | integral	   |               |
+| bitwise_xor           |   medianBlur  |  warpPerspective      |                |			            | meanStdDev	 |               | 
+| bitwise_not           |   boxFilter   |                       |                |					        | minMaxLoc		 |               |   
+| threshold             |   pyrUp       |                       |                |                  | LUT          |               |
+| add                   |   pyrDown     |                       |                |                  |              |               | 
 | subtract              |||||||
 | multiply              |||||||
 | accumulate            |||||||
 | accumulateWeighted    |||||||
 | accumulateSquare      |||||||
-| pixel-wise mult       |||||||
 | magnitude             |||||||
 | phase                 |||||||
 
-\* These designs require a patch to xfopencv (tag: 2018.2_release) in order to build properly. Please see clone https://github.com/denolf/xfopencv.git
+\* These designs require a patch to xfopencv (tag: 2018.2_release) in order to build properly. Please clone https://github.com/denolf/xfopencv.git and checkout the v2018.2Fixed branch to pick up a temporary fix.
 
 ## Setup Environment on Host
 
