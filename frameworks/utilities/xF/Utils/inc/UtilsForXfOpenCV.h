@@ -151,7 +151,7 @@ bool cvToXfDestination(cv::Mat &dst, xf::Mat<dstTypeTP, maxHeightTP, maxWidthTP,
 		std::cout << "dst not yet allocated" << std::endl;
 		dst = cv::Mat(src.size(),CV_MAKE_TYPE(ddepth,src.channels()));		
 	} else if (dst.depth() != ddepth || dst.channels() != src.channels()) { // if dst cv::Mat has wrong depth, or has a different number of channels than the source re-allocate it 
-		std::cout << "dst allocated does not match ddepth, reallocating" << std::endl;
+		std::cout << "dst allocated does not match ddepth and/or number of channels, reallocating" << std::endl;
 		dst = cv::Mat(src.size(),CV_MAKE_TYPE(ddepth,src.channels()));
 	}
 	

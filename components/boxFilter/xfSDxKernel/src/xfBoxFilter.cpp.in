@@ -68,10 +68,12 @@ void boxFilter(cv::Mat &src, cv::Mat &dst, int ddepth, cv::Size ksize, cv::Point
 	//check for limitations of xfOpenCV module
 	//compile-time checks
 	static_assert(borderTypeTP == XF_BORDER_CONSTANT, "XF only supports border constant");
+	static_assert((kernelSizeTP == 3) || (kernelSizeTP == 5) || (kernelSizeTP == 7));
     //run-time
 	assert(src.channels() == 1);
 	assert(dst.channels() == 1);
 	assert(ksize.width == kernelSizeTP);
+	assert(borderType == borderTypeTP);
 	
 	xf::Mat<srcTypeTP, maxHeightTP, maxWidthTP, NPCTP>* imgInput;
 	xf::Mat<dstTypeTP, maxHeightTP, maxWidthTP, NPCTP>* imgOutput;

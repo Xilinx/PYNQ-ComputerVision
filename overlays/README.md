@@ -2,13 +2,26 @@
 
 ## List of Supported Components 
 
-| Image Arithmetic      | Filters       |   Geometric Transform | Flow and Depts|   Features    | Input Processing	| Analysis 	|
-| ---------             | ---------     |   ---------           |    ---------  |    ---------  |  ---------  		|--------- 	|
-| bitwise_and           |   filter2D   	|         remap         |   stereoBM    |   canny       | 					|			|
-| bitwise_or            |   erode       |         resize        |               |               |					|			|
-| bitwise_xor           |   dilate      |                       |               |               |					|			|
-| threshold             |   medianBlur  |                       |               |               |					|			|
-| subtract              |   boxFilter   |                       |               |               |					|			|
+| Image Arithmetic      | Filters       |   Geometric Transform | Flow and Depts|   Features    | Input Processing	| Analysis 	   |
+| ---------             | ---------     |   ---------           |    ---------  |    ---------  |  ---------  		  |--------- 	   |
+| absdiff               |  filter2D     |   remap               |   stereoBM    |   canny       | * split 	 	      |	calcHist     |  
+| bitwise_and           |  dilate    	  |   resize  | calcOpticalFlowDenseNonPyrLK | cornerHarris |	* merge         |	equalizeHist |   
+| bitwise_or            |   erode       |   warpAffine          |               |   fast        |	combine	          | integral	   |
+| bitwise_xor           |   medianBlur  |  warpPerspective      |               |               |			              | meanStdDev	 | 
+| bitwise_not           |   boxFilter   |                       |               |               |					          | minMaxLoc		 |   
+| threshold             |   pyrUp       |                       |               |               |                   | LUT          |
+| add                   |   pyrDown     |                       |               |               |                   |              | 
+| subtract              |||||||
+| multiply              |||||||
+| accumulate            |||||||
+| accumulateWeighted    |||||||
+| accumulateSquare      |||||||
+| pixel-wise mult       |||||||
+| magnitude             |||||||
+| phase                 |||||||
+
+\* These designs require a patch to xfopencv (tag: 2018.2_release) in order to build properly. Please see clone https://github.com/denolf/xfopencv.git
+
 ## Setup Environment on Host
 
   + clone [Pynq-ComputerVision](https://github.com/Xilinx/PYNQ-ComputerVision) repository:

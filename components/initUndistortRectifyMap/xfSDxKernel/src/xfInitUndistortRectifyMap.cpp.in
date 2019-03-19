@@ -1,0 +1,158 @@
+/******************************************************************************
+ *  Copyright (c) 2018, Xilinx, Inc.
+ *  All rights reserved.
+ * 
+ *  Redistribution and use in source and binary forms, with or without 
+ *  modification, are permitted provided that the following conditions are met:
+ *
+ *  1.  Redistributions of source code must retain the above copyright notice, 
+ *     this list of conditions and the following disclaimer.
+ *
+ *  2.  Redistributions in binary form must reproduce the above copyright 
+ *      notice, this list of conditions and the following disclaimer in the 
+ *      documentation and/or other materials provided with the distribution.
+ *
+ *  3.  Neither the name of the copyright holder nor the names of its 
+ *      contributors may be used to endorse or promote products derived from 
+ *      this software without specific prior written permission.
+ *
+ *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ *  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, 
+ *  THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR 
+ *  PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR 
+ *  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, 
+ *  EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, 
+ *  PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+ *  OR BUSINESS INTERRUPTION). HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
+ *  WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR 
+ *  OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
+ *  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ *****************************************************************************/
+ 
+/*****************************************************************************
+*
+*
+*     Author: Kristof Denolf <kristof@xilinx.com>
+*     Date:   2018/09/24
+*
+*****************************************************************************/
+
+#include "xfInitUndistortRectifyMapCoreForVivadoHLS.h"
+
+///SDx temporal fix for Clang issue
+#ifdef __SDSCC__
+#undef __ARM_NEON__
+#undef __ARM_NEON
+#include <opencv2/core/core.hpp>
+#define __ARM_NEON__
+#define __ARM_NEON
+#else
+#include <opencv2/core/core.hpp>
+#endif
+//#include <opencv2/core/core.hpp>
+
+#include <Utils/inc/UtilsForXfOpenCV.h>
+
+namespace xF {
+	
+void initUndistortRectifyMap(cv::Mat &cameraMatrix, cv::Mat &distCoeffs, cv::Mat &R, cv::Mat &newCameraMatrix, cv::Size size, int m1type, cv::Mat &map1, cv::Mat &map2)
+{
+	const int cameraMatrixSizeTP = sqrt(${cameraMatrixSizeCMakeParamInitUndistortRectifyMap});
+	const int distortionCoefficentSizeTP = ${distortionCoefficientSizeCMakeParamInitUndistortRectifyMap};
+	const int mapTypeTP = ${mapTypeCMakeParamInitUndistortRectifyMap};
+	
+	typedef ${parameterTypeCMakeParamInitUndistortRectifyMap} parameterTypeTP;
+
+	const int maxWidthTP = ${maxWidthCMakeParamInitUndistortRectifyMap};
+	const int maxHeightTP = ${maxHeightCMakeParamInitUndistortRectifyMap};
+	const int NPCTP = ${NPCCMakeParamInitUndistortRectifyMap};
+	
+	//check for limitations of xfOpenCV module
+	//compile-time checks
+	static_assert(mapTypeTP == XF_32FC1, "XF only supports 32FC1");
+	static_assert((distortionCoefficentSizeTP == 4 || distortionCoefficentSizeTP == 5 || distortionCoefficentSizeTP == 8), "XF only supports 4, 5 or 8 distortion coefficients");
+	//run-time
+	assert(m1type == CV_32FC1); //TODO: check m1type directly to mapTypeTP through proper conversion of XF_TYPE to CV_TYPE
+	assert(cameraMatrixSizeTP == 3);
+	
+	xf::Mat<mapTypeTP, maxHeightTP, maxWidthTP, NPCTP> *mapX;
+	xf::Mat<mapTypeTP, maxHeightTP, maxWidthTP, NPCTP> *mapY;
+
+	// perform some checks on the src type
+	//cvToXfSource(src,imgInput);
+          
+	// perform some checks on the dst type
+	bool dstPostConversionX = cvToXfDestination(map1, mapX, size, m1type);
+	bool dstPostConversionY = cvToXfDestination(map2, mapY, size, m1type);
+		
+	//compute Invert(newCameraMatrix*R),
+	cv::Mat iRA = cv::Mat(cameraMatrixSizeTP, cameraMatrixSizeTP, CV_64FC1);
+
+	iRA = newCameraMatrix.colRange(0,3)*R;
+	iRA = iRA.inv();
+	
+	//prepare camera parameters
+	const CvMat cvCameraMatrix = cameraMatrix;
+	const CvMat cvIRA = iRA;
+	
+	parameterTypeTP *cameraMatrixHLS, *iRnewCameraMatrixHLS, *distCoeffsHLS;
+	
+	#if __SDSCC__
+		cameraMatrixHLS=(parameterTypeTP*)sds_alloc(cameraMatrixSizeTP*cameraMatrixSizeTP*sizeof(parameterTypeTP));
+		iRnewCameraMatrixHLS=(parameterTypeTP*)sds_alloc(cameraMatrixSizeTP*cameraMatrixSizeTP*sizeof(parameterTypeTP));
+		distCoeffsHLS=(parameterTypeTP*)sds_alloc(distortionCoefficentSizeTP*sizeof(parameterTypeTP));
+	#else
+		cameraMatrixHLS=(parameterTypeTP*)malloc(cameraMatrixSizeTP*cameraMatrixSizeTP*sizeof(parameterTypeTP));
+		iRnewCameraMatrixHLS=(parameterTypeTP*)malloc(cameraMatrixSizeTP*cameraMatrixSizeTP*sizeof(parameterTypeTP));
+		distCoeffsHLS=(parameterTypeTP*)malloc(distortionCoefficentSizeTP*sizeof(parameterTypeTP));
+	#endif
+	
+	//parameterTypeTP cameraMatrixHLS[cameraMatrixSizeTP*cameraMatrixSizeTP];
+	//parameterTypeTP iRnewCameraMatrixHLS[cameraMatrixSizeTP*cameraMatrixSizeTP];
+
+	for(int i=0; i<cameraMatrixSizeTP; i++) {
+		for(int j=0; j<cameraMatrixSizeTP; j++) {
+			cameraMatrixHLS[i*cameraMatrixSizeTP+j] = (parameterTypeTP) cvmGet(&cvCameraMatrix, i, j);
+			iRnewCameraMatrixHLS[i*cameraMatrixSizeTP+j] = (parameterTypeTP) cvmGet(&cvIRA, i, j);
+		}
+	}
+	
+	//parameterTypeTP distCoeffsHLS[distortionCoefficentSizeTP];
+	const CvMat cvDistCoeffs = distCoeffs;
+
+	for (int i=0; i<distortionCoefficentSizeTP; i++) {
+		distCoeffsHLS[i] = (parameterTypeTP) cvmGet(&cvDistCoeffs, 0, i);
+
+	}
+	
+	// call CoreForVivadoHLS wrapper of xf::InitUndistortRectifyMapInverse  
+	xF_InitUndistortRectifyMapInverse(cameraMatrixHLS,distCoeffsHLS,iRnewCameraMatrixHLS,mapX,mapY);
+  
+   
+	// If SW post conversion required, we do it here
+	if (dstPostConversionX) {
+		xfMatDepthPostConversion(map1,mapX);		
+	}
+
+	if (dstPostConversionY) {
+		xfMatDepthPostConversion(map2,mapY);		
+	}	
+	
+	#if __SDSCC__
+		sds_free(cameraMatrixHLS);
+		sds_free(iRnewCameraMatrixHLS);
+		sds_free(distCoeffsHLS);
+	#else
+		free(cameraMatrixHLS);
+		free(iRnewCameraMatrixHLS);
+		free(distCoeffsHLS);
+	#endif
+	
+	delete mapX;
+	delete mapY;
+	
+	return;
+}
+
+} //namespace xF

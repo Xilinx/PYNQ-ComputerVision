@@ -1,0 +1,114 @@
+/******************************************************************************
+ *  Copyright (c) 2018, Xilinx, Inc.
+ *  All rights reserved.
+ * 
+ *  Redistribution and use in source and binary forms, with or without 
+ *  modification, are permitted provided that the following conditions are met:
+ *
+ *  1.  Redistributions of source code must retain the above copyright notice, 
+ *     this list of conditions and the following disclaimer.
+ *
+ *  2.  Redistributions in binary form must reproduce the above copyright 
+ *      notice, this list of conditions and the following disclaimer in the 
+ *      documentation and/or other materials provided with the distribution.
+ *
+ *  3.  Neither the name of the copyright holder nor the names of its 
+ *      contributors may be used to endorse or promote products derived from 
+ *      this software without specific prior written permission.
+ *
+ *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ *  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, 
+ *  THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR 
+ *  PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR 
+ *  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, 
+ *  EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, 
+ *  PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+ *  OR BUSINESS INTERRUPTION). HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
+ *  WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR 
+ *  OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
+ *  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ *****************************************************************************/
+ 
+/*****************************************************************************
+*
+*
+*     Author: Kristof Denolf <kristof@xilinx.com>
+*     Date:   2018/01/22
+*
+*****************************************************************************/
+
+#include "xfCalcOpticalFlowDenseNonPyrLKCoreForVivadoHLS.h"
+
+///SDx temporal fix for Clang issue
+#ifdef __SDSCC__
+#undef __ARM_NEON__
+#undef __ARM_NEON
+#include <opencv2/core/core.hpp>
+#define __ARM_NEON__
+#define __ARM_NEON
+#else
+#include <opencv2/core/core.hpp>
+#endif
+//#include <opencv2/core/core.hpp>
+
+#include <Utils/inc/UtilsForXfOpenCV.h>
+
+//PL instatiation parameters
+
+
+namespace xF {
+
+void calcOpticalFlowDenseNonPyrLK(cv::Mat &prev, cv::Mat &next, cv::Mat &flowX, cv::Mat &flowY)
+{
+	
+	const int windowSizeTP = ${windowSizeCMakeParamCalcOpticalFlowDenseNonPyrLK};
+	const int maxWidthTP = ${maxWidthCMakeParamCalcOpticalFlowDenseNonPyrLK};
+	const int maxHeightTP = ${maxHeightCMakeParamCalcOpticalFlowDenseNonPyrLK};
+	const int srcTypeTP = ${srcTypeCMakeParamCalcOpticalFlowDenseNonPyrLK};
+	const int flowTypeTP = ${flowTypeCMakeParamCalcOpticalFlowDenseNonPyrLK};
+	const int NPCTP = ${NPCCMakeParamCalcOpticalFlowDenseNonPyrLK};
+	
+	//check for limitations of xfOpenCV module
+	assert(prev.channels() == 1);
+	assert(next.channels() == 1);
+	assert(flowX.channels() == 1);
+	assert(flowY.channels() == 1);
+	
+	assert(srcTypeTP == XF_8UC1); //xfOpenCV only supports XF_8UC1 
+	assert(flowTypeTP == XF_32FC1); //xfOpenCV only supports 32FC1
+	
+	xf::Mat<srcTypeTP, maxHeightTP, maxWidthTP, NPCTP>* imgPrev;
+	xf::Mat<srcTypeTP, maxHeightTP, maxWidthTP, NPCTP>* imgNext;
+	xf::Mat<flowTypeTP, maxHeightTP, maxWidthTP, NPCTP>* imgFlowX;
+	xf::Mat<flowTypeTP, maxHeightTP, maxWidthTP, NPCTP>* imgFlowY;
+
+	// perform some checks on the src type
+	cvToXfSource(prev,imgPrev);
+	cvToXfSource(next,imgNext);
+          
+	// perform some checks on the dst type
+	bool dstPostConversionX = cvToXfDestination(flowX, imgFlowX, prev, CV_32F);
+	bool dstPostConversionY = cvToXfDestination(flowY, imgFlowY, prev, CV_32F);
+
+	// call CoreForVivadoHLS wrapper of xf::DenseNonPyrLKOpticalFlow
+	xF_calcOpticalFlowDenseNonPyrLK(imgPrev, imgNext, imgFlowX, imgFlowY);
+	
+	// If SW post conversion required, we do it here
+	if (dstPostConversionX) {
+		xfMatDepthPostConversion(flowX,imgFlowX);
+	}
+	
+	if (dstPostConversionY) {
+		xfMatDepthPostConversion(flowY,imgFlowY);
+	}
+
+	delete imgPrev;
+	delete imgNext;
+	delete imgFlowX;
+	delete imgFlowY;
+	
+	return;
+}
+
+} //namespace xF
