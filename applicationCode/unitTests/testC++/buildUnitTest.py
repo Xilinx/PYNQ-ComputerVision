@@ -47,10 +47,10 @@ import errno
 from distutils.dir_util import mkpath
 import shutil
 
-toolchain_file  = "../../../../../frameworks/cmakeModules/toolchain_sdx2018.2.cmake"
+toolchain_file  = "../../../../../frameworks/cmakeModules/cmakeModulesXilinx/toolchain_sds.cmake"
 arch            = "arm64"
 clockID         = "3"
-platform        = "/platforms/Ultra96/bare/2018.2/ultra"
+platform        = "/platforms/Ultra96/bare/2018.3/ultra"
 usePL           = "ON"
 noBitstream     = "OFF"
 noSDCardImage   = "ON"
@@ -149,7 +149,7 @@ def buildUnitTestCSim(component):
 desc = "Script to run build on test directories."
 parser = argparse.ArgumentParser(description = desc)
 parser.add_argument("-c","--csim", help="build for C simulation only", action="store_true")
-parser.add_argument("-l","--list", help="file of tests diretories to build.")
+parser.add_argument("-l","--list", help="file of tests directories to build.")
 args = parser.parse_args()
 
 if(not args.list):

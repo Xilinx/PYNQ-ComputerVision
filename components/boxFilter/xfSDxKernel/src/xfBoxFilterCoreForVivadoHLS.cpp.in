@@ -43,7 +43,7 @@
 void xF_boxFilter(xf::Mat<${srcTypeCMakeParamBoxFilter}, ${maxHeightCMakeParamBoxFilter}, ${maxWidthCMakeParamBoxFilter}, ${NPCCMakeParamBoxFilter}>* imgInput, xf::Mat<${srcTypeCMakeParamBoxFilter}, ${maxHeightCMakeParamBoxFilter}, ${maxWidthCMakeParamBoxFilter}, ${NPCCMakeParamBoxFilter}>* imgOutput)
 {
 	// call xf::boxFilter 
-	xf::boxFilter<${borderTypeCMakeParamBoxFilter},${kernelSizeCMakeParamBoxFilter},${srcTypeCMakeParamBoxFilter},${maxHeightCMakeParamBoxFilter}, ${maxWidthCMakeParamBoxFilter},${NPCCMakeParamBoxFilter}>(*imgInput,*imgOutput);
+	xf::boxFilter<${borderTypeCMakeParamBoxFilter},${kernelSizeCMakeParamBoxFilter},${srcTypeCMakeParamBoxFilter},${maxHeightCMakeParamBoxFilter}, ${maxWidthCMakeParamBoxFilter},${NPCCMakeParamBoxFilter},${URAMEnableCMakeParam}>(*imgInput,*imgOutput);
 	
 	return;
 }

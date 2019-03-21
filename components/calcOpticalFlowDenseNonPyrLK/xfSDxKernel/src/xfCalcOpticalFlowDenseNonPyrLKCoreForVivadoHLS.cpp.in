@@ -41,11 +41,10 @@
 #include "xfCalcOpticalFlowDenseNonPyrLKCoreForVivadoHLS.h"
 #include "imgproc/xf_dense_npyr_optical_flow.hpp" 
 
-
 void xF_calcOpticalFlowDenseNonPyrLK(xf::Mat<${srcTypeCMakeParamCalcOpticalFlowDenseNonPyrLK}, ${maxHeightCMakeParamCalcOpticalFlowDenseNonPyrLK}, ${maxWidthCMakeParamCalcOpticalFlowDenseNonPyrLK}, ${NPCCMakeParamCalcOpticalFlowDenseNonPyrLK}>* imgInput1, xf::Mat<${srcTypeCMakeParamCalcOpticalFlowDenseNonPyrLK}, ${maxHeightCMakeParamCalcOpticalFlowDenseNonPyrLK}, ${maxWidthCMakeParamCalcOpticalFlowDenseNonPyrLK}, ${NPCCMakeParamCalcOpticalFlowDenseNonPyrLK}>* imgInput2, xf::Mat<${flowTypeCMakeParamCalcOpticalFlowDenseNonPyrLK}, ${maxHeightCMakeParamCalcOpticalFlowDenseNonPyrLK}, ${maxWidthCMakeParamCalcOpticalFlowDenseNonPyrLK}, ${NPCCMakeParamCalcOpticalFlowDenseNonPyrLK}>* imgFlowX, xf::Mat<${flowTypeCMakeParamCalcOpticalFlowDenseNonPyrLK}, ${maxHeightCMakeParamCalcOpticalFlowDenseNonPyrLK}, ${maxWidthCMakeParamCalcOpticalFlowDenseNonPyrLK}, ${NPCCMakeParamCalcOpticalFlowDenseNonPyrLK}>* imgFlowY)
 {
 	// call xf::DenseNonPyrLKOpticalFlow
-	xf::DenseNonPyrLKOpticalFlow<${windowSizeCMakeParamCalcOpticalFlowDenseNonPyrLK}, ${srcTypeCMakeParamCalcOpticalFlowDenseNonPyrLK}, ${maxHeightCMakeParamCalcOpticalFlowDenseNonPyrLK}, ${maxWidthCMakeParamCalcOpticalFlowDenseNonPyrLK}, ${NPCCMakeParamCalcOpticalFlowDenseNonPyrLK}> (*imgInput1, *imgInput2, *imgFlowX, *imgFlowY);
+	xf::DenseNonPyrLKOpticalFlow<${windowSizeCMakeParamCalcOpticalFlowDenseNonPyrLK}, ${srcTypeCMakeParamCalcOpticalFlowDenseNonPyrLK}, ${maxHeightCMakeParamCalcOpticalFlowDenseNonPyrLK}, ${maxWidthCMakeParamCalcOpticalFlowDenseNonPyrLK}, ${NPCCMakeParamCalcOpticalFlowDenseNonPyrLK}, ${URAMEnableCMakeParamCalcOpticalFlowDenseNonPyrLK}> (*imgInput1, *imgInput2, *imgFlowX, *imgFlowY);
 	
 	return;
 }

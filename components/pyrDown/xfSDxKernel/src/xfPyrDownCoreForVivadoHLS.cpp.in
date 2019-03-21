@@ -45,7 +45,7 @@ void xF_pyrDown(
 {
  
 	// call xf::pyrDown
-	xf::pyrDown<${srcTypeCMakeParamPyrDown},${maxHeightCMakeParamPyrDown},${maxWidthCMakeParamPyrDown},${NPCCMakeParamPyrDown}>(*imgInput, *imgOutput);
+	xf::pyrDown<${srcTypeCMakeParamPyrDown},${maxHeightCMakeParamPyrDown},${maxWidthCMakeParamPyrDown},${NPCCMakeParamPyrDown},${URAMEnableCMakeParamPyrDown}>(*imgInput, *imgOutput);
 
 	return;
 }

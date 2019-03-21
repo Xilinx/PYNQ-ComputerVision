@@ -47,7 +47,7 @@ unsigned short Thresh, unsigned short kHLS)
 { 
 	 
 	// call xf::cornerHarris
-	xf::cornerHarris<${filterSizeCMakeParamCornerHarris}, ${blockWidthCMakeParamCornerHarris}, ${NMSRadiusCMakeParamCornerHarris}, ${srcTypeCMakeParamCornerHarris},${maxHeightCMakeParamCornerHarris},${maxWidthCMakeParamCornerHarris},${NPCCMakeParamCornerHarris}>(*imgInput,*imgOutput, Thresh, kHLS);
+	xf::cornerHarris<${filterSizeCMakeParamCornerHarris}, ${blockWidthCMakeParamCornerHarris}, ${NMSRadiusCMakeParamCornerHarris}, ${srcTypeCMakeParamCornerHarris},${maxHeightCMakeParamCornerHarris},${maxWidthCMakeParamCornerHarris},${NPCCMakeParamCornerHarris},${URAMEnableCMakeParamCornerHarris}>(*imgInput,*imgOutput, Thresh, kHLS);
 
  
 	return;

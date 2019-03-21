@@ -70,14 +70,15 @@ void calcOpticalFlowDenseNonPyrLK(cv::Mat &prev, cv::Mat &next, cv::Mat &flowX, 
 	const int NPCTP = ${NPCCMakeParamCalcOpticalFlowDenseNonPyrLK};
 	
 	//check for limitations of xfOpenCV module
+	//compile time
+	static_assert((srcTypeTP == XF_8UC1),"XF only support single channel input"); //xfOpenCV only supports XF_8UC1 
+	static_assert((flowTypeTP == XF_32FC1), "XF only supports 32FC1 output"); //xfOpenCV only supports 32FC1
+	//run-time
 	assert(prev.channels() == 1);
 	assert(next.channels() == 1);
 	assert(flowX.channels() == 1);
 	assert(flowY.channels() == 1);
-	
-	assert(srcTypeTP == XF_8UC1); //xfOpenCV only supports XF_8UC1 
-	assert(flowTypeTP == XF_32FC1); //xfOpenCV only supports 32FC1
-	
+		
 	xf::Mat<srcTypeTP, maxHeightTP, maxWidthTP, NPCTP>* imgPrev;
 	xf::Mat<srcTypeTP, maxHeightTP, maxWidthTP, NPCTP>* imgNext;
 	xf::Mat<flowTypeTP, maxHeightTP, maxWidthTP, NPCTP>* imgFlowX;

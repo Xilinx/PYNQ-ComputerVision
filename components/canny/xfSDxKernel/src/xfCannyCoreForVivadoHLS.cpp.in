@@ -53,9 +53,9 @@ unsigned char threshold1, unsigned char threshold2)
 	
 	// call xf::Canny and xf::EdgeTracing
 	#pragma SDS async(1)
-	xf::Canny<${apertureSizeCMakeParamCanny},${L2gradientCMakeParamCanny},${srcTypeCMakeParamCanny},${dstIntermedTypeCMakeParamCanny},${maxHeightCMakeParamCanny},${maxWidthCMakeParamCanny},${srcNPCCMakeParamCanny},${dstIntermedNPCCMakeParamCanny}>(*imgInput,dstInter,threshold1,threshold2);
+	xf::Canny<${apertureSizeCMakeParamCanny},${L2gradientCMakeParamCanny},${srcTypeCMakeParamCanny},${dstIntermedTypeCMakeParamCanny},${maxHeightCMakeParamCanny},${maxWidthCMakeParamCanny},${srcNPCCMakeParamCanny},${dstIntermedNPCCMakeParamCanny},${URAMEnableCMakeParamCanny}>(*imgInput,dstInter,threshold1,threshold2);
 	#pragma SDS wait(1)
-	xf::EdgeTracing<${srcIntermedTypeCMakeParamCanny},${dstTypeCMakeParamCanny},${maxHeightCMakeParamCanny},${maxWidthCMakeParamCanny},${srcIntermedNPCCMakeParamCanny},${dstNPCCMakeParamCanny}>(srcInter,*imgOutput);
+	xf::EdgeTracing<${srcIntermedTypeCMakeParamCanny},${dstTypeCMakeParamCanny},${maxHeightCMakeParamCanny},${maxWidthCMakeParamCanny},${srcIntermedNPCCMakeParamCanny},${dstNPCCMakeParamCanny},${URAMEnableCMakeParamCanny}>(srcInter,*imgOutput);
 	
 	return;
 }
