@@ -49,7 +49,6 @@
 #endif 
  
 #include <Utils/inc/UtilsForXfOpenCV.h>
-
 #include "xfBitwise_xorCoreForVivadoHLS.h"
 
 namespace xF { 

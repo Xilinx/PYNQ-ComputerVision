@@ -1,0 +1,107 @@
+/******************************************************************************
+ *  Copyright (c) 2018, Xilinx, Inc.
+ *  All rights reserved.
+ * 
+ *  Redistribution and use in source and binary forms, with or without 
+ *  modification, are permitted provided that the following conditions are met:
+ *
+ *  1.  Redistributions of source code must retain the above copyright notice, 
+ *     this list of conditions and the following disclaimer.
+ *
+ *  2.  Redistributions in binary form must reproduce the above copyright 
+ *      notice, this list of conditions and the following disclaimer in the 
+ *      documentation and/or other materials provided with the distribution.
+ *
+ *  3.  Neither the name of the copyright holder nor the names of its 
+ *      contributors may be used to endorse or promote products derived from 
+ *      this software without specific prior written permission.
+ *
+ *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ *  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, 
+ *  THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR 
+ *  PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR 
+ *  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, 
+ *  EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, 
+ *  PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+ *  OR BUSINESS INTERRUPTION). HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
+ *  WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR 
+ *  OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
+ *  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ *****************************************************************************/
+ 
+/*****************************************************************************
+*
+*     Author: Kristof Denolf <kristof@xilinx.com>
+*     Date:   2018/05/11
+*
+*****************************************************************************/
+
+///SDx temporal fix for Clang issue
+#ifdef __SDSCC__
+#undef __ARM_NEON__
+#undef __ARM_NEON
+#include <opencv2/core/core.hpp>
+#define __ARM_NEON__
+#define __ARM_NEON
+#else
+#include <opencv2/core/core.hpp>
+#endif 
+
+#include <Utils/inc/UtilsForXfOpenCV.h> 
+#include "xfSplitCoreForVivadoHLS.h"   
+ 
+
+namespace xF 
+{
+	void split(cv::Mat &src, std::vector<cv::Mat> &dst)
+	{ 
+		const int srcTypeTP = ${srcTypeCMakeParamSplit}; 	
+		const int dstTypeTP = ${dstTypeCMakeParamSplit};
+		const int maxWidthTP = ${maxWidthCMakeParam};
+		const int maxHeightTP = ${maxHeightCMakeParamSplit};	
+		const int NPCTP = ${NPCCMakeParamSplit};
+	
+		//check for limitations of xfOpenCV module
+		//run-time
+		assert(src.channels() == 4);  
+	
+		xf::Mat<srcTypeTP, maxHeightTP, maxWidthTP, NPCTP>* imgInput;		
+		xf::Mat<dstTypeTP, maxHeightTP, maxWidthTP, NPCTP>* imgOutput[4]; 
+	
+		// perform some checks on the src type
+		cvToXfSource(src, imgInput);  
+	 
+		// perform some checks on the dst type
+		bool dstPostConversion0 = cvToXfDestination(dst[0], imgOutput[0], src.size(),src.depth()); 	
+		bool dstPostConversion1 = cvToXfDestination(dst[1], imgOutput[1], src.size(),src.depth()); 	
+		bool dstPostConversion2 = cvToXfDestination(dst[2], imgOutput[2], src.size(),src.depth()); 
+		bool dstPostConversion3 = cvToXfDestination(dst[3], imgOutput[3], src.size(),src.depth()); 
+			  
+		// call xf::extractChannel 
+		xF_split(imgInput, imgOutput[0],imgOutput[1],imgOutput[2],imgOutput[3]);	 
+	
+		//perform checks on the dst type
+		if (dstPostConversion0) {
+			//xfMatDepthPostConversion(dst,*imgOutput[0]);
+		}	
+		if (dstPostConversion1) {
+			//xfMatDepthPostConversion(dst,*imgOutput[1]);
+		}	
+		if (dstPostConversion2) {
+			//xfMatDepthPostConversion(dst,*imgOutput[2]);
+		}
+		if (dstPostConversion3) {
+			//xfMatDepthPostConversion(dst,*imgOutput[3]);
+		}
+	
+		delete imgOutput[0];	
+		delete imgOutput[1];	
+		delete imgOutput[2];	
+		delete imgOutput[3];
+		delete imgInput;
+	
+		return;
+	}
+}
+
