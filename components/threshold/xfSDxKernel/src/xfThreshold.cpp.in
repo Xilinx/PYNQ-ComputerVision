@@ -69,8 +69,8 @@ double threshold(cv::Mat &src, cv::Mat &dst, double thresh, double maxval, int t
 	//check for limitations of xfOpenCV module
 	assert(src.channels() == 1);
 	assert(dst.channels() == 1);
-	assert(maxval == 255);		
-	assert(type == 0); //cv::THRESH_BINARY=0
+	assert((maxval >= 0) && maxval <= 255);
+	assert(type==XF_XFTHRESHOLDTYPE2CVTHRESHOLDTYPE(thresholdTypeTP));
 	
 	xf::Mat<srcTypeTP, maxHeightTP, maxWidthTP, NPCTP>* imgInput;
 	xf::Mat<srcTypeTP, maxHeightTP, maxWidthTP, NPCTP>* imgOutput;
@@ -80,14 +80,9 @@ double threshold(cv::Mat &src, cv::Mat &dst, double thresh, double maxval, int t
           
 	// perform some checks on the dst type
 	bool dstPostConversion = cvToXfDestination(dst, imgOutput, src); 
-	//cast double to unsigned short
-	short xfThresh= (short) thresh;
-	// set threshold range to 0
-	short xfThresh_upper=0;
-	short xfThresh_lower=0;
-
+	
 	// call xf::threshold
-	xF_Threshold(imgInput, imgOutput, xfThresh, xfThresh_upper, xfThresh_lower);
+	xF_Threshold(imgInput, imgOutput, (short) thresh, (short) maxval);
 
 	//perform checks on the dst type
 	if (dstPostConversion) {
