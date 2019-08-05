@@ -50,13 +50,24 @@ import shutil
 toolchain_file  = "../../../../../frameworks/cmakeModules/cmakeModulesXilinx/toolchain_sds.cmake"
 arch            = "arm64"
 clockID         = "3"
-platform        = "/platforms/Ultra96/bare/2018.3/ultra"
+platform        = "/group/xrlabs/projects/image_processing/platforms/Ultra96/ultra_v2.4/2018.3/ultra"
 usePL           = "ON"
 noBitstream     = "OFF"
 noSDCardImage   = "ON"
-unitTestFileDir = "unitTestFiles"
-buildDir        = "build"
+unitTestFileDir = "unitTestFilesUltra96"
+buildDir        = "buildUltra96"
 
+#clockID         = "2"
+#platform        = "/group/xrlabs/tools/reVISION/platforms/zcu102_rv_ss/2018.3/zcu102_rv_ss"
+#platform        = "/group/xrlabs/tools/reVISION/platforms/zcu104_rv_min_2019.1"
+#usePL           = "ON"
+#noBitstream     = "OFF"
+#noSDCardImage   = "ON"
+#unitTestFileDir = "unitTestFilesZCU102"
+#buildDir        = "buildzcu102"
+
+#unitTestFileDir = "unitTestFilesCSIM"
+#buildDir        = "build2019.1"
 
 #*****************************************************************************
 # Create a conversion .bif file
@@ -87,15 +98,15 @@ def buildUnitTest(component):
     #run cmake here
     os.system("cmake .. -DCMAKE_TOOLCHAIN_FILE="+toolchain_file+" -DSDxArch="+arch+" -DSDxClockID="+clockID+" -DSDxPlatform="+platform+" -DusePL="+usePL+" -DnoBitstream="+noBitstream+" -DnoSDCardImage="+noSDCardImage+" >& cmake.log") 
     if '-- Build files have been written to' in open('cmake.log').read():
-        print("\t CMake OK", end='')
+        print("\t CMake OK", end='', flush=True)
     else:
-        print("\t CMake FAIL", end='')
+        print("\t CMake FAIL", end='', flush=True)
     #run make
     os.system("make "+target+" >&  make.log")
     if '[100%] Built target' in open('make.log').read():
-        print("\t build OK")
+        print("\t build OK", flush=True)
     else:
-        print("\t build FAIL")
+        print("\t build FAIL", flush=True)
         os.chdir("..")
         return
     #convert bitstream
@@ -149,7 +160,7 @@ def buildUnitTestCSim(component):
 desc = "Script to run build on test directories."
 parser = argparse.ArgumentParser(description = desc)
 parser.add_argument("-c","--csim", help="build for C simulation only", action="store_true")
-parser.add_argument("-l","--list", help="file of tests directories to build.")
+parser.add_argument("-l","--list", help="file of tests diretories to build.")
 args = parser.parse_args()
 
 if(not args.list):
