@@ -53,6 +53,7 @@
 //#include <opencv2/core/core.hpp>
 
 bool imageCompare(cv::Mat &test, cv::Mat &golden, int &numberOfDifferences, double &error, bool listPositionFirstDifference = false, bool displayResult = false, double epsilon = 0.01);
+bool compareKeypointPoints (std::vector<cv::KeyPoint> test, std::vector<cv::KeyPoint> golden);
 void readImage(const std::string &fileName, cv::Mat &image, int flags = 1);
 void writeImage(const std::string &fileName, cv::Mat &image);
 void writeImage(const std::string &fileName, cv::Mat &image, const std::vector<int> &params);

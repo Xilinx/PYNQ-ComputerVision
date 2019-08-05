@@ -50,6 +50,39 @@
 
 using namespace cv;
 
+void readImage(const std::string &fileName, Mat &image, int flags)
+{
+	// Load an image
+	image = imread(fileName, flags);
+	if (!image.data) {
+		std::stringstream errorMessage;
+		errorMessage << "Failed to load image " << fileName;
+		CV_Error(Error::StsBadArg, errorMessage.str());
+	}
+}
+
+void writeImage(const std::string &fileName, Mat &image)
+{
+	//Write an image
+	if (!image.data) {
+		std::stringstream errorMessage;
+		errorMessage << "Failed to write image " << fileName;
+		CV_Error(Error::StsBadArg, errorMessage.str());
+	}
+	imwrite(fileName, image);
+}
+
+void writeImage(const std::string &fileName, Mat &image, const std::vector<int> &params)
+{
+	//Write an image
+	if (!image.data) {
+		std::stringstream errorMessage;
+		errorMessage << "Failed to write image " << fileName;
+		CV_Error(Error::StsBadArg, errorMessage.str());
+	}
+	imwrite(fileName, image, params);
+}
+
 template<typename T>
 void listFirstDifferenceTwoMatrices(Mat &test, Mat &golden, double epsilon)
 {
@@ -75,42 +108,6 @@ void listFirstDifferenceTwoMatrices(Mat &test, Mat &golden, double epsilon)
 	}
 }
 
-void readImage(const std::string &fileName, Mat &image, int flags)
-{
-	// Load an image
-	image = imread(fileName, flags);
-	if (!image.data) {
-		std::stringstream errorMessage;
-		errorMessage << "Failed to load image " << fileName;
-		CV_Error(CV_StsBadArg, errorMessage.str());
-	}
-}
-
-void writeImage(const std::string &fileName, Mat &image)
-{
-	//Write an image
-	if (!image.data) {
-		std::stringstream errorMessage;
-		errorMessage << "Failed to write image " << fileName;
-		CV_Error(CV_StsBadArg, errorMessage.str());
-	}
-	imwrite(fileName, image);
-}
-
-void writeImage(const std::string &fileName, Mat &image, const std::vector<int> &params)
-{
-	//Write an image
-	if (!image.data) {
-		std::stringstream errorMessage;
-		errorMessage << "Failed to write image " << fileName;
-		CV_Error(CV_StsBadArg, errorMessage.str());
-	}
-	imwrite(fileName, image, params);
-
-
-}
-
-
 bool imageCompare(Mat &test, Mat &golden, int &numberOfDifferences, double &error, bool listPositionFirstDifference, bool displayResult, double epsilon)
 {
 	bool identical = true;
@@ -124,7 +121,7 @@ bool imageCompare(Mat &test, Mat &golden, int &numberOfDifferences, double &erro
 	else {
 		Mat difference = Mat(golden.size(), golden.type());
 
-		error = norm(test, golden, CV_L1);
+		error = norm(test, golden, NORM_L1);
 		error /= (double)(test.rows*test.cols);
 		absdiff(test, golden, difference);
 
@@ -141,7 +138,7 @@ bool imageCompare(Mat &test, Mat &golden, int &numberOfDifferences, double &erro
 		if (displayResult)
 		{
 			const char* differenceWindowName = "difference";
-			namedWindow(differenceWindowName, CV_WINDOW_AUTOSIZE);
+			namedWindow(differenceWindowName, WINDOW_AUTOSIZE);
 			imshow(differenceWindowName, difference);
 		}
 
@@ -176,6 +173,36 @@ bool imageCompare(Mat &test, Mat &golden, int &numberOfDifferences, double &erro
 	return identical;
 }
 
+bool compareKeypointPoints (std::vector<KeyPoint> test, std::vector<KeyPoint> golden)
+{
+	bool returnValue = true;
+	
+	if (golden.size() == test.size())
+	{
+		std::cout << "Same number of keypoints found, starting elementwise comparison" << std::endl;
+		
+		for (int i = 0; i < golden.size(); i++ )
+		{
+			auto keyGolden = golden[i];
+			auto keyTest = test[i];
+			
+			if (keyGolden.pt != keyTest.pt)
+			{
+				std::cout << "keypoint differs" << i << " : golden: " << keyGolden.pt << " , test: " << keyTest.pt << std::endl;
+				returnValue = false;
+			}
+		}
+	}
+	else
+	{
+		std::cout << "Different number of keypoints: golden: " << golden.size() << ", test: " << test.size() << std::endl;
+		returnValue = false;
+	}
+		
+	return returnValue;
+	
+}
+
 template<typename T, typename Tcast>
 void writeImageAsTextFileT(Mat in, std::ofstream &file)
 {
@@ -195,7 +222,7 @@ void writeImageAsTextFile(Mat in, std::ofstream &file){
 	if(!file.is_open()){
 		std::stringstream errorMessage;
 		errorMessage << "Output file not open";
-		CV_Error(CV_StsBadArg, errorMessage.str());
+		CV_Error(Error::StsBadArg, errorMessage.str());
 	}
 
 	switch (in.depth()) {
@@ -222,7 +249,7 @@ void writeImageAsTextFile(Mat in, std::ofstream &file){
 		default:
 		std::stringstream errorMessage;
 		errorMessage << "unexpected CV type";
-		CV_Error(CV_StsBadArg, errorMessage.str());
+		CV_Error(Error::StsBadArg, errorMessage.str());
 	}
 }
 
@@ -306,7 +333,7 @@ void initializeSingleGrayImageTest(int argc, char ** argv, Mat &src)
 		}
 
 		// Load an image
-		readImage(argv[1], src, CV_LOAD_IMAGE_GRAYSCALE);
+		readImage(argv[1], src, IMREAD_GRAYSCALE );
 	}
 	catch (std::exception &e)
 	{
@@ -324,7 +351,7 @@ void initializeSingleGrayImageTest(std::string fileName, Mat &src)
 	try
 	{
 		// Load an image
-		readImage(fileName, src, CV_LOAD_IMAGE_GRAYSCALE);
+		readImage(fileName, src, IMREAD_GRAYSCALE );
 	}
 	catch (std::exception &e)
 	{
@@ -349,7 +376,7 @@ void initializeSingleImageTest(int argc, char ** argv, Mat &src)
 		}
 
 		// Load an image
-		readImage(argv[1], src, CV_LOAD_IMAGE_COLOR);
+		readImage(argv[1], src, IMREAD_COLOR );
 	}
 	catch (std::exception &e)
 	{
@@ -367,7 +394,7 @@ void initializeSingleImageTest(std::string fileName, Mat &src)
 	try
 	{
 		// Load an image
-		readImage(fileName, src, CV_LOAD_IMAGE_COLOR);
+		readImage(fileName, src, IMREAD_COLOR );
 	}
 	catch (std::exception &e)
 	{
@@ -385,8 +412,8 @@ void initializeDualImageTest(std::string fileName1, std::string fileName2, Mat &
 	try
 	{
 		// Load an image
-		readImage(fileName1, src1, CV_LOAD_IMAGE_COLOR);
-		readImage(fileName2, src2, CV_LOAD_IMAGE_COLOR);
+		readImage(fileName1, src1, IMREAD_COLOR );
+		readImage(fileName2, src2, IMREAD_COLOR );
 	}
 	catch (std::exception &e)
 	{
@@ -439,7 +466,7 @@ std::vector<cv::Rect> mergeIntersectingBoundingBoxes(std::vector<cv::Rect> listO
     }
 		else if((tmpRect1 & tmpRect2).area() > 0) // intersecting our touching boundingboxes, merge
     {
-      CvRect newrect = rect1 | rect2;
+      cv::Rect newrect = rect1 | rect2;
       listOfBoxes.erase(listOfBoxes.begin()+offset);
       listOfBoxes.erase(listOfBoxes.begin()+offset);
       listOfBoxes.push_back(newrect);

@@ -1314,6 +1314,63 @@ static int convert_to_char(PyObject *o, char *dst, const char *name = "no_name")
 #  pragma GCC diagnostic ignored "-Wmissing-field-initializers"
 #endif
 
+//#include "pyopencv_generated_types.h"
+
+struct pyopencv_KeyPoint_t
+{
+    PyObject_HEAD
+    cv::KeyPoint v;
+};
+
+static PyTypeObject pyopencv_KeyPoint_Type =
+{
+    PyObject_HEAD_INIT(&PyType_Type)
+    MODULESTR".KeyPoint",
+    sizeof(pyopencv_KeyPoint_t),
+};
+
+static void pyopencv_KeyPoint_dealloc(PyObject* self)
+{
+    PyObject_Del(self);
+}
+
+template<> PyObject* pyopencv_from(const cv::KeyPoint& r)
+{
+    pyopencv_KeyPoint_t *m = PyObject_NEW(pyopencv_KeyPoint_t, &pyopencv_KeyPoint_Type);
+    m->v = r;
+    return (PyObject*)m;
+}
+
+template<> bool pyopencv_to(PyObject* src, cv::KeyPoint& dst, const char* name)
+{
+    if( src == NULL || src == Py_None )
+        return true;
+    if(!PyObject_TypeCheck(src, &pyopencv_KeyPoint_Type))
+    {
+        failmsg("Expected cv::KeyPoint for argument '%s'", name);
+        return false;
+    }
+    dst = ((pyopencv_KeyPoint_t*)src)->v;
+    return true;
+}
+
+static PyMethodDef pyopencv_KeyPoint_methods[] =
+{
+
+    {NULL,          NULL}
+};
+
+static void pyopencv_KeyPoint_specials(void)
+{
+    pyopencv_KeyPoint_Type.tp_base = NULL;
+    pyopencv_KeyPoint_Type.tp_dealloc = pyopencv_KeyPoint_dealloc;
+//    pyopencv_KeyPoint_Type.tp_repr = pyopencv_KeyPoint_repr;
+//    pyopencv_KeyPoint_Type.tp_getset = pyopencv_KeyPoint_getseters;
+//    pyopencv_KeyPoint_Type.tp_methods = pyopencv_KeyPoint_methods;
+}
+
+
+
 static PyMethodDef special_methods[] = {
 #ifdef HAVE_OPENCV_HIGHGUI
   {"createTrackbar", pycvCreateTrackbar, METH_VARARGS, "createTrackbar(trackbarName, windowName, value, count, onChange) -> None"},
