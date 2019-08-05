@@ -49,55 +49,107 @@
 #endif 
 
 #include <Utils/inc/UtilsForXfOpenCV.h>
+#include "xfSDxFast.h" 
+
 #include <Mat/inc/mat.hpp> 
 #include "xfFastCoreForVivadoHLS.h"
 
+//#include <HRTimer.h>
+
 namespace xF { 
  
-	void fast(cv::Mat &image, std::vector<cv::KeyPoint> &keypoints, int threshold, bool nonmaxSuppression)
-	{
-		const int NMSTP 		= ${NMSCMakeParamFast}; 	// non-maximum suppression	
-		const int maxWidthTP 	= ${maxWidthCMakeParamFast};
-		const int maxHeightTP 	= ${maxHeightCMakeParamFast};
-		const int srcTypeTP 	= ${srcTypeCMakeParamFast};
-		const int dstTypeTP 	= ${srcTypeCMakeParamFast}; 	
-		const int NPCTP	 		= ${NPCCMakeParamFast};
-	
-		//check for limitations of xfOpenCV module
-		//run-time
-		assert(image.channels() == 1); 
-	
-		xf::Mat<srcTypeTP, maxHeightTP, maxWidthTP, NPCTP>* imgInput;
-		xf::Mat<dstTypeTP, maxHeightTP, maxWidthTP, NPCTP>* imgOutput;
-		
-		//need to create a tmp full image for results and then extract keypoints
-		xF::Mat dst(image.rows, image.cols, CV_8UC1);
-		
-		// perform some checks on the src type
-		cvToXfSource(image,imgInput);
-			        
-		unsigned char thresholdHLS= (unsigned char) threshold;
-		
-		// perform some checks on the dst type
-		bool dstPostConversion = cvToXfDestination(dst, imgOutput, image); 
-	
-		// call xf::FAST
-		xF_fast(imgInput, imgOutput, thresholdHLS);
+void FAST(cv::Mat &image, std::vector<cv::KeyPoint> &keypoints, int threshold, bool nonmaxSuppression)
+{
+	const int NMSTP 		= ${NMSCMakeParamFast}; 	// non-maximum suppression	
+	const int maxWidthTP 	= ${maxWidthCMakeParamFast};
+	const int maxHeightTP 	= ${maxHeightCMakeParamFast};
+	const int srcTypeTP 	= ${srcTypeCMakeParamFast};
+	const int dstTypeTP 	= ${srcTypeCMakeParamFast}; 	
+	const int NPCTP	 		= ${NPCCMakeParamFast};
 
-		// locations of non-zero pixels
-		std::vector<cv::Point> Locations; 
+	//check for limitations of xfOpenCV module
+	//run-time
+	assert(image.channels() == 1); 
+
+	//HRTimer timer;
+
+	//timer.StartTimer();
+	xf::Mat<srcTypeTP, maxHeightTP, maxWidthTP, NPCTP>* imgInput;
+	xf::Mat<dstTypeTP, maxHeightTP, maxWidthTP, NPCTP>* imgOutput;
 	
-		// find list of keypoints in imgOutput
-		cv::findNonZero(dst, Locations);
-			
-		//copy points to keypoints
-		for( int i=0; i< Locations.size(); i++){
-		  	keypoints.push_back(cv::KeyPoint(Locations[i], 1.f));
-		}
-		delete imgInput;
-		delete imgOutput;
+	//need to create a tmp full image for results and then extract keypoints
+	xF::Mat dst(image.rows, image.cols, CV_8UC1);
 	
-		return;
+	// perform some checks on the src type
+	cvToXfSource(image,imgInput);
+		        
+	unsigned char thresholdHLS= (unsigned char) threshold;
+	
+	// perform some checks on the dst type
+	bool dstPostConversion = cvToXfDestination(dst, imgOutput, image); 
+	//timer.StopTimer();
+	//std::cout << "Fast wrapper buffers setup: " << timer.GetElapsedUs() << " us" << std::endl;
+
+
+	//timer.StartTimer();
+	// call xf::FAST
+	xF_fast(imgInput, imgOutput, thresholdHLS);
+	//timer.StopTimer();
+	//std::cout << "Fast wrapper xf::fast call: " << timer.GetElapsedUs() << " us" << std::endl;
+	
+	//timer.StartTimer();
+	// locations of non-zero pixels
+	std::vector<cv::Point> Locations; 
+
+	// find list of keypoints in imgOutput
+	cv::findNonZero(dst, Locations);
+		
+	//copy points to keypoints
+	for( int i=0; i< Locations.size(); i++){
+	  	keypoints.push_back(cv::KeyPoint(Locations[i], 1.f));
 	}
+	//timer.StopTimer();
+	//std::cout << "Fast wrapper keypoints extraction: " << timer.GetElapsedUs() << " us" << std::endl;
+	
+	
+	delete imgInput;
+	delete imgOutput;
+
+	return;
 }
+
+class FastFeatureDetector_Impl : public xF::FastFeatureDetector
+{
+private:
+	int threshold;
+	bool nonmaxSuppression;
+
+public:
+	FastFeatureDetector_Impl() {};
+	
+	#if (CV_MAJOR_VERSION < 4)
+	FastFeatureDetector_Impl(int _threshold, bool _nonmaxSuppression, int type)
+	#else
+	FastFeatureDetector_Impl(int _threshold, bool _nonmaxSuppression, FastFeatureDetector::DetectorType type)
+	#endif
+	{
+		threshold = _threshold;
+		bool nonmaxSuppression = _nonmaxSuppression;
+	}
+	
+	void detect( cv::Mat &image, std::vector<cv::KeyPoint> &keypoints, cv::InputArray mask) {
+		xF::FAST(image,keypoints, threshold, nonmaxSuppression);
+	}
+};
+
+#if (CV_MAJOR_VERSION < 4)
+cv::Ptr<xF::FastFeatureDetector> FastFeatureDetector::create( int threshold, bool nonmaxSuppression, int type )
+#else
+cv::Ptr<xF::FastFeatureDetector> FastFeatureDetector::create( int threshold, bool nonmaxSuppression, FastFeatureDetector::DetectorType type )
+#endif
+{
+    return cv::makePtr<FastFeatureDetector_Impl>(threshold, nonmaxSuppression, type);
+}
+
+} // namespace xF
  

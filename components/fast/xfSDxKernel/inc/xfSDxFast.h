@@ -51,10 +51,25 @@
 #else
 #include <opencv2/core/core.hpp>
 #endif 
- 
+
+#include "opencv2/features2d.hpp" 
  
 namespace xF {  
 
-	void fast(cv::Mat &image, std::vector<cv::KeyPoint> &keypoints, int threshold, bool nonmaxSuppression = true);  
-}
+void FAST(cv::Mat &image, std::vector<cv::KeyPoint> &keypoints, int threshold, bool nonmaxSuppression = true); 
+
+class FastFeatureDetector
+{
+	public:
+		#if (CV_MAJOR_VERSION < 4)
+		static cv::Ptr<xF::FastFeatureDetector> create( int threshold, bool nonmaxSuppression = true, int type= cv::FastFeatureDetector::TYPE_9_16);
+		#else
+		static cv::Ptr<xF::FastFeatureDetector> create( int threshold, bool nonmaxSuppression = true, cv::FastFeatureDetector::DetectorType type= cv::FastFeatureDetector::DetectorType::TYPE_9_16);	
+		#endif
+		virtual void detect( cv::Mat &image, std::vector<cv::KeyPoint> &keypoints, cv::InputArray mask=cv::noArray() ) = 0;
+	
+};
+
 #endif
+
+} //namespace xF
