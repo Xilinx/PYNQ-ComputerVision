@@ -43,7 +43,10 @@
 
 #include "common/xf_common.h"
 
-void xF_dilate(xf::Mat<${srcTypeCMakeParamDilate}, ${maxHeightCMakeParamDilate}, ${maxWidthCMakeParamDilate}, ${NPCCMakeParamDilate}>* imgInput, xf::Mat<${srcTypeCMakeParamDilate}, ${maxHeightCMakeParamDilate}, ${maxWidthCMakeParamDilate}, ${NPCCMakeParamDilate}>* imgOutput);
+//PL instantiation types
+typedef unsigned char xfkernelType; //xfOpenCV forces coefficients as unsigned char
+
+void xF_dilate(xf::Mat<${srcTypeCMakeParamDilate}, ${maxHeightCMakeParamDilate}, ${maxWidthCMakeParamDilate}, ${NPCCMakeParamDilate}>* imgInput, xf::Mat<${srcTypeCMakeParamDilate}, ${maxHeightCMakeParamDilate}, ${maxWidthCMakeParamDilate}, ${NPCCMakeParamDilate}>* imgOutput, xfkernelType kernelWindow[]);
 
 
 #endif
