@@ -43,7 +43,10 @@
 
 #include "common/xf_common.h"
 
-void xF_erode(xf::Mat<${srcTypeCMakeParamErode}, ${maxHeightCMakeParamErode}, ${maxWidthCMakeParamErode}, ${NPCCMakeParamErode}>* imgInput, xf::Mat<${srcTypeCMakeParamErode}, ${maxHeightCMakeParamErode}, ${maxWidthCMakeParamErode}, ${NPCCMakeParamErode}>* imgOutput);
+//PL instantiation types
+typedef unsigned char xfkernelType; //xfOpenCV forces coefficients as unsigned char
+
+void xF_erode(xf::Mat<${srcTypeCMakeParamErode}, ${maxHeightCMakeParamErode}, ${maxWidthCMakeParamErode}, ${NPCCMakeParamErode}>* imgInput, xf::Mat<${srcTypeCMakeParamErode}, ${maxHeightCMakeParamErode}, ${maxWidthCMakeParamErode}, ${NPCCMakeParamErode}>* imgOutput, xfkernelType kernelWindow[]);
 
 
-#endif
+#endif

@@ -41,10 +41,10 @@
 #include "imgproc/xf_erosion.hpp" 
 
 
-void xF_erode(xf::Mat<${srcTypeCMakeParamErode}, ${maxHeightCMakeParamErode}, ${maxWidthCMakeParamErode}, ${NPCCMakeParamErode}>* imgInput, xf::Mat<${srcTypeCMakeParamErode}, ${maxHeightCMakeParamErode}, ${maxWidthCMakeParamErode}, ${NPCCMakeParamErode}>* imgOutput)
+void xF_erode(xf::Mat<${srcTypeCMakeParamErode}, ${maxHeightCMakeParamErode}, ${maxWidthCMakeParamErode}, ${NPCCMakeParamErode}>* imgInput, xf::Mat<${srcTypeCMakeParamErode}, ${maxHeightCMakeParamErode}, ${maxWidthCMakeParamErode}, ${NPCCMakeParamErode}>* imgOutput, xfkernelType kernelWindow[])
 {
 	// call xf::erode
-	xf::erode<${borderTypeCMakeParamErode},${srcTypeCMakeParamErode},${maxHeightCMakeParamErode},${maxWidthCMakeParamErode},${NPCCMakeParamErode}>(*imgInput,*imgOutput);
+	xf::erode<${borderTypeCMakeParamErode},${srcTypeCMakeParamErode},${maxHeightCMakeParamErode},${maxWidthCMakeParamErode},${kernelShapeCMakeParamErode},${kernelSizeCMakeParamErode},${kernelSizeCMakeParamErode},${iterationsCMakeParamErode},${NPCCMakeParamErode}>(*imgInput,*imgOutput, kernelWindow);
 	
 	return;
 }
