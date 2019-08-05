@@ -34,7 +34,7 @@
 #     Date:   2017/12/05
 
 cmake_minimum_required(VERSION 2.8)
-include (rulesForSDxTargets)
+include (rulesForXFCV)
 
 macro (setXfOpenCVDefinitions)
 set(XF_BORDER_CONSTANT  0)
@@ -413,7 +413,7 @@ setDefaultParameters1In1OutModule(${componentNameCapLocalForRule})
 
 #Magnitude
 if(NOT DEFINED normTypeCMakeParamMagnitude)
-	set(normTypeCMakeParamMagnitude ${XF_L1NORM} CACHE STRING "Normalization type")
+	set(normTypeCMakeParamMagnitude ${XF_L2NORM} CACHE STRING "Normalization type")
 endif()
 if(NOT DEFINED srcTypeCMakeParamMagnitude)
 	set(srcTypeCMakeParamMagnitude ${XF_16SC1} CACHE STRING "Input pixel type")
@@ -557,7 +557,7 @@ if(NOT DEFINED interpolationTypeCMakeParam${componentNameCapLocalForRule})
 endif()
 
 if(NOT DEFINED maxDownScaleCMakeParam${componentNameCapLocalForRule})
-	set(maxDownScaleCMakeParam${componentNameCapLocalForRule} 2 CACHE STRING "maximum height")
+	set(maxDownScaleCMakeParam${componentNameCapLocalForRule} 2 CACHE STRING "maximum d")
 endif()
 
 
@@ -613,6 +613,9 @@ function(buildSDxCompilerFlags componentList SDxCompileFlags)
 			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocal}<${srcTypeCMakeParamAbsdiff},${maxHeightCMakeParamAbsdiff},${maxWidthCMakeParamAbsdiff},${NPCCMakeParamAbsdiff}>\" xf${componentNameLocalCap}CoreForVivadoHLS.cpp -files ${xfOpenCV_INCLUDE_DIRS}/core/xf_arithm.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}")
 		elseif (${componentNameLocal} STREQUAL "subtract")
 			message(STATUS "generating flags for subtract")
+			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocal}<${policyTypeCMakeParamSubtract},${srcTypeCMakeParamSubtract},${maxHeightCMakeParamSubtract},${maxWidthCMakeParamSubtract},${NPCCMakeParamSubtract}>\" xf${componentNameLocalCap}CoreForVivadoHLS.cpp -files ${xfOpenCV_INCLUDE_DIRS}/core/xf_arithm.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}")
+		elseif (${componentNameLocal} STREQUAL "add")
+			message(STATUS "generating flags for add")
 			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocal}<${policyTypeCMakeParamSubtract},${srcTypeCMakeParamSubtract},${maxHeightCMakeParamSubtract},${maxWidthCMakeParamSubtract},${NPCCMakeParamSubtract}>\" xf${componentNameLocalCap}CoreForVivadoHLS.cpp -files ${xfOpenCV_INCLUDE_DIRS}/core/xf_arithm.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}")
 		elseif (${componentNameLocal} STREQUAL "bitwise_and")
 			message(STATUS "generating flags for bitwise_and")
@@ -692,14 +695,9 @@ function(buildSDxCompilerFlags componentList SDxCompileFlags)
 		elseif (${componentNameLocal} STREQUAL "multiply")
 			message(STATUS "generating flags for multiply") 
 			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocal}<${policyTypeCMakeParamMultiply},${srcTypeCMakeParamMultiply},${maxHeightCMakeParamMultiply},${maxWidthCMakeParamMultiply},${NPCCMakeParamMultiply}>\" xf${componentNameLocalCap}CoreForVivadoHLS.cpp -files ${xfOpenCV_INCLUDE_DIRS}/core/xf_arithm.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}")
-	
-elseif (${componentNameLocal} STREQUAL "resize")
+		elseif (${componentNameLocal} STREQUAL "resize")
 			message(STATUS "generating flags for resize")
-			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocal}<${interpolationTypeCMakeParamResize},${srcTypeCMakeParamResize},${srcMaxHeightCMakeParamResize},${srcMaxWidthCMakeParamResize},${dstMaxHeightCMakeParamResize},${dstMaxWidthCMakeParamResize},${NPCCMakeParamResize},${maxDownScaleCMakeParamResize}>\" xf${componentNameLocalCap}CoreForVivadoHLS.cpp -files ${xfOpenCV_INCLUDE_DIRS}/imgproc/xf_resize.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}")
-
- 			
-	else (${CMAKE_C_COMPILER_ID} STREQUAL "SDSCC") #native compilation
-				
+			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocal}<${interpolationTypeCMakeParamResize},${srcTypeCMakeParamResize},${srcMaxHeightCMakeParamResize},${srcMaxWidthCMakeParamResize},${dstMaxHeightCMakeParamResize},${dstMaxWidthCMakeParamResize},${NPCCMakeParamResize},${maxDownScaleCMakeParamResize}>\" xf${componentNameLocalCap}CoreForVivadoHLS.cpp -files ${xfOpenCV_INCLUDE_DIRS}/imgproc/xf_resize.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}")				
 		else()
 		endif()
 	endforeach()
@@ -811,7 +809,8 @@ function (createPyOpenCVModulesInOverlayHeaderFile componentList incPath)
  		elseif (${componentNameLocal} STREQUAL "LUT")
  			file(APPEND ${fileName} "\t{\"LUT\",(PyCFunction)pyopencv_cv_LUT, METH_VARARGS | METH_KEYWORDS, \"LUT(src, lut[, dst]) -> dst\"},\n") 
  		elseif (${componentNameLocal} STREQUAL "fast")
- 			file(APPEND ${fileName} "\t{\"fast\",(PyCFunction)pyopencv_cv_LUT, METH_VARARGS | METH_KEYWORDS, \"fast(src, lut[, dst]) -> dst\"},\n") 
+			file(APPEND ${fileName} "\t{\"FastFeatureDetector_create\", (PyCFunction)pyopencv_cv_FastFeatureDetector_create, METH_VARARGS | METH_KEYWORDS, \"FastFeatureDetector_create([, threshold[, nonmaxSuppression[, type]]]) -> retval\"},\n")
+			file(APPEND ${fileName} "\t{\"detect\", (PyCFunction)pyopencv_cv_Feature2D_detect, METH_VARARGS | METH_KEYWORDS, \"detect(image[, mask]) -> keypoints\"},\n") 
  		elseif (${componentNameLocal} STREQUAL "cornerHarris")
  			file(APPEND ${fileName} "\t{\"cornerHarris\",(PyCFunction)pyopencv_cv_cornerHarris, METH_VARARGS | METH_KEYWORDS, \"cornerHarris(src, blockSize, ksize, k[, dst[, borderType]]) -> dst\"},\n") 
  		elseif (${componentNameLocal} STREQUAL "calcHist")
@@ -835,6 +834,8 @@ function (createPyOpenCVTypePublishHeaderFile componentList incPath)
 		
 		if (${componentNameLocal} STREQUAL "stereoBM")
 			file(APPEND ${fileName} "PUBLISH_OBJECT(\"${componentNameLocalCap}\", pyopencv_${componentNameLocalCap}_Type);")
+		elseif (${componentNameLocal} STREQUAL "fast")
+			file(APPEND ${fileName} "PUBLISH_OBJECT(\"${componentNameLocalCap}\", pyopencv_FastFeatureDetector_Type);")
 		else()
 		endif()
 		
@@ -845,12 +846,15 @@ endfunction()
 function (createPyOpenCVTypeRegHeaderFile componentList incPath)
 	set(fileName "${incPath}/xilinx_pyopencv_generated_type_reg.h")
 	file(WRITE ${fileName} "// CMake Automatically generated xilinx_pyopencv_generated_type_reg.h.h\n\n")
+	file(APPEND ${fileName} "MKTYPE2(KeyPoint);")
 	
 	foreach(componentNameLocal ${componentList})
 		capFirstLetter(${componentNameLocal} componentNameLocalCap)
 		
 		if (${componentNameLocal} STREQUAL "stereoBM")
 			file(APPEND ${fileName} "MKTYPE2(${componentNameLocalCap});")
+		elseif (${componentNameLocal} STREQUAL "fast")
+			file(APPEND ${fileName} "MKTYPE2(FastFeatureDetector);")
 		else()
 		endif()
 		
@@ -889,10 +893,19 @@ function (createXfOpenCVOverlayWithPythonBindings overlayName subDirLevels compo
 	project(${overlayName})
 	capFirstLetter(${overlayName} overlayNameCap)
 	
-	#add_subdirectory(${PROJECT_SOURCE_DIR}/${subDirLevels}/frameworks/utilities/xF/PynqLib ${CMAKE_CURRENT_BINARY_DIR}/PynqLib)
+	#Enable C++11
+	set(CMAKE_CXX_STANDARD 11)
+	set(CMAKE_CXX_STANDARD_REQUIRED ON)
+	set(CMAKE_CXX_EXTENSIONS OFF)
+	
+	# force static linking of sds_lib
+	if (${CMAKE_C_COMPILER_ID} STREQUAL "SDSCC")
+		add_compile_options(-static-sds)
+	endif(${CMAKE_C_COMPILER_ID} STREQUAL "SDSCC")
 	
 	# Find packages and compile xF::Mat in static lib (with sds++ while generating overlay).
 	requireOpenCVAndVivadoHLS()
+	add_subdirectory(${PROJECT_SOURCE_DIR}/${subDirLevels}/frameworks/utilities/xF/Mat ${CMAKE_CURRENT_BINARY_DIR}/xFMat)
 	find_package(xfOpenCV QUIET)
 
 	message(STATUS "PROJECT_SOURCE_DIR: ${PROJECT_SOURCE_DIR}")
@@ -951,7 +964,9 @@ function (createXfOpenCVOverlayWithPythonBindings overlayName subDirLevels compo
 		)
 		
 		set_target_properties (${currentTarget} PROPERTIES COMPILE_FLAGS ${CompileFlags})	#FLAGS for compile only	
-		#set_target_properties (xFMat PROPERTIES COMPILE_FLAGS "-fpic")
+		if (${CMAKE_C_COMPILER_ID} STREQUAL "SDSCC")
+			set_target_properties (${currentTarget} PROPERTIES LINK_FLAGS "-static-sds")	#FLAGS for link only
+		endif(${CMAKE_C_COMPILER_ID} STREQUAL "SDSCC")
 		
 		compilerDependentVivadoHLSInclude(${currentTarget})
 		
@@ -967,6 +982,7 @@ function (createXfOpenCVOverlayWithPythonBindings overlayName subDirLevels compo
 		#sysrootDependentLibSDSLink(${currentTarget})
 		target_link_libraries(${currentTarget}
 			${OpenCV_LIBS}
+			xFMat
 		)
 		
 	endif (${VivadoHLS_FOUND})
@@ -992,11 +1008,18 @@ function (createXfOpenCVUnitTestPL subDirLevels componentName)
 
 	capFirstLetter(${componentName} componentNameCap)
 
+	#Enable C++11
+	set(CMAKE_CXX_STANDARD 11)
+	set(CMAKE_CXX_STANDARD_REQUIRED ON)
+	set(CMAKE_CXX_EXTENSIONS OFF)
+
 	# Define project name
 	project(Xf${componentName})
 	
 	# force static linking of sds_lib
-	add_compile_options(-static-sds)
+	if (${CMAKE_C_COMPILER_ID} STREQUAL "SDSCC")
+		add_compile_options(-static-sds)
+	endif(${CMAKE_C_COMPILER_ID} STREQUAL "SDSCC")
 	#SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static-sds")
 	
 	# Find packages, add subdirectories and setup target independent include folders and libraries 
@@ -1065,7 +1088,9 @@ function (createXfOpenCVUnitTestPL subDirLevels componentName)
 		)
 		
 		set_target_properties (${currentTarget} PROPERTIES COMPILE_FLAGS ${CompileFlags})	#FLAGS for compile only
-		set_target_properties (${currentTarget} PROPERTIES LINK_FLAGS "-static-sds")	#FLAGS for link only
+		if (${CMAKE_C_COMPILER_ID} STREQUAL "SDSCC")
+			set_target_properties (${currentTarget} PROPERTIES LINK_FLAGS "-static-sds")	#FLAGS for link only
+		endif(${CMAKE_C_COMPILER_ID} STREQUAL "SDSCC")
 		
 		target_include_directories (${currentTarget} PUBLIC
 			${PROJECT_SOURCE_DIR}/${subdirLevels}/${componentFolder}/${componentName}/xfSDxKernel/inc
