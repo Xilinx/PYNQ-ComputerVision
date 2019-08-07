@@ -123,8 +123,8 @@ int main ( int argc, char** argv )
 	xF::Mat mapYHLS(height, width, CV_32FC1);
 	
 	//convert 3-channel image into 1-channel image
-	cvtColor(srcIn, srcInY, CV_BGR2GRAY, 1);
-	cvtColor(srcIn, srcHLS, CV_BGR2GRAY, 1);
+	cvtColor(srcIn, srcInY, COLOR_BGR2GRAY, 1);
+	cvtColor(srcIn, srcHLS, COLOR_BGR2GRAY, 1);
 	
 	//create map
 	makeMapXYFlipHor(srcInY.cols, srcInY.rows, mapX, mapY);

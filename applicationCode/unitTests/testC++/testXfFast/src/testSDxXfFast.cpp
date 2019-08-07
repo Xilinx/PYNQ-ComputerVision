@@ -117,13 +117,13 @@ int main ( int argc, char** argv )
 	
 	// Declare variables used for HW-SW interface to achieve good performance
 	xF::Mat srcHLS(height, width, CV_8UC1); 
-  	std::vector<KeyPoint> keypointHW; 
-  	
+  	std::vector<KeyPoint> keypointHW;
+	  	
 	//convert 3-channel image into 1-channel image
-	cvtColor(srcIn, srcHLS, CV_BGR2GRAY, 1);	
-	cvtColor(srcIn, srcInY, CV_BGR2GRAY, 1);	
+	cvtColor(srcIn, srcHLS, COLOR_BGR2GRAY, 1);	
+	cvtColor(srcIn, srcInY, COLOR_BGR2GRAY, 1);	
   	
-	// Apply OpenCV reference canny
+	// Apply OpenCV reference FAST
 	std::cout << "running golden model" << std::endl;
 	timer.StartTimer();
 	for (int i = 0; i < numberOfIterations; i++){
@@ -132,28 +132,29 @@ int main ( int argc, char** argv )
 	timer.StopTimer();
 	std::cout << "Elapsed time over " << numberOfIterations << "SW call(s): " << timer.GetElapsedUs() << " us or " << (float)timer.GetElapsedUs() / (float)numberOfIterations << "us per frame" << std::endl;
 
-	// Call wrapper for xf::canny
+	// Call wrapper for xf::fast
+	//std::cout << "testing new object based wrapper" << std::endl;
+	//cv::Ptr<xF::FastFeatureDetector> fastDetect = xF::FastFeatureDetector::create(threshold, nonMaxSupression);
+	//fastDetect->detect(srcHLS,keypointHWTest);
+	
+	
 	std::cout << "running hardware fast" << std::endl;
 	timer.StartTimer();
 	for (int i = 0; i < numberOfIterations; i++){
-		xF::fast (srcHLS, keypointHW, threshold, nonMaxSupression);
+		xF::FAST (srcHLS, keypointHW, threshold, nonMaxSupression);
+		//fastDetect->detect(srcHLS,keypointHW);
 	}
 	timer.StopTimer();	
 	std::cout << "Elapsed time over " << numberOfIterations << "PL call(s): " << timer.GetElapsedUs() << " us or " << (float)timer.GetElapsedUs() / (float)numberOfIterations << "us per frame" << std::endl;
 
-	// compare results
+	// compare results	
 	std::cout << "comparing HLS versus golden" << std::endl;
-	int numberOfDifferences = 0;
-	double errorPerPixel = 0;
-	//imageCompare(dstHLS, dstSW, numberOfDifferences, errorPerPixel, true, false);
-	std::cout << "number of differences: " << numberOfDifferences << " average L2 error: " << errorPerPixel << std::endl;
+	compareKeypointPoints(keypointSW,keypointHW);
 		
 	//draw keypoints
 	drawKeypoints(srcIn, keypointSW, dstSW);	    
 	drawKeypoints(srcIn, keypointHW, dstHW);
-	
-		std::cout<< "Keypoints[0]= "<< keypointSW[0].pt<<std::endl;
-		std::cout<< "Keypoints[0]= "<< keypointHW[0].pt<<std::endl;
+
 	//write back images in files
 	if (writeSWResult)
 		writeImage(filenameSW, dstSW);

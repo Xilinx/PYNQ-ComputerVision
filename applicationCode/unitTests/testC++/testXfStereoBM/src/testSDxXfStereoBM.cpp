@@ -131,10 +131,10 @@ int main ( int argc, char** argv )
 	//cv::Mat srcIn16; srcIn.convertTo(srcIn16,CV_16U);
 	
 	//convert 3-channel image into 1-channel image
-	cvtColor(srcLeft, leftHLS, CV_BGR2GRAY, 1);
-	cvtColor(srcRight, rightHLS, CV_BGR2GRAY, 1);
-	cvtColor(srcLeft, srcLeftY, CV_BGR2GRAY, 1);
-	cvtColor(srcRight, srcRightY, CV_BGR2GRAY, 1);
+	cvtColor(srcLeft, leftHLS, COLOR_BGR2GRAY, 1);
+	cvtColor(srcRight, rightHLS, COLOR_BGR2GRAY, 1);
+	cvtColor(srcLeft, srcLeftY, COLOR_BGR2GRAY, 1);
+	cvtColor(srcRight, srcRightY, COLOR_BGR2GRAY, 1);
 
 	// Apply OpenCV reference stereoBM
 	std::cout << "running golden model" << std::endl;

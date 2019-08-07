@@ -138,8 +138,8 @@ int main ( int argc, char** argv )
 	//cv::Mat srcIn16; srcIn.convertTo(srcIn16,CV_16U);
 	
 	//convert 3-channel image into 1-channel image
-	cvtColor(srcIn, srcInY, CV_BGR2GRAY, 1);
-	cvtColor(srcIn, srcHLS, CV_BGR2GRAY, 1);
+	cvtColor(srcIn, srcInY, COLOR_BGR2GRAY, 1);
+	cvtColor(srcIn, srcHLS, COLOR_BGR2GRAY, 1);
 	//srcInY.cvCopyToXf(srcHLS);
 	
 

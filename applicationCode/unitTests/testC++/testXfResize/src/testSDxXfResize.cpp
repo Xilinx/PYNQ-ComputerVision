@@ -121,8 +121,8 @@ int main ( int argc, char** argv )
 	xF::Mat dstHLS(dstHeight, dstWidth, CV_8UC1);
 	
 	//convert 3-channel image into 1-channel image
-	cvtColor(src, srcHLS, CV_BGR2GRAY, 1);	
-	cvtColor(src, srcInY, CV_BGR2GRAY, 1);	
+	cvtColor(src, srcHLS, COLOR_BGR2GRAY, 1);	
+	cvtColor(src, srcInY, COLOR_BGR2GRAY, 1);	
 
 	// Apply OpenCV reference Absdiff
 	std::cout << "running golden model" << std::endl;

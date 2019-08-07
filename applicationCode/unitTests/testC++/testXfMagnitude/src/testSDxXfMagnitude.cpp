@@ -113,7 +113,7 @@ int main ( int argc, char** argv )
 	int height = srcIn.size().height;
 
 	//convert 3-channel image into 1-channel image
-	cvtColor(srcIn, grayIn, CV_BGR2GRAY, 1);	   
+	cvtColor(srcIn, grayIn, COLOR_BGR2GRAY, 1);	   
   	
   	//Sobel variables
   	Mat gx,gy;
@@ -131,9 +131,6 @@ int main ( int argc, char** argv )
 	 
 	gx.convertTo(gxHLS, CV_16SC1);
 	gy.convertTo(gyHLS, CV_16SC1);	 
-	
-	std::cout<<"gxHLS.type()="<<gxHLS.type()<<std::endl;
-	std::cout<<"gyHLS.type()="<<gyHLS.type()<<std::endl;
 	
 	// Apply OpenCV reference threshold
 	std::cout << "running golden model" << std::endl;
@@ -159,7 +156,9 @@ int main ( int argc, char** argv )
 	std::cout << "comparing HLS versus golden" << std::endl;
 	int numberOfDifferences = 0;
 	double errorPerPixel = 0;
-	imageCompare(dstHLS, dstSW, numberOfDifferences, errorPerPixel, true, false);
+	cv::Mat dstSW16SC1;
+	dstSW.convertTo(dstSW16SC1,CV_16SC1); // xfOpenCV produces fixed point results
+	imageCompare(dstHLS, dstSW16SC1, numberOfDifferences, errorPerPixel, true, false);
 	std::cout << "number of differences: " << numberOfDifferences << " average L2 error: " << errorPerPixel << std::endl;
 
 	//write back images in files

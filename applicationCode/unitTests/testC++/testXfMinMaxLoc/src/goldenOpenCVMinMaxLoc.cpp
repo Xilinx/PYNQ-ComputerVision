@@ -87,7 +87,7 @@ int main ( int argc, char** argv )
   
   // Initialize
   initializeSingleImageTest(fileName, src);
-  cvtColor(src, gray, CV_BGR2GRAY, 1); 
+  cvtColor(src, gray, COLOR_BGR2GRAY, 1); 
   
   if (numberOfIterations > 0) {
     HRTimer timer;

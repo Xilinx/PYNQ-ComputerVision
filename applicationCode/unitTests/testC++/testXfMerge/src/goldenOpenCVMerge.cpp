@@ -85,7 +85,7 @@ int main ( int argc, char** argv )
 
   // Initialize
   initializeSingleImageTest(fileName1, src); 
-  cvtColor(src, gray, CV_BGR2GRAY, 1);
+  cvtColor(src, gray, COLOR_BGR2GRAY, 1);
     
   std::vector<Mat> channels; 
   channels.push_back(gray);

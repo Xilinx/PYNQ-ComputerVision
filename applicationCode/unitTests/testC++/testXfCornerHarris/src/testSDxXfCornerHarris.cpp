@@ -124,8 +124,8 @@ int main ( int argc, char** argv )
 	xF::Mat dstHLS_norm_scaled(height, width, CV_8UC1);
 	
 	//convert 3-channel image into 1-channel image
-	cvtColor(srcIn, srcHLS, CV_BGR2GRAY, 1);
-	cvtColor(srcIn, srcInY, CV_BGR2GRAY, 1);
+	cvtColor(srcIn, srcHLS, COLOR_BGR2GRAY, 1);
+	cvtColor(srcIn, srcInY, COLOR_BGR2GRAY, 1);
 
 	// Apply OpenCV reference canny
 	std::cout << "running golden model" << std::endl;

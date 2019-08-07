@@ -113,7 +113,7 @@ int main ( int argc, char** argv )
 	int height = srcIn.size().height;
 
 	//convert 3-channel image into 1-channel image
-	cvtColor(srcIn, grayIn, CV_BGR2GRAY, 1);	   
+	cvtColor(srcIn, grayIn, COLOR_BGR2GRAY, 1);	   
   	
 	//Sobel variables
 	Mat gx,gy;

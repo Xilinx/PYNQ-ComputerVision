@@ -139,8 +139,8 @@ int main ( int argc, char** argv )
   	initializeSingleImageTest(fileName1, prev);
   	initializeSingleImageTest(fileName2, next);
  
-  	cvtColor(prev, prevY, CV_BGR2GRAY, 1);
-  	cvtColor(next, nextY, CV_BGR2GRAY, 1);
+  	cvtColor(prev, prevY, COLOR_BGR2GRAY, 1);
+  	cvtColor(next, nextY, COLOR_BGR2GRAY, 1);
   
 	
 	std::vector<Point2f > prevPts, nextPts;
@@ -156,8 +156,8 @@ int main ( int argc, char** argv )
 	xF::Mat flowXHLS(height, width, CV_32FC1);	
 	xF::Mat flowYHLS(height, width, CV_32FC1);
 	
-  	cvtColor(prev, prevHLS, CV_BGR2GRAY, 1);
-  	cvtColor(next, nextHLS, CV_BGR2GRAY, 1);
+  	cvtColor(prev, prevHLS, COLOR_BGR2GRAY, 1);
+  	cvtColor(next, nextHLS, COLOR_BGR2GRAY, 1);
   	
 	// Apply OpenCV reference erode
 	std::cout << "running golden model" << std::endl;
