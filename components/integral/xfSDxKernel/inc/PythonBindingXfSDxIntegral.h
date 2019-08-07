@@ -60,7 +60,7 @@ static PyObject* pyopencv_cv_integral(PyObject* , PyObject* args, PyObject* kw)
         pyopencv_to(pyobj_src, src, ArgInfo("src", 0)) &&
         pyopencv_to(pyobj_sum, sum, ArgInfo("sum", 1)) )
     {
-        ERRWRAP2(xF_integral(src, sum, sdepth));
+        ERRWRAP2(xF::integral(src, sum, sdepth));
         return pyopencv_from(sum);
     }
     }

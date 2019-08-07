@@ -69,7 +69,7 @@ static PyObject* pyopencv_cv_warpAffine(PyObject* , PyObject* args, PyObject* kw
         pyopencv_to(pyobj_dsize, dsize, ArgInfo("dsize", 0)) &&
         pyopencv_to(pyobj_borderValue, borderValue, ArgInfo("borderValue", 0)) )
     {
-        ERRWRAP2(XF::warpAffine(src, dst, M, dsize, flags, borderMode, borderValue));
+        ERRWRAP2(xF::warpAffine(src, dst, M, dsize, flags, borderMode, borderValue));
         return pyopencv_from(dst);
     }
     }

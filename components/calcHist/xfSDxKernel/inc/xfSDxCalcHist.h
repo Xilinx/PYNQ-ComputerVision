@@ -53,7 +53,9 @@
 
 namespace xF {  
 
-void calcHist(cv::Mat* images, int nimages,const int* channels, cv::Mat mask, cv::Mat &hist, int dims,const int * histSize,const float** ranges, bool uniform=true, bool accumulate=false);
+void calcHist(cv::Mat* images, int nimages, const int* channels, cv::Mat mask, cv::Mat &hist, int dims, const int* histSize,const float** ranges, bool uniform=true, bool accumulate=false);
+
+void calcHist(std::vector<cv::Mat> &images, std::vector<int> channels, cv::Mat mask, cv::Mat &hist, std::vector<int> histSize, std::vector<float> ranges, bool accumulate=false);
  
 }// namespace xF
 #endif

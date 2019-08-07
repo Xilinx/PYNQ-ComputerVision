@@ -61,7 +61,7 @@ static PyObject* pyopencv_cv_LUT(PyObject* , PyObject* args, PyObject* kw)
         pyopencv_to(pyobj_lut, lut, ArgInfo("lut", 0)) &&
         pyopencv_to(pyobj_dst, dst, ArgInfo("dst", 1)) )
     {
-        ERRWRAP2(xF_LUT(src, lut, dst));
+        ERRWRAP2(xF::LUT(src, lut, dst));
         return pyopencv_from(dst);
     }
     }
