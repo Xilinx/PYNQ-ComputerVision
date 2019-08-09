@@ -69,20 +69,32 @@ namespace xF {
 
 		// perform some checks on the src type
 		cvToXfSource(src, imgInput);
-		         
-	 
-		unsigned short meanHLS[4]; 	
-		unsigned short stddevHLS[4];  
-	
+		
+		int channels = src.channels();
+		
+		#if __SDSCC__
+		unsigned short *meanHLS=(unsigned short*)sds_alloc_non_cacheable(channels*sizeof(unsigned short));
+		unsigned short *stddevHLS=(unsigned short*)sds_alloc_non_cacheable(channels*sizeof(unsigned short));
+		#else
+		unsigned short *meanHLS=(unsigned short*)malloc(channels*sizeof(unsigned short));
+		unsigned short *stddevHLS=(unsigned short*)malloc(channels*sizeof(unsigned short));
+		#endif
+			
 		// call xf::meanStdDev
 		xF_meanStdDev(imgInput, meanHLS, stddevHLS);
 	
 	 	mean= cv::Mat(1, 1, CV_32F, cv::Scalar((float)meanHLS[0]/256)); //xfOpenCV uses fixed point 8.8
 	 	stddev=cv::Mat(1, 1, CV_32F, cv::Scalar((float)stddevHLS[0]/256)); //xfOpenCV uses fixed point 8.8
-		 
-	
-		delete imgInput; 
-		 
+		
+		#if __SDSCC__
+		sds_free(meanHLS);
+		sds_free(stddevHLS);
+		#else
+		free(meanHLS);
+		free(stddevHLS);
+		#endif
+		
+		delete imgInput;
 	}
 }
 

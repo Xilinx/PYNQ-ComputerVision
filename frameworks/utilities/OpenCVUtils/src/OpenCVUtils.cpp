@@ -192,6 +192,9 @@ bool compareKeypointPoints (std::vector<KeyPoint> test, std::vector<KeyPoint> go
 				returnValue = false;
 			}
 		}
+		
+		if (returnValue)
+			std::cout << "keypoint comparison succesfull" << std::endl; 
 	}
 	else
 	{

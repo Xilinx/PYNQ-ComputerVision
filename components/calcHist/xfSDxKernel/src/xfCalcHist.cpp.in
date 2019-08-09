@@ -82,6 +82,13 @@ void calcHist(cv::Mat* images, int nimages, const int* channels, cv::Mat mask, c
 	{ 
 		hist.at<float>(cnt)=(float)histogram[cnt]; 
 	}
+	
+	#if __SDSCC__
+	sds_free(histogram);
+	#else
+	free(histogram);
+	#endif
+	
 	delete imgInput; 
 	 
 }
