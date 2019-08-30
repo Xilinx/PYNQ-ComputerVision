@@ -151,10 +151,12 @@ int main ( int argc, char** argv )
 	std::cout << "Elapsed time over " << numberOfIterations << "PL call(s): " << timer.GetElapsedUs() << " us or " << (float)timer.GetElapsedUs() / (float)numberOfIterations << "us per frame" << std::endl;
  
 	// compare results
-	std::cout << "comparing HLS versus golden" << std::endl;
+	std::cout << "comparing HLS versus golden, xfOpenCV seems to have swapped R and B so we correct that before comparing" << std::endl;
+	cv::Mat dstHLSSwap(dstHLS.size(),CV_8UC4);
+	cv::cvtColor(dstHLS,dstHLSSwap,COLOR_BGRA2RGBA);
 	int numberOfDifferences = 0;
 	double errorPerPixel = 0;
-	imageCompare(dstHLS, dstSW, numberOfDifferences, errorPerPixel, true, false);
+	imageCompare(dstHLSSwap, dstSW, numberOfDifferences, errorPerPixel, true, false);
 	std::cout << "number of differences: " << numberOfDifferences << " average L1 error: " << errorPerPixel << std::endl;
 
 	//write back images in files

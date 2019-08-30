@@ -151,9 +151,17 @@ int main ( int argc, char** argv )
 	// compare results
 	std::cout << "comparing HLS versus golden" << std::endl;
 	int numberOfDifferences = 0;
-	double errorPerPixel = 0;
-	//imageCompare(dstHLS, dstSW, numberOfDifferences, errorPerPixel, true, false);
-	std::cout << "number of differences: " << numberOfDifferences << " average L1 error: " << errorPerPixel << std::endl;
+	if ((minHW != minSW) || (minLocSW != minLocHW)) {
+		std::cout << "difference in minimum" << "SW min: "<< minSW << ", loc: " << minLocSW << ", HW min: " << minHW << ", loc: " << minLocHW << std::endl;
+		numberOfDifferences++;
+	}
+	
+	if ((maxSW != maxHW) || (maxLocSW != maxLocHW)) {
+		std::cout << "difference in minimum" << "SW mx: "<< maxSW << ", loc: " << maxLocSW << ", HW max: " << maxHW << ", loc: " << maxLocHW << std::endl;
+		numberOfDifferences++;
+	}
+	
+	std::cout << "number of differences: " << numberOfDifferences <<  std::endl;
  
 	// Output input and filter output
 	if (imShowOn) {

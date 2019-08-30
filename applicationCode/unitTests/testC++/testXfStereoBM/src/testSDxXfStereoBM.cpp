@@ -170,10 +170,13 @@ int main ( int argc, char** argv )
 	int numberOfDifferences = 0;
 	double errorPerPixel = 0;
 	
-	Mat tmpMatSW;
-	disparitySW.convertTo(tmpMatSW,CV_16U);
+	cv::Mat disparitySWInFloat(disparitySW.size(),CV_32F);
+	fixedPointToCvConversion(disparitySW,disparitySWInFloat,4); //OPenCV uses fixed point 12.4 format
 	
-	imageCompare(disparityHLS, tmpMatSW, numberOfDifferences, errorPerPixel, true, false);
+	cv::Mat disparityHLSInFloat(disparityHLS.size(),CV_32F);
+	fixedPointToCvConversion(disparityHLS,disparityHLSInFloat,4); // xfOpenCV uses fixed point 12.4 format
+	
+	imageCompare(disparityHLSInFloat, disparitySWInFloat, numberOfDifferences, errorPerPixel, true, false);
 	std::cout << "number of differences: " << numberOfDifferences << " average L1 error: " << errorPerPixel << std::endl;
 
 	//write back images in files
@@ -188,10 +191,10 @@ int main ( int argc, char** argv )
 		imshow("Input right", rightHLS);
 		
 		double minVal; double maxVal;
-		minMaxLoc(tmpMatSW, &minVal, &maxVal);
+		minMaxLoc(disparitySW, &minVal, &maxVal);
 		
 		Mat tmpShowDisparitySW, showDisparitySW;
-		tmpMatSW.convertTo(tmpShowDisparitySW,CV_8U,255.0/maxVal); // use maxVal for nicer colors instead of (numberOfDisparitiesD*16.0) disparity in 16U is 12.4 format, so we need *16
+		disparitySW.convertTo(tmpShowDisparitySW,CV_8U,255.0/maxVal); // use maxVal for nicer colors instead of (numberOfDisparitiesD*16.0) disparity in 16U is 12.4 format, so we need *16
 		applyColorMap(tmpShowDisparitySW,showDisparitySW,COLORMAP_JET); 		
 		imshow("Processed (SW)", showDisparitySW);
 		

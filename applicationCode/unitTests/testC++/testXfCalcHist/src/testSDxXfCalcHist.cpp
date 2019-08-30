@@ -118,7 +118,7 @@ int main ( int argc, char** argv )
 	
 	// Declare variables used for HW-SW interface to achieve good performance
 	xF::Mat srcHLS(height, width, CV_8UC1);
-	xF::Mat histogramHLS(height, width, CV_8UC1); 
+	xF::Mat histogramHLS(histSize, 1, CV_32FC1); 
 	
 	//convert 3-channel image into 1-channel image
 	cvtColor(srcIn, srcHLS, COLOR_BGR2GRAY, 1);
@@ -146,7 +146,7 @@ int main ( int argc, char** argv )
 	std::cout << "comparing HLS versus golden" << std::endl;
 	int numberOfDifferences = 0;
 	double errorPerPixel = 0;
-	//imageCompare(dstHLS, dstSW, numberOfDifferences, errorPerPixel, true, false);
+	imageCompare(histogramHLS, histogramSW, numberOfDifferences, errorPerPixel, true, false);
 	std::cout << "number of differences: " << numberOfDifferences << " average L1 error: " << errorPerPixel << std::endl;
 	  
 	// Output input and filter output
