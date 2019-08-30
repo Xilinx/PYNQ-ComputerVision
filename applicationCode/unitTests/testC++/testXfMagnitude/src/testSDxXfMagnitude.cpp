@@ -159,7 +159,7 @@ int main ( int argc, char** argv )
 	cv::Mat dstSW16SC1;
 	dstSW.convertTo(dstSW16SC1,CV_16SC1); // xfOpenCV produces fixed point results
 	imageCompare(dstHLS, dstSW16SC1, numberOfDifferences, errorPerPixel, true, false);
-	std::cout << "number of differences: " << numberOfDifferences << " average L2 error: " << errorPerPixel << std::endl;
+	std::cout << "number of differences: " << numberOfDifferences << " average L1 error: " << errorPerPixel << std::endl;
 
 	//write back images in files
 	if (writeSWResult)

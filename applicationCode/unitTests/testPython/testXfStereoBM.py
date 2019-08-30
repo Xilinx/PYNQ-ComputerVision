@@ -100,10 +100,8 @@ print("PL frames per second: ", ((numberOfIterations) / (stopPL - startPL)))
 tmpSW = np.clip(np.int16(dstSW),0,None)
 
 print("Checking SW and HW results match")
-numberOfDifferences=0
-errorPerPixel = 0.0
-epsilon = 0.0
-cvu.imageCompare(xFdst,tmpSW,numberOfDifferences,errorPerPixel,True,False,epsilon)
+numberOfDifferences,errorPerPixel = cvu.imageCompare(xFdst,tmpSW,True,False,0.0)
+print("number of differences: "+str(numberOfDifferences)+", average L1 error: "+str(errorPerPixel))
 
 print("Writing SW and HW results to image files.")
 disp_sw = cvu.colorizeDisparity(dstSW)

@@ -115,7 +115,7 @@ int main ( int argc, char** argv )
 
 	// Declare variables used for HW-SW interface to achieve good performance
 	xF::Mat srcHLS(height, width, CV_8UC1);
-	xF::Mat dstHLS(height, width, CV_32S);
+	xF::Mat dstHLS(height, width, CV_32SC1);
 	 
 	
 	//convert 3-channel image into 1-channel image
@@ -149,7 +149,7 @@ int main ( int argc, char** argv )
 	int numberOfDifferences = 0;
 	double errorPerPixel = 0;
 	imageCompare(dstHLS, dstSW2, numberOfDifferences, errorPerPixel, true, false);
-	std::cout << "number of differences: " << numberOfDifferences << " average L2 error: " << errorPerPixel << std::endl;
+	std::cout << "number of differences: " << numberOfDifferences << " average L1 error: " << errorPerPixel << std::endl;
 
     timer.StopTimer(); 
     

@@ -221,6 +221,49 @@ bool cvToXfDisparity(cv::Mat &disparity, xf::Mat<disparityTypeTP, maxHeightTP, m
 	return dstPostConversion;
 }
 
+template<typename T, int dstTypeTP, int maxHeightTP, int maxWidthTP, int NPCTP>
+void deepSlowConvert32UToCvMat(xf::Mat<dstTypeTP, maxHeightTP, maxWidthTP, NPCTP>* &imgInput, cv::Mat &dst)
+{
+	const int channels = 1; 
+	
+	for (int i = 0; i < imgInput->rows; i++) {
+		for (int j = 0; j < imgInput->cols; j++) {
+			T *pDst = dst.ptr<T>(i, j);
+			for (int k = 0; k < channels; k++) {
+				pDst[k] = (T) imgInput->data[(i*imgInput->cols+j)*channels + k];
+			}
+		}
+	}
+}
+
+template<int dstTypeTP, int maxHeightTP, int maxWidthTP, int NPCTP>
+void xf32UToCvConversion(xf::Mat<dstTypeTP, maxHeightTP, maxWidthTP, NPCTP>* &imgInput, cv::Mat &dst)
+{
+	switch (dst.depth()) {
+	case CV_8U:
+		deepSlowConvert32UToCvMat<uchar>(imgInput, dst);
+		break;
+	case CV_8S:
+		deepSlowConvert32UToCvMat<char>(imgInput, dst);
+	case CV_16U:
+		deepSlowConvert32UToCvMat<ushort>(imgInput, dst);
+		break;
+	case CV_16S:
+		deepSlowConvert32UToCvMat<short>(imgInput, dst);
+		break;
+	case CV_32S:
+		deepSlowConvert32UToCvMat<int>(imgInput, dst);
+		break;
+	case CV_32F:
+		deepSlowConvert32UToCvMat<float>(imgInput, dst);
+		break;
+	case CV_64F:
+		deepSlowConvert32UToCvMat<double>(imgInput, dst);
+		break;
+	default:
+		std::cerr << "unexpected CV type" << std::endl;
+	}
+}
 
 // Performs depth conversion on dst buffer
 // User should check if this is needed outside of this function

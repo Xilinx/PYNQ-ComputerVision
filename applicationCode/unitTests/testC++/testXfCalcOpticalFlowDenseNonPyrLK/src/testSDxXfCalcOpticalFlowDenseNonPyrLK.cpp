@@ -134,6 +134,7 @@ int main ( int argc, char** argv )
   	/// Declare variables
   	Mat prev,next;
   	Mat prevY,nextY; 
+	Mat flow;
 
   	// Initialize
   	initializeSingleImageTest(fileName1, prev);
@@ -161,12 +162,23 @@ int main ( int argc, char** argv )
   	
 	// Apply OpenCV reference erode
 	std::cout << "running golden model" << std::endl;
+	
+	//calcOpticalFlowPyrLK with all points as feature and no pyramid
 	timer.StartTimer();
 	for (int i = 0; i < numberOfIterations; i++){
     	cv::calcOpticalFlowPyrLK(prevY, nextY, prevPts, nextPts, status, err, cv::Size(21,21),0);;
 	}
 	timer.StopTimer();
-	std::cout << "Elapsed time over " << numberOfIterations << "SW call(s): " << timer.GetElapsedUs() << " us or " << (float)timer.GetElapsedUs() / (float)numberOfIterations << "us per frame" << std::endl;
+	std::cout << "Elapsed time over " << numberOfIterations << "SW calcOpticalFlowPyrLK call(s): " << timer.GetElapsedUs() << " us or " << (float)timer.GetElapsedUs() / (float)numberOfIterations << "us per frame" << std::endl;
+	
+	//farneback algorithm
+	timer.StartTimer();
+	for (int i = 0; i < numberOfIterations; i++){
+		cv::calcOpticalFlowFarneback(prevY, nextY,flow,0.5, 3, 15, 3, 5, 1.2, 0);
+    	//cv::calcOpticalFlowPyrLK(prevY, nextY, prevPts, nextPts, status, err, cv::Size(21,21),0);;
+	}
+	timer.StopTimer();
+	std::cout << "Elapsed time over " << numberOfIterations << "SW calcOpticalFlowFarneback call(s): " << timer.GetElapsedUs() << " us or " << (float)timer.GetElapsedUs() / (float)numberOfIterations << "us per frame" << std::endl;
 
 	// Call wrapper for xf::calcOpticalFlowPyrLK
 	std::cout << "running hardware calcOpticalFlowPyrLK" << std::endl;
@@ -174,7 +186,7 @@ int main ( int argc, char** argv )
 	
 	
 	for (int i = 0; i < numberOfIterations; i++){ 
-		xF::calcOpticalFlowDenseNonPyrLK(prevHLS,nextHLS,flowXHLS,flowXHLS);
+		xF::calcOpticalFlowDenseNonPyrLK(prevHLS,nextHLS,flowXHLS,flowYHLS);
 	}
 	timer.StopTimer();	
 	std::cout << "Elapsed time over " << numberOfIterations << "PL call(s): " << timer.GetElapsedUs() << " us or " << (float)timer.GetElapsedUs() / (float)numberOfIterations << "us per frame" << std::endl;
@@ -184,7 +196,13 @@ int main ( int argc, char** argv )
 	int numberOfDifferences = 0;
 	double errorPerPixel = 0;
 	//imageCompare(dstHLS, dstSW, numberOfDifferences, errorPerPixel, true, false);
-	std::cout << "number of differences: " << numberOfDifferences << " average L2 error: " << errorPerPixel << std::endl;
+	std::cout << "number of differences: " << numberOfDifferences << " average L1 error: " << errorPerPixel << std::endl;
+	
+	double min=0.0, max=0.0;
+	cv::minMaxLoc(flowXHLS,&min,&max);
+	std::cout << "min flowX: " << min << " max flowX: " << max << std::endl;
+	cv::minMaxLoc(flowYHLS,&min,&max);
+	std::cout << "min flowY: " << min << " max flowY: " << max << std::endl;
 
 
 	
@@ -192,7 +210,7 @@ int main ( int argc, char** argv )
 		std::vector<KeyPoint> keypointsPrev, keypointsNext;
 		cv::Mat nextImgCorners;
 		
-		for(int i=0;i<nextPts.size();i++)
+		/*for(int i=0;i<nextPts.size();i++)
 		{
 			if (status[i] == 1) {
 				KeyPoint point(nextPts[i],1);
@@ -206,19 +224,44 @@ int main ( int argc, char** argv )
 		imshow("input",prevY);
 		//imshow("prevImgCorners",prevImgCorners);
 		imshow("nextImgCorners",nextImgCorners);
+		*/
 		
-		cv::Mat flowXtmp, flowYtmp, flowXasU, flowYasV;
-		flowXtmp = flowXHLS*5+128.0;
-		flowYtmp = flowYHLS*5+128.0;
+		cv::Mat flowXasU, flowYasV;
+		cv::Mat flowTmp,flowTmpSplit[2];
+		cv::Mat toMerge[3];
+		cv::Mat outYUV;
+		
+		
+		flowTmp = flow*4+128.0;
+		cv::split(flowTmp,flowTmpSplit);
+		flowTmpSplit[0].convertTo(flowXasU,CV_8U);
+		flowTmpSplit[1].convertTo(flowYasV,CV_8U);
+		
+		cv::minMaxLoc(flowTmpSplit[0],&min,&max);
+		std::cout << "min flowX CV: " << min << " max flowX CV: " << max << std::endl;
+		cv::minMaxLoc(flowTmpSplit[1],&min,&max);
+		std::cout << "min flowY CV: " << min << " max flowY CV: " << max << std::endl;
+		
+		toMerge[0] = prevY; toMerge[1]=flowXasU; toMerge[2]=flowYasV; 
+		//cv::Mat toMerge[3] = {prevY,flowXasU,flowYasV};
+		
+		merge(toMerge,3,outYUV);
+		
+		cv::Mat outBGR_SW;
+		cvtColor(outYUV,outBGR_SW,cv::COLOR_YUV2BGR);
+		imshow("flow CV",outBGR_SW);
+		
+		cv::Mat flowXtmp, flowYtmp;
+		flowXtmp = flowXHLS*10+128.0;
+		flowYtmp = flowYHLS*10+128.0;
 		flowXtmp.convertTo(flowXasU,CV_8U);
 		flowYtmp.convertTo(flowYasV,CV_8U);
 		
-		cv::Mat toMerge[3] = {prevY,flowXasU,flowYasV}; 
-		cv::Mat outYUV;
+		toMerge[0] = prevY; toMerge[1]=flowXasU; toMerge[2]=flowYasV;
 		merge(toMerge,3,outYUV);
-		cv::Mat outBGR;
-		cvtColor(outYUV,outBGR,cv::COLOR_YUV2BGR);
-		imshow("output",outBGR);		
+		cv::Mat outBGR_HLS;
+		cvtColor(outYUV,outBGR_HLS,cv::COLOR_YUV2BGR);
+		imshow("flowHLS",outBGR_HLS);
 		
 		waitKey(0);
 	}

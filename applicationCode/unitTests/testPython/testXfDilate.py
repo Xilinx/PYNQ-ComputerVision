@@ -73,22 +73,22 @@ xFdst  = mem_manager.cma_array((height,width),np.uint8) #allocated physically co
 print("Start SW loop")
 startSW=time.time()
 for i in range(numberOfIterations):
-    cv2.dilate(imgY,kernelD,dst=dstSW,iterations=1) #dilate on ARM
+    cv2.dilate(imgY,kernelD,dst=dstSW,iterations=1,borderType=cv2.BORDER_REPLICATE) #dilate on ARM
 stopSW=time.time()
 
 
 print("Start HW loop")
 startPL=time.time()
 for i in range(numberOfIterations):
-    xv2.dilate(xFimgY,kernelVoid,dst=xFdst,borderType=cv2.BORDER_CONSTANT) #dilate offloaded to PL, working on physically continuous numpy arrays
+    #xv2.dilate(xFimgY,kernelVoid,dst=xFdst,borderType=cv2.BORDER_REPLICATE) #dilate offloaded to PL, working on physically continuous numpy arrays
+    xv2.dilate(xFimgY,kernelD,dst=xFdst,borderType=cv2.BORDER_REPLICATE) #dilate offloaded to PL, working on physically continuous numpy arrays
 stopPL=time.time()
     
 print("SW frames per second: ", ((numberOfIterations) / (stopSW - startSW)))
 print("PL frames per second: ", ((numberOfIterations) / (stopPL - startPL)))
 
 print("Checking SW and HW results match")
-numberOfDifferences=0
-errorPerPixel = 0.0
-cvu.imageCompare(xFdst,dstSW,numberOfDifferences,errorPerPixel,True,False,0.0)
+numberOfDifferences,errorPerPixel = cvu.imageCompare(xFdst,dstSW,True,False,0.0)
+print("number of differences: "+str(numberOfDifferences)+", average L1 error: "+str(errorPerPixel))
 
 print("Done")

@@ -174,7 +174,7 @@ int main ( int argc, char** argv )
 	disparitySW.convertTo(tmpMatSW,CV_16U);
 	
 	imageCompare(disparityHLS, tmpMatSW, numberOfDifferences, errorPerPixel, true, false);
-	std::cout << "number of differences: " << numberOfDifferences << " average L2 error: " << errorPerPixel << std::endl;
+	std::cout << "number of differences: " << numberOfDifferences << " average L1 error: " << errorPerPixel << std::endl;
 
 	//write back images in files
 	if (writeSWResult)

@@ -73,7 +73,7 @@ namespace xF
 		uint16_t max_locx, max_locy, min_locx, min_locy;  
 	
 		// call xf::minMaxLoc
-		xF_minMaxLoc(imgInput, min_value, max_value, min_locx, min_locy, max_locx, max_locy);
+		xF_minMaxLoc(imgInput, &min_value, &max_value, &min_locx, &min_locy, &max_locx, &max_locy);
 	
 		*minVal= ((double)min_value);
 		*maxVal= ((double)max_value);

@@ -70,7 +70,8 @@ namespace xF {
 		// perform some checks on the src type
 		cvToXfSource(src, imgInput);
 		
-		int channels = src.channels();
+		//int channels = src.channels();
+		int channels = 4;
 		
 		#if __SDSCC__
 		unsigned short *meanHLS=(unsigned short*)sds_alloc_non_cacheable(channels*sizeof(unsigned short));
@@ -96,5 +97,5 @@ namespace xF {
 		
 		delete imgInput;
 	}
-}
+
 

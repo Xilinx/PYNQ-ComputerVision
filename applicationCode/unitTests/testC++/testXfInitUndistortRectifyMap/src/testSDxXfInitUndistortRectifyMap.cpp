@@ -204,9 +204,9 @@ int main(int argc, char** argv)
 	int numberOfDifferences = 0;
 	double errorPerPixel = 0;
 	imageCompare(mapXHLS, mapX, numberOfDifferences, errorPerPixel, true, false);
-	std::cout << "mapX number of differences: " << numberOfDifferences << " average L2 error: " << errorPerPixel << std::endl;
+	std::cout << "mapX number of differences: " << numberOfDifferences << " average L1 error: " << errorPerPixel << std::endl;
 	imageCompare(mapYHLS, mapY, numberOfDifferences, errorPerPixel, true, false);
-	std::cout << "mapY number of differences: " << numberOfDifferences << " average L2 error: " << errorPerPixel << std::endl;
+	std::cout << "mapY number of differences: " << numberOfDifferences << " average L1 error: " << errorPerPixel << std::endl;
 
 	return 0;
 }

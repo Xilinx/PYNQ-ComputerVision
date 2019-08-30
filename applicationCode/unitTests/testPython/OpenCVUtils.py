@@ -38,68 +38,92 @@ import numpy as np
 import cv2
 
 #def listFirstDifferenceTwoMatrices(test,golden,channels,epsilon):
-def listFirstDifferenceTwoMatrices(test,golden,epsilon):
+def listDifferenceTwoMatrices(test,golden,epsilon,displayResult):
     #print("running listFirstDifferenceTwoMatrices ...")
     foundFirstDifference = False
     maxGolden = 0
     maxTest   = 0
-    #print("golden shape:"+str(golden.shape))
-    for i in range(golden.shape[0]):
-        for j in range(golden.shape[1]):
-            pGolden = golden[i,j]
-            pTest   = test[i,j]
+    print("image shape:"+str(golden.shape))
+    if(len(golden.shape) > 2):
+        channels = golden.shape[2]
+    else:
+        channels = 1
+    for c in range(channels): # channels
+        for i in range(golden.shape[0]): # height 
+            for j in range(golden.shape[1]): # width 
+                if(channels > 1):
+                    pGolden = golden[i,j,c]
+                    pTest   = test[i,j,c]
+                else:
+                    pGolden = golden[i,j]
+                    pTest   = test[i,j]
 
-            if(abs(int(pGolden) - int(pTest)) > epsilon):
-                print("Mismatch at ("+str(i)+","+str(j)+") golden: "+str(pGolden)+" test: "+str(pTest))
-                foundFirstDifference = True
-            #for k in range(channels):
-            #    goldenValue = pGolden[k]
-            #    testValue = pTest[k]
-            #    if(abs(goldenValue - testValue) > epsilon):
-            #        print("Mismatch at ("+str(i)+","+str(j)+") channel: "+str(k)+" golden: "+goldenValue+" test: "+testValue)
-            #        foundFirstDifference = True
+                if(abs(int(pGolden) - int(pTest)) > epsilon):
+                    print("Mismatch at ("+str(i)+","+str(j)+","+str(c)+") golden: "+str(pGolden)+" test: "+str(pTest))
+                    foundFirstDifference = True
+                #for k in range(channels):
+                #    goldenValue = pGolden[k]
+                #    testValue = pTest[k]
+                #    if(abs(goldenValue - testValue) > epsilon):
+                #        print("Mismatch at ("+str(i)+","+str(j)+") channel: "+str(k)+" golden: "+goldenValue+" test: "+testValue)
+                #        foundFirstDifference = True
+                if(foundFirstDifference and not displayResult):
+                    print("Errors found in width loop. Exiting compare.")
+                    return True
             if(foundFirstDifference):
                 break
     return foundFirstDifference
 
-def imageCompare(test,golden,numberOfDifferences,error,listPositionFirstDifference,displayResult,epsilon):
+#def imageCompare(test,golden,numberOfDifferences,error,listPositionFirstDifference,displayResult,epsilon):
+def imageCompare(test,golden,listPositionFirstDifference,displayResult,epsilon):
     #print("running imageCompare ...")
     identical = True
     numberOfDifferences = -1   
     error = -1
+
+    if(len(golden.shape) > 2):
+        channels = golden.shape[2]
+    else:
+        channels = 1
 
     if test.shape[0] != golden.shape[0] or test.shape[1] != golden.shape[1]:
         # test matching channels and depths too
         identical = False
         print("Error: image sizes do no match, golden: "+golden.shape+" test: "+test.shape)
     else:
+        print("Comparing image shape ("+str(golden.shape)+"), channels: "+str(channels))
         #difference = golden
-        #error = norm(test,golden,CV_L1)
-        #error /= test.shape[0]*test.shape[1]
+        error = cv2.norm(test,golden,cv2.NORM_L1)
+        error = error / (golden.shape[0]*golden.shape[1])
         #np.absdiff(test,golden,difference)
+        difference = cv2.absdiff(test,golden)
 
         numberOfDifferences = 0
-        #for k in range(channels):
-        #    extractChannel(difference, differenceChannel,k)
-        #    numberOfDifferences += countNonZero(differenceChannel)
-        #if numberOfDifferences != 0:
-        #    identicial = False
-        identical = False
+        if(channels == 1):
+            numberOfDifferences += cv2.countNonZero(difference)
+        else: 
+            for k in range(channels):
+                differenceChannel = cv2.extractChannel(difference,k)
+                numberOfDifferences += cv2.countNonZero(differenceChannel)
+        if(numberOfDifferences != 0):
+            identical = False
+        #identical = False
 
-        if displayResult:
-            differenceWindowName = "difference"
+        #if displayResult:
+        #    differenceWindowName = "difference"
             # imshow difference in window 
 
-        #print("listPositionFirstDifference: "+str(listPositionFirstDifference)+", identical: "+str(identical))
         if listPositionFirstDifference and not identical:
             #print("calling listFirstDifferenceTwoMatrices...")
-            identical = not listFirstDifferenceTwoMatrices(test,golden,epsilon)
+            identical = not listDifferenceTwoMatrices(test,golden,epsilon,displayResult)
 
     if identical:
         print("Success! Images match!")
     else:
         print("Failure! Images do no match!")
-    return identical
+
+    #return identical
+    return numberOfDifferences,error
 
 def makeMapCircleZoom(width, height, cx, cy, radius, zoom):
     mapY, mapX = np.indices((height,width),dtype=np.float32)

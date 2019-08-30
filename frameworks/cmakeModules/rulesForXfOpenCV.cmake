@@ -404,6 +404,10 @@ setDefaultParameters1In1OutModule(${componentNameCapLocalForRule})
 
 
 #Integral
+if(NOT DEFINED dstTypeCMakeParamIntegral)
+	set(dstTypeCMakeParamIntegral ${XF_32UC1} CACHE STRING "Output pixel type")
+endif()
+
 set(componentNameCapLocalForRule "Integral")
 setDefaultParameters1In1OutModule(${componentNameCapLocalForRule})
 
@@ -762,6 +766,8 @@ function (createPyOpenCVModulesInOverlayHeaderFile componentList incPath)
 			file(APPEND ${fileName} "\t{\"threshold\", (PyCFunction)pyopencv_cv_threshold, METH_VARARGS | METH_KEYWORDS, \"threshold(src, thresh, maxval, type[, dst]) -> retval\"},\n")
 		elseif (${componentNameLocal} STREQUAL "absdiff")
 			file(APPEND ${fileName} "\t{\"absdiff\", (PyCFunction)pyopencv_cv_absdiff, METH_VARARGS | METH_KEYWORDS, \"absdiff(src1, src2, dst) -> None\"},\n")
+		elseif (${componentNameLocal} STREQUAL "add")
+                        file(APPEND ${fileName} "\t{\"add\", (PyCFunction)pyopencv_cv_add, METH_VARARGS | METH_KEYWORDS, \"add(src1, src2[, dst[, mask[, dtype]]]) -> dst\"},\n")
 		elseif (${componentNameLocal} STREQUAL "subtract")
 			file(APPEND ${fileName} "\t{\"subtract\", (PyCFunction)pyopencv_cv_subtract, METH_VARARGS | METH_KEYWORDS, \"subtract(src1, src2[, dst[, mask[, dtype]]]) -> dst\"},\n")
  		elseif (${componentNameLocal} STREQUAL "bitwise_and")
@@ -815,8 +821,10 @@ function (createPyOpenCVModulesInOverlayHeaderFile componentList incPath)
  			file(APPEND ${fileName} "\t{\"cornerHarris\",(PyCFunction)pyopencv_cv_cornerHarris, METH_VARARGS | METH_KEYWORDS, \"cornerHarris(src, blockSize, ksize, k[, dst[, borderType]]) -> dst\"},\n") 
  		elseif (${componentNameLocal} STREQUAL "calcHist")
  			file(APPEND ${fileName} "\t{\"calcHist\",(PyCFunction)pyopencv_cv_calcHist, METH_VARARGS | METH_KEYWORDS, \"calcHist(images, channels, mask, histSize, ranges[, hist[, accumulate]]) -> hist\"},\n") 
- 			 
- 			
+ 		elseif (${componentNameLocal} STREQUAL "split")	 
+ 			file(APPEND ${fileName} "\t{\"split\", (PyCFunction)pyopencv_cv_split, METH_VARARGS | METH_KEYWORDS, \"split(m[, mv]) -> mv\"},\n")
+		elseif (${componentNameLocal} STREQUAL "warpPerspective")
+			file(APPEND ${fileName} "\t{\"warpPerspective\", (PyCFunction)pyopencv_cv_warpPerspective, METH_VARARGS | METH_KEYWORDS, \"warpPerspective(src, M, dsize[, dst[, flags[, borderMode[, borderValue]]]]) -> dst\"},\n")
  		else()
 		endif()
     endforeach()
