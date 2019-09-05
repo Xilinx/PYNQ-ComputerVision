@@ -1,6 +1,3 @@
-
-# coding: utf-8
-
 #!/usr/bin/python3.6
 
 ###############################################################################
@@ -86,7 +83,9 @@ print("SW frames per second: ", ((numberOfIterations) / (stopSW - startSW)))
 print("PL frames per second: ", ((numberOfIterations) / (stopPL - startPL)))
 
 print("Checking SW and HW results match")
-numberOfDifferences,errorPerPixel = cvu.imageCompare(xFdst,dstSW,True,False,0.0)
+dstSW_uint8 = np.ones((height,width),np.uint8)
+dstSW_uint8[:] = dstSW[:]
+numberOfDifferences,errorPerPixel = cvu.imageCompare(xFdst,dstSW_uint8,True,False,0.0)
 print("number of differences: "+str(numberOfDifferences)+", average L1 error: "+str(errorPerPixel))
 
 

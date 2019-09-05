@@ -50,11 +50,6 @@ import time
 
 import OpenCVUtils as cvu
 
-print("Methods in module, START")
-for i in dir(xv2): 
-    print(i)
-print("Methods in module, END")
-
 print("Loading image ../images/bigBunny_1080.png")
 img = cv2.imread('../images/bigBunny_1080.png')
 imgY = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
