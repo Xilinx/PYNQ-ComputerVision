@@ -206,6 +206,83 @@ bool compareKeypointPoints (std::vector<KeyPoint> test, std::vector<KeyPoint> go
 	
 }
 
+template<typename srcTypeTP, typename dstTypeTP>
+void deepSlowConvertFixedPointToCvMat(cv::Mat &src, cv::Mat &dst, unsigned int scaleFactor)
+{
+	const int channels = 1; 
+	
+	for (int i = 0; i < src.rows; i++) {
+		for (int j = 0; j < src.cols; j++) {
+			srcTypeTP *pSrc = src.ptr<srcTypeTP>(i, j);
+			dstTypeTP *pDst = dst.ptr<dstTypeTP>(i, j);
+			for (int k = 0; k < channels; k++) {
+				float tmpFloat = (float) pSrc[k];
+				tmpFloat = tmpFloat/(1 << scaleFactor);
+				pDst[k] = (dstTypeTP) tmpFloat;
+			}
+		}
+	}
+}
+
+void fixedPointToCvConversion(cv::Mat &src, cv::Mat &dst, unsigned int scaleFactor)
+{
+	if (src.depth()==CV_16S){
+		
+		switch (dst.depth()) {
+		case CV_8U:
+			deepSlowConvertFixedPointToCvMat<short,uchar>(src, dst, scaleFactor);
+			break;
+		case CV_8S:
+			deepSlowConvertFixedPointToCvMat<short,char>(src, dst, scaleFactor);
+		case CV_16U:
+			deepSlowConvertFixedPointToCvMat<short,ushort>(src, dst, scaleFactor);
+			break;
+		case CV_16S:
+			deepSlowConvertFixedPointToCvMat<short,short>(src, dst, scaleFactor);
+			break;
+		case CV_32S:
+			deepSlowConvertFixedPointToCvMat<short,int>(src, dst, scaleFactor);
+			break;
+		case CV_32F:
+			deepSlowConvertFixedPointToCvMat<short,float>(src, dst, scaleFactor);
+			break;
+		case CV_64F:
+			deepSlowConvertFixedPointToCvMat<short,double>(src, dst, scaleFactor);
+			break;
+		default:
+			std::cerr << "unexpected CV type" << std::endl;
+		}
+	}
+	else if (src.depth() == CV_16U) {
+		switch (dst.depth()) {
+		case CV_8U:
+			deepSlowConvertFixedPointToCvMat<ushort,uchar>(src, dst, scaleFactor);
+			break;
+		case CV_8S:
+			deepSlowConvertFixedPointToCvMat<ushort,char>(src, dst, scaleFactor);
+		case CV_16U:
+			deepSlowConvertFixedPointToCvMat<ushort,ushort>(src, dst, scaleFactor);
+			break;
+		case CV_16S:
+			deepSlowConvertFixedPointToCvMat<ushort,short>(src, dst, scaleFactor);
+			break;
+		case CV_32S:
+			deepSlowConvertFixedPointToCvMat<ushort,int>(src, dst, scaleFactor);
+			break;
+		case CV_32F:
+			deepSlowConvertFixedPointToCvMat<ushort,float>(src, dst, scaleFactor);
+			break;
+		case CV_64F:
+			deepSlowConvertFixedPointToCvMat<ushort,double>(src, dst, scaleFactor);
+			break;
+		default:
+			std::cerr << "unexpected CV type" << std::endl;
+		}		
+	}
+	else
+		std::cerr << "unexpected CV src type" << std::endl;
+}
+
 template<typename T, typename Tcast>
 void writeImageAsTextFileT(Mat in, std::ofstream &file)
 {
