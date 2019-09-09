@@ -98,4 +98,4 @@ namespace xF {
 		delete imgInput;
 	}
 
-
+}
