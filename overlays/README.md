@@ -19,7 +19,7 @@
 | magnitude             |||||||
 | phase                 |||||||
 
-\* These designs require a patch to xfopencv (tag: 2018.3_release) in order to build properly. Please clone https://github.com/denolf/xfopencv.git and checkout the v2018.2Fixed branch to pick up a temporary fix.
+\* These designs require a patch to xfopencv (tag: 2018.3_release) in order to build properly. Please clone https://github.com/denolf/xfopencv.git and checkout the v2018.3Fixed branch to pick up a temporary fix.
 
 ## Setup Environment on Host
 
@@ -27,11 +27,11 @@
     ```commandline
     $ git clone https://github.com/Xilinx/PYNQ-ComputerVision.git <your_pynqcv_folder>
     ``` 
-  + clone [xfOpenCV](https://github.com/Xilinx/xfopencv) repository and checkout the correct version (e.g. 2018.2_release):
+  + clone fixed [xfOpenCV](https://github.com/Xilinx/xfopencv) repository and checkout the correct version (e.g. 2018.3Fixed):
     ```commandline
-    $ git clone https://github.com/Xilinx/xfopencv.git <your_xfopencv_folder>
+    $ git clone https://github.com/denolf/xfopencv.git <your_xfopencv_folder>
     $ cd <your_xfopencv_folder>
-    $ git checkout <release_number>
+    $ git checkout <release_number>      (i.e. git checkout 2018.3Fixed)
     ``` 
   + Prepare the Ultra96 bare platform package in /your_PynqPlatform_folder. 
     + download [ultra96_platform_sysroot_2018.3.tar.gz](https://www.xilinx.com/member/forms/download/xef.html?filename=ultra96_platform_sysroot_2018.3.tar.gz) in /your_PynqPlatform_folder
