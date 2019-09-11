@@ -52,23 +52,24 @@ import OpenCVUtils as cvu
 
 print("Loading image ../images/bigBunny_1080.png")
 img = cv2.imread('../images/bigBunny_1080.png')
-imgY = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
+imgYtmp = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
 
+# downscale before pyrUp
+height, width, channels = img.shape 
+imgY = cv2.resize(imgYtmp, (width//2,height//2))
+
+height, width = imgY.shape 
 print("Size of imgY is ",imgY.shape);
-height, width, channels = img.shape
 
 numberOfIterations=10
 print("Number of loop iterations: "+str(numberOfIterations))
 
-height_2  = (height*2)
-width_2   = (width*2)
-
-dstSW = np.ones((height_2,width_2),np.uint8);
+dstSW = np.ones((height*2,width*2),np.uint8);
 
 xFimgY  = mem_manager.cma_array((height,width),np.uint8) #allocated physically contiguous numpy array 
 xFimgY[:] = imgY[:] # copy source data
 
-xFdst     = mem_manager.cma_array((height_2,width_2),np.uint8) #allocated physically contiguous numpy array
+xFdst = mem_manager.cma_array((height*2,width*2),np.uint8) #allocated physically contiguous numpy array
 
 print("Start SW loop")
 startSW=time.time()
