@@ -60,16 +60,16 @@ height, width, channels = img1.shape
 numberOfIterations=1
 print("Number of loop iterations: "+str(numberOfIterations))
 
-cameraMatrixLeft = np.array([[1000.0, 0.0, 950.0], [0.0, 1000.0, 950.0], [0.0, 0.0, 1.0]], np.float64)
-cameraMatrixRight = np.array([[0.001, 0.0, -0.95], [0.0, 0.001, -0.95], [0.0, 0.0, 1.0]], np.float64)
+cameraMatrixLeft = np.array([[1000.0, 0.0, 0.0], [0.0, 1000.0, 0.0], [950.0, 950.0, 1.0]], np.float64)
+cameraMatrixRight = np.array([[1000.0, 0.0, 0.0], [0.0, 1000.0, 0.0], [950.0, 950.0, 1.0]], np.float64)
 
 distCoeffsLeft = np.zeros([1,5], np.float64)
 distCoeffsRight = np.zeros([1,5], np.float64)
 
 R = np.eye(3, dtype=np.float64)
 
-iRLeft = np.array([[0.001, 0, -0.95], [0.0, 0.001, -0.95], [0.0, 0.0, 1.0]], np.float64)
-iRRight = np.array([[0.001, 0, -0.95], [0.0, 0.001, -0.95], [0.0, 0.0, 1.0]], np.float64)
+iRLeft = np.array([[0.001, 0.0, 0.0], [0.0, 0.001, 0.0], [-0.95, -0.95, 1.0]], np.float64)
+iRRight = np.array([[0.001, 0.0, 0.0], [0.0, 0.001, 0.0], [-0.95, -0.95, 1.0]], np.float64)
 
 newCameraMatrixLeft = iRLeft*R
 newCameraMatrixRight = iRRight*R
