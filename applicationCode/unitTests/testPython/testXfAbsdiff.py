@@ -75,10 +75,12 @@ for i in range(numberOfIterations):
 stopSW=time.time()
 print("SW loop finished")
 
+xFdst  = mem_manager.cma_array((height,width),np.uint16) #allocated physically contiguous numpy array
+
 print("Start HW loop")
 startPL=time.time()
 for i in range(numberOfIterations):
-    xFdst = xv2.absdiff(src1=xFimgY1, src2=xFimgY2) #absdiff offloaded to PL, working on physically continuous numpy arrays
+    xFdst = xv2.absdiff(src1=xFimgY1, src2=xFimgY2, dst=xFdst) #absdiff offloaded to PL, working on physically continuous numpy arrays
 stopPL=time.time()
 print("HW loop finished")
 
