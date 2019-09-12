@@ -89,14 +89,14 @@ xFmapY = np.zeros((height, width), np.float32)
 print("Start SW loop")
 startSW=time.time()
 for i in range(numberOfIterations):
-    mapX, mapY = cv2.initUndistortRectifyMap(cameraMatrixLeft, distCoeffsLeft, Rleft, newCameraMatrixLeft, (width, height), cv2.CV_32FC1, mapX, mapY) # on ARM
+    cv2.initUndistortRectifyMap(cameraMatrixLeft, distCoeffsLeft, Rleft, newCameraMatrixLeft, (width, height), cv2.CV_32FC1, mapX, mapY) # on ARM
 stopSW=time.time()
 print("SW loop finished")
 
 print("Start HW loop")
 startPL=time.time()
 for i in range(numberOfIterations):
-     xFmapX, xFmapY = xv2.initUndistortRectifyMap(cameraMatrixLeft, distCoeffsLeft, Rleft, newCameraMatrixLeft, (width, height), cv2.CV_32FC1, xFmapX, xFmapY)# offloaded to PL, working on physically continuous numpy arrays
+    xv2.initUndistortRectifyMap(cameraMatrixLeft, distCoeffsLeft, Rleft, newCameraMatrixLeft, (width, height), cv2.CV_32FC1, xFmapX, xFmapY)# offloaded to PL, working on physically continuous numpy arrays
 stopPL=time.time()
 print("HW loop finished")
 

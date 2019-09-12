@@ -67,14 +67,14 @@ xFimgY1[:] = imgY1[:] # copy source data
 print("Start SW loop")
 startSW=time.time()
 for i in range(numberOfIterations):
-    dstSW = cv2.calcHist([imgY1], [0], None, [256], [0,255]) #calcHist on ARM
+    cv2.calcHist([imgY1], [0], None, [256], [0,255], hist=dstSW) #calcHist on ARM
 stopSW=time.time()
 print("SW loop finished")
 
 print("Start HW loop")
 startPL=time.time()
 for i in range(numberOfIterations):
-    xFhist = xv2.calcHist(images=[xFimgY1], channels=[0], mask=None, histSize=[256], ranges=[0,255], hist=xFhist) #calcHist offloaded to PL, working on physically continuous numpy arrays
+    xv2.calcHist(images=[xFimgY1], channels=[0], mask=None, histSize=[256], ranges=[0,255], hist=xFhist) #calcHist offloaded to PL, working on physically continuous numpy arrays
 stopPL=time.time()
 print("HW loop finished")
 

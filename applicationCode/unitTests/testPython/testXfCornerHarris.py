@@ -68,14 +68,14 @@ xFdst = mem_manager.cma_array((height,width),np.uint8) #allocated physically con
 print("Start SW loop")
 startSW=time.time()
 for i in range(numberOfIterations):
-    dstSW = cv2.cornerHarris(imgY1, 2, 3, 0.04) #cornerHarris on ARM
+    cv2.cornerHarris(imgY1, 2, 3, 0.04, dst=dstSW) #cornerHarris on ARM
 stopSW=time.time()
 print("SW loop finished")
 
 print("Start HW loop")
 startPL=time.time()
 for i in range(numberOfIterations):
-    xFdst = xv2.cornerHarris(src=xFimgY1, blockSize=3, ksize=3, k=0.14, dst=xFdst, borderType=cv2.BORDER_DEFAULT) #cornerHarris offloaded to PL, working on physically continuous numpy arrays
+    xv2.cornerHarris(src=xFimgY1, blockSize=3, ksize=3, k=0.14, dst=xFdst, borderType=cv2.BORDER_DEFAULT) #cornerHarris offloaded to PL, working on physically continuous numpy arrays
 stopPL=time.time()
 print("HW loop finished")
 

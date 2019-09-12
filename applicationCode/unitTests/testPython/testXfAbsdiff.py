@@ -71,7 +71,7 @@ xFimgY2 = cv2.cvtColor(img2,cv2.COLOR_BGR2GRAY)
 print("Start SW loop")
 startSW=time.time()
 for i in range(numberOfIterations):
-    dstSW = cv2.absdiff(src1=imgY1, src2=imgY2) #absdiff on ARM
+    cv2.absdiff(src1=imgY1, src2=imgY2, dst=dstSW) #absdiff on ARM
 stopSW=time.time()
 print("SW loop finished")
 
@@ -80,7 +80,7 @@ xFdst  = mem_manager.cma_array((height,width),np.uint16) #allocated physically c
 print("Start HW loop")
 startPL=time.time()
 for i in range(numberOfIterations):
-    xFdst = xv2.absdiff(src1=xFimgY1, src2=xFimgY2, dst=xFdst) #absdiff offloaded to PL, working on physically continuous numpy arrays
+    xv2.absdiff(src1=xFimgY1, src2=xFimgY2, dst=xFdst) #absdiff offloaded to PL, working on physically continuous numpy arrays
 stopPL=time.time()
 print("HW loop finished")
 

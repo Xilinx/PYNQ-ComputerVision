@@ -70,7 +70,7 @@ xFdst  = mem_manager.cma_array((height,width),np.int32) #allocated physically co
 print("Start SW loop")
 startSW=time.time()
 for i in range(numberOfIterations):
-    dstSW = cv2.integral(imgY1, dstSW) #integral on ARM
+    cv2.integral(imgY1, dstSW) #integral on ARM
 stopSW=time.time()
 print("SW loop finished")
 
