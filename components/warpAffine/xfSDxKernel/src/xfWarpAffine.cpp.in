@@ -98,10 +98,10 @@ namespace xF
 		// perform some checks on the dst type
 		bool dstPostConversion = cvToXfDestination(dst, imgOutput, src);    
 
-		std::cout << "calling HW warpAffine" << std::endl;
+		//std::cout << "calling HW warpAffine" << std::endl;
 		// call xf::wrapAffine
 		xF_warpAffine(imgInput,imgOutput, transform_matrix);
-		std::cout << "Done: HW warpAffine" << std::endl;
+		//std::cout << "Done: HW warpAffine" << std::endl;
 
 		 // If SW post conversion required, we do it here
 		 if (dstPostConversion) {

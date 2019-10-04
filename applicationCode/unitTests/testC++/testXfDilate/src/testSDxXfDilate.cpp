@@ -50,6 +50,7 @@
 
 //include xF::mat prototype
 #include <Mat/inc/mat.hpp>
+#include <Utils/inc/UtilsForXfOpenCV.h>
 
 #include <HRTimer.h>
 
@@ -119,7 +120,7 @@ int main ( int argc, char** argv )
 	int width = srcIn.size().width;
 	int height = srcIn.size().height;
 	
-	Mat kernelD = getStructuringElement( MORPH_RECT, Size(kernelSizeDilateD,kernelSizeDilateD));
+	Mat kernelD = getStructuringElement(XF_XFSTRUCTURINGELEMENT2CVSTRUCTURINGELEMENT(kernelShapeDilateD), Size(kernelSizeDilateD,kernelSizeDilateD));
 
 	// Declare variables used for HW-SW interface to achieve good performance
 	xF::Mat srcHLS(height, width, CV_8UC1);
@@ -128,14 +129,14 @@ int main ( int argc, char** argv )
 	//cv::Mat srcIn16; srcIn.convertTo(srcIn16,CV_16U);
 	
 	//convert 3-channel image into 1-channel image
-	cvtColor(srcIn, srcHLS, CV_BGR2GRAY, 1);
-	cvtColor(srcIn, srcInY, CV_BGR2GRAY, 1);
+	cvtColor(srcIn, srcHLS, COLOR_BGR2GRAY, 1);
+	cvtColor(srcIn, srcInY, COLOR_BGR2GRAY, 1);
 
 	// Apply OpenCV reference dilate
 	std::cout << "running golden model" << std::endl;
 	timer.StartTimer();
 	for (int i = 0; i < numberOfIterations; i++){
-	   cv::dilate(srcInY, dstSW, kernelD);
+	   dilate(srcInY, dstSW, kernelD, Point( -1, -1 ),1,BORDER_REPLICATE);
 	}
 	timer.StopTimer();
 	std::cout << "Elapsed time over " << numberOfIterations << "SW call(s): " << timer.GetElapsedUs() << " us or " << (float)timer.GetElapsedUs() / (float)numberOfIterations << "us per frame" << std::endl;
@@ -144,7 +145,7 @@ int main ( int argc, char** argv )
 	std::cout << "running hardware dilate" << std::endl;
 	timer.StartTimer();
 	for (int i = 0; i < numberOfIterations; i++){
-		xF::dilate(srcHLS, dstHLS, cv::Mat(0,0,0));
+		xF::dilate(srcHLS, dstHLS, kernelD, Point( -1, -1 ),1,BORDER_REPLICATE);
 	}
 	timer.StopTimer();	
 	std::cout << "Elapsed time over " << numberOfIterations << "PL call(s): " << timer.GetElapsedUs() << " us or " << (float)timer.GetElapsedUs() / (float)numberOfIterations << "us per frame" << std::endl;
@@ -154,7 +155,7 @@ int main ( int argc, char** argv )
 	int numberOfDifferences = 0;
 	double errorPerPixel = 0;
 	imageCompare(dstHLS, dstSW, numberOfDifferences, errorPerPixel, true, false);
-	std::cout << "number of differences: " << numberOfDifferences << " average L2 error: " << errorPerPixel << std::endl;
+	std::cout << "number of differences: " << numberOfDifferences << " average L1 error: " << errorPerPixel << std::endl;
 
 	//write back images in files
 	if (writeSWResult)

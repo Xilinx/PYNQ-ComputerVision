@@ -43,10 +43,10 @@
 void xF_Threshold(
 xf::Mat<${srcTypeCMakeParamThreshold}, ${maxHeightCMakeParamThreshold}, ${maxWidthCMakeParamThreshold}, ${NPCCMakeParamThreshold}>* imgInput,  
 xf::Mat<${srcTypeCMakeParamThreshold}, ${maxHeightCMakeParamThreshold}, ${maxWidthCMakeParamThreshold}, ${NPCCMakeParamThreshold}>* imgOutput,
-short xfThresh, short xfThresh_upper, short xfThresh_lower)
+short threshold, short maxval)
 {
 	// call xf::Threshold
-	xf::Threshold<${thresholdTypeCMakeParamThreshold},${srcTypeCMakeParamThreshold},${maxHeightCMakeParamThreshold},${maxWidthCMakeParamThreshold},${NPCCMakeParamThreshold}>(*imgInput,*imgOutput, xfThresh, xfThresh_upper, xfThresh_lower);
+	xf::Threshold<${thresholdTypeCMakeParamThreshold},${srcTypeCMakeParamThreshold},${maxHeightCMakeParamThreshold},${maxWidthCMakeParamThreshold},${NPCCMakeParamThreshold}>(*imgInput,*imgOutput, threshold, maxval);
 	
 	return;
 }

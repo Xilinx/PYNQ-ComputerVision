@@ -1314,6 +1314,173 @@ static int convert_to_char(PyObject *o, char *dst, const char *name = "no_name")
 #  pragma GCC diagnostic ignored "-Wmissing-field-initializers"
 #endif
 
+//#include "pyopencv_generated_types.h"
+
+struct pyopencv_KeyPoint_t
+{
+    PyObject_HEAD
+    cv::KeyPoint v;
+};
+
+static PyTypeObject pyopencv_KeyPoint_Type =
+{
+    PyObject_HEAD_INIT(&PyType_Type)
+    MODULESTR".KeyPoint",
+    sizeof(pyopencv_KeyPoint_t),
+};
+
+static void pyopencv_KeyPoint_dealloc(PyObject* self)
+{
+    PyObject_Del(self);
+}
+
+template<> PyObject* pyopencv_from(const cv::KeyPoint& r)
+{
+    pyopencv_KeyPoint_t *m = PyObject_NEW(pyopencv_KeyPoint_t, &pyopencv_KeyPoint_Type);
+    m->v = r;
+    return (PyObject*)m;
+}
+
+template<> bool pyopencv_to(PyObject* src, cv::KeyPoint& dst, const char* name)
+{
+    if( src == NULL || src == Py_None )
+        return true;
+    if(!PyObject_TypeCheck(src, &pyopencv_KeyPoint_Type))
+    {
+        failmsg("Expected cv::KeyPoint for argument '%s'", name);
+        return false;
+    }
+    dst = ((pyopencv_KeyPoint_t*)src)->v;
+    return true;
+}
+
+static PyObject* pyopencv_KeyPoint_repr(PyObject* self)
+{
+    char str[1000];
+    sprintf(str, "<KeyPoint %p>", self);
+    return PyString_FromString(str);
+}
+
+
+static PyObject* pyopencv_KeyPoint_get_angle(pyopencv_KeyPoint_t* p, void *closure)
+{
+    return pyopencv_from(p->v.angle);
+}
+
+static int pyopencv_KeyPoint_set_angle(pyopencv_KeyPoint_t* p, PyObject *value, void *closure)
+{
+    if (value == NULL)
+    {
+        PyErr_SetString(PyExc_TypeError, "Cannot delete the angle attribute");
+        return -1;
+    }
+    return pyopencv_to(value, p->v.angle) ? 0 : -1;
+}
+
+static PyObject* pyopencv_KeyPoint_get_class_id(pyopencv_KeyPoint_t* p, void *closure)
+{
+    return pyopencv_from(p->v.class_id);
+}
+
+static int pyopencv_KeyPoint_set_class_id(pyopencv_KeyPoint_t* p, PyObject *value, void *closure)
+{
+    if (value == NULL)
+    {
+        PyErr_SetString(PyExc_TypeError, "Cannot delete the class_id attribute");
+        return -1;
+    }
+    return pyopencv_to(value, p->v.class_id) ? 0 : -1;
+}
+
+static PyObject* pyopencv_KeyPoint_get_octave(pyopencv_KeyPoint_t* p, void *closure)
+{
+    return pyopencv_from(p->v.octave);
+}
+
+static int pyopencv_KeyPoint_set_octave(pyopencv_KeyPoint_t* p, PyObject *value, void *closure)
+{
+    if (value == NULL)
+    {
+        PyErr_SetString(PyExc_TypeError, "Cannot delete the octave attribute");
+        return -1;
+    }
+    return pyopencv_to(value, p->v.octave) ? 0 : -1;
+}
+
+static PyObject* pyopencv_KeyPoint_get_pt(pyopencv_KeyPoint_t* p, void *closure)
+{
+    return pyopencv_from(p->v.pt);
+}
+
+static int pyopencv_KeyPoint_set_pt(pyopencv_KeyPoint_t* p, PyObject *value, void *closure)
+{
+    if (value == NULL)
+    {
+        PyErr_SetString(PyExc_TypeError, "Cannot delete the pt attribute");
+        return -1;
+    }
+    return pyopencv_to(value, p->v.pt) ? 0 : -1;
+}
+
+static PyObject* pyopencv_KeyPoint_get_response(pyopencv_KeyPoint_t* p, void *closure)
+{
+    return pyopencv_from(p->v.response);
+}
+
+static int pyopencv_KeyPoint_set_response(pyopencv_KeyPoint_t* p, PyObject *value, void *closure)
+{
+    if (value == NULL)
+    {
+        PyErr_SetString(PyExc_TypeError, "Cannot delete the response attribute");
+        return -1;
+    }
+    return pyopencv_to(value, p->v.response) ? 0 : -1;
+}
+
+static PyObject* pyopencv_KeyPoint_get_size(pyopencv_KeyPoint_t* p, void *closure)
+{
+    return pyopencv_from(p->v.size);
+}
+
+static int pyopencv_KeyPoint_set_size(pyopencv_KeyPoint_t* p, PyObject *value, void *closure)
+{
+    if (value == NULL)
+    {
+        PyErr_SetString(PyExc_TypeError, "Cannot delete the size attribute");
+        return -1;
+    }
+    return pyopencv_to(value, p->v.size) ? 0 : -1;
+}
+
+
+static PyGetSetDef pyopencv_KeyPoint_getseters[] =
+{
+    {(char*)"angle", (getter)pyopencv_KeyPoint_get_angle, (setter)pyopencv_KeyPoint_set_angle, (char*)"angle", NULL},
+    {(char*)"class_id", (getter)pyopencv_KeyPoint_get_class_id, (setter)pyopencv_KeyPoint_set_class_id, (char*)"class_id", NULL},
+    {(char*)"octave", (getter)pyopencv_KeyPoint_get_octave, (setter)pyopencv_KeyPoint_set_octave, (char*)"octave", NULL},
+    {(char*)"pt", (getter)pyopencv_KeyPoint_get_pt, (setter)pyopencv_KeyPoint_set_pt, (char*)"pt", NULL},
+    {(char*)"response", (getter)pyopencv_KeyPoint_get_response, (setter)pyopencv_KeyPoint_set_response, (char*)"response", NULL},
+    {(char*)"size", (getter)pyopencv_KeyPoint_get_size, (setter)pyopencv_KeyPoint_set_size, (char*)"size", NULL},
+    {NULL}  /* Sentinel */
+};
+
+
+
+static PyMethodDef pyopencv_KeyPoint_methods[] =
+{
+
+    {NULL,          NULL}
+};
+
+static void pyopencv_KeyPoint_specials(void)
+{
+    pyopencv_KeyPoint_Type.tp_base = NULL;
+    pyopencv_KeyPoint_Type.tp_dealloc = pyopencv_KeyPoint_dealloc;
+    pyopencv_KeyPoint_Type.tp_repr = pyopencv_KeyPoint_repr;
+    pyopencv_KeyPoint_Type.tp_getset = pyopencv_KeyPoint_getseters;
+    pyopencv_KeyPoint_Type.tp_methods = pyopencv_KeyPoint_methods;
+}
+
 static PyMethodDef special_methods[] = {
 #ifdef HAVE_OPENCV_HIGHGUI
   {"createTrackbar", pycvCreateTrackbar, METH_VARARGS, "createTrackbar(trackbarName, windowName, value, count, onChange) -> None"},

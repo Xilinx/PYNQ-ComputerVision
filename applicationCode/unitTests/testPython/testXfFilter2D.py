@@ -86,8 +86,7 @@ print("SW frames per second: ", ((numberOfIterations) / (stopSW - startSW)))
 print("PL frames per second: ", ((numberOfIterations) / (stopPL - startPL)))
 
 print("Checking SW and HW results match")
-numberOfDifferences=0
-errorPerPixel = 0.0
-cvu.imageCompare(xFdst,dstSW,numberOfDifferences,errorPerPixel,True,False,0.0)
+numberOfDifferences,errorPerPixel = cvu.imageCompare(xFdst,dstSW,True,False,0.0)
+print("number of differences: "+str(numberOfDifferences)+", average L1 error: "+str(errorPerPixel))
 
 print("Done")

@@ -19,7 +19,7 @@
 | magnitude             |||||||
 | phase                 |||||||
 
-\* These designs require a patch to xfopencv (tag: 2018.2_release) in order to build properly. Please clone https://github.com/denolf/xfopencv.git and checkout the v2018.2Fixed branch to pick up a temporary fix.
+\* These designs require a patch to xfopencv (tag: 2018.3_release) in order to build properly. Please clone https://github.com/denolf/xfopencv.git and checkout the v2018.3Fixed branch to pick up a temporary fix.
 
 ## Setup Environment on Host
 
@@ -27,24 +27,24 @@
     ```commandline
     $ git clone https://github.com/Xilinx/PYNQ-ComputerVision.git <your_pynqcv_folder>
     ``` 
-  + clone [xfOpenCV](https://github.com/Xilinx/xfopencv) repository and checkout the correct version (e.g. 2018.2_release):
+  + clone fixed [xfOpenCV](https://github.com/Xilinx/xfopencv) repository and checkout the correct version (e.g. 2018.3Fixed):
     ```commandline
-    $ git clone https://github.com/Xilinx/xfopencv.git <your_xfopencv_folder>
+    $ git clone https://github.com/denolf/xfopencv.git <your_xfopencv_folder>
     $ cd <your_xfopencv_folder>
-    $ git checkout <release_number>
+    $ git checkout <release_number>      (i.e. git checkout 2018.3Fixed)
     ``` 
   + Prepare the Ultra96 bare platform package in /your_PynqPlatform_folder. 
-    + download [ultra96_platform_sysroot_2018.2.tar.gz](https://www.xilinx.com/member/forms/download/xef.html?filename=ultra96_platform_sysroot_2018.2.tar.gz) in /your_PynqPlatform_folder
+    + download [ultra96_platform_sysroot_2018.3.tar.gz](https://www.xilinx.com/member/forms/download/xef.html?filename=ultra96_platform_sysroot_2018.3.tar.gz) in /your_PynqPlatform_folder
     + untar the package. This will create an ultra subfolder in /your_PynqPlatform_folder
       ```commandline
-      $ tar -zxvf ultra96_platform_sysroot_2018.2.tar.gz
+      $ tar -zxvf ultra96_platform_sysroot_2018.3.tar.gz
       ```
     + Note that you can adapt /your_PynqPlatform_folder to your preference, but the deepest subfolder should match the platform name, in this case 'ultra'. 
   + set an environmental variable to xfOpenCV
     ```commandline
     $ setenv XFOPENCV_PATH <your_xfopencv_folder>
     ```
-  + set up Xilinx SDx tools, version 2018.2 by running its setup script
+  + set up Xilinx SDx tools, version 2018.3 by running its setup script
 
 
 ### Building your Overlay
@@ -57,7 +57,7 @@
     ```commandline
     $ cd /<your_pynqcv_folder>/overlays/myFirstOverlay
     $ mkdir build; cd build
-    $ cmake .. -DCMAKE_TOOLCHAIN_FILE=../../../frameworks/cmakeModules/toolchain_sdx2018.2.cmake -DSDxPlatform=/your_PynqPlatform_folder/ultra -DSDxClockID=1 -DusePL=ON -DnoBitstream=OFF -DnoSDCardImage=ON -DSDxArch=arm64
+    $ cmake .. -DCMAKE_TOOLCHAIN_FILE=../../../frameworks/cmakeModules/cmakeModulesXilinx/toolchain_sds.cmake -DSDxPlatform=/your_PynqPlatform_folder/ultra -DSDxClockID=1 -DusePL=ON -DnoBitstream=OFF -DnoSDCardImage=ON -DSDxArch=arm64
     ```
   + Note that the clock ID for the platform selects the desired clock frequency for the overlay design. In the case of the Ultra96 platform, the following IDs are available: 0=100MHz, 1=150MHz, 2=250MHz, 3=300MHz.
   + run make for the target with your chosen overlay name

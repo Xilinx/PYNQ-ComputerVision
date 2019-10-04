@@ -53,16 +53,17 @@
 //#include <opencv2/core/core.hpp>
 
 #include <Utils/inc/UtilsForXfOpenCV.h>
-
-//PL instatiation parameters
-typedef unsigned char xfkernelType; //xfOpenCV does not yet support specifying the kernel
-
+ 
 namespace xF {
 
 void dilate(cv::Mat &src, cv::Mat &dst, const cv::Mat &kernel, cv::Point anchor, int iterations, int borderType, const cv::Scalar& borderValue)
 {
 	
 	const int borderTypeTP = ${borderTypeCMakeParamDilate};
+	const int kernelRowsTP = ${kernelSizeCMakeParamDilate};
+	const int kernelColsTP = ${kernelSizeCMakeParamDilate};
+	const int kernelShapeTP = ${kernelShapeCMakeParamDilate};
+	const int iterationsTP = ${iterationsCMakeParamDilate};
 	const int maxWidthTP = ${maxWidthCMakeParamDilate};
 	const int maxHeightTP = ${maxHeightCMakeParamDilate};
 	const int srcTypeTP = ${srcTypeCMakeParamDilate};
@@ -71,32 +72,31 @@ void dilate(cv::Mat &src, cv::Mat &dst, const cv::Mat &kernel, cv::Point anchor,
 	
 	//check for limitations of xfOpenCV module
 	//compile-time checks
-	static_assert(borderTypeTP == XF_BORDER_CONSTANT, "XF only supports border constant");
+	static_assert(borderTypeTP == XF_BORDER_REPLICATE, "XF only supports border replicate");
     //run-time
 	assert(src.channels() == 1);
 	assert(dst.channels() == 1);
 	assert(borderType == borderTypeTP);
-	assert(kernel.empty() == true);
+	assert(iterations == iterationsTP);
+	assert(kernel.empty() == false);
 	
 	xf::Mat<srcTypeTP, maxHeightTP, maxWidthTP, NPCTP>* imgInput;
 	xf::Mat<dstTypeTP, maxHeightTP, maxWidthTP, NPCTP>* imgOutput;
-
+	
 	// perform some checks on the src type
 	cvToXfSource(src,imgInput);
           
 	// perform some checks on the dst type
 	bool dstPostConversion = cvToXfDestination(dst, imgOutput, src);
    
-	//xfOpenCV does not yet support different dilate shapes
-	/*
 	//prepare kernel coefficients as array of kernelType (unsigned char)
-	kernelType kernelWindow[kernelRows][kernelCols];
-	for(int i=0; i<kernelRows; i++)
-		for(int j=0; j<kernelCols; j++)
-			kernelWindow[i][j] = (kernelType) kernel.at<unsigned char>(i, j);*/
+	xfkernelType kernelWindow[kernelRowsTP*kernelColsTP];
+	for(int i=0; i<kernelRowsTP; i++)
+		for(int j=0; j<kernelColsTP; j++)
+			kernelWindow[i*kernelRowsTP+j] = (xfkernelType) kernel.at<unsigned char>(i, j);
 
 	// call CoreForVivadoHLS wrapper of xf::dilate
-	xF_dilate(imgInput, imgOutput);
+	xF_dilate(imgInput, imgOutput, kernelWindow);
 
    // If SW post conversion required, we do it here
    if (dstPostConversion) {

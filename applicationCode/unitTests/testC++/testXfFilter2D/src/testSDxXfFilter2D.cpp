@@ -138,8 +138,8 @@ int main ( int argc, char** argv )
 	//cv::Mat srcIn16; srcIn.convertTo(srcIn16,CV_16U);
 	
 	//convert 3-channel image into 1-channel image
-	cvtColor(srcIn, srcInY, CV_BGR2GRAY, 1);
-	cvtColor(srcIn, srcHLS, CV_BGR2GRAY, 1);
+	cvtColor(srcIn, srcInY, COLOR_BGR2GRAY, 1);
+	cvtColor(srcIn, srcHLS, COLOR_BGR2GRAY, 1);
 	//srcInY.cvCopyToXf(srcHLS);
 	
 
@@ -179,7 +179,7 @@ int main ( int argc, char** argv )
 	int numberOfDifferences = 0;
 	double errorPerPixel = 0;
 	imageCompare(dstHLS, dstSW, numberOfDifferences, errorPerPixel, true, false);
-	std::cout << "number of differences: " << numberOfDifferences << " average L2 error: " << errorPerPixel << std::endl;
+	std::cout << "number of differences: " << numberOfDifferences << " average L1 error: " << errorPerPixel << std::endl;
 
 	//write back images in files
 	if (writeSWResult)

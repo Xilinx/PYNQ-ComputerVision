@@ -171,7 +171,7 @@ int main ( int argc, char** argv )
 	if (numberOfIterations > 0) {
 		HRTimer timer;
 
-		cvtColor(src, srcY, CV_BGR2GRAY);
+		cvtColor(src, srcY, COLOR_BGR2GRAY);
 		
 		timer.StartTimer();
 		for (unsigned int i = 0; i < numberOfIterations; i++)

@@ -1,5 +1,5 @@
 ###############################################################################
-#  Copyright (c) 2018, Xilinx, Inc.
+#  Copyright (c) 2019, Xilinx, Inc.
 #  All rights reserved.
 # 
 #  Redistribution and use in source and binary forms, with or without 
@@ -34,13 +34,7 @@
 #     Date:   2017/12/05
 
 cmake_minimum_required(VERSION 2.8)
-
-function(capFirstLetter smallName capName)
-	string(SUBSTRING ${smallName} 0 1 FIRST_LETTER)
-	string(TOUPPER ${FIRST_LETTER} FIRST_LETTER)
-	string(REGEX REPLACE "^.(.*)" "${FIRST_LETTER}\\1" capNameLocal "${smallName}")
-	set(${capName} ${capNameLocal} PARENT_SCOPE)
-endfunction()
+include (rulesForSds)
 
 function (printPackageStatusOpenCV)
 	message(STATUS "OpenCV library status:")
@@ -49,10 +43,11 @@ function (printPackageStatusOpenCV)
 	message(STATUS "    include path: ${OpenCV_INCLUDE_DIRS}")
 endfunction()
 
-function (printPackageStatusVivadoHLS)
-	message(STATUS "VivadoHLS status:")
-	message(STATUS "    found: ${VivadoHLS_FOUND}")
-	message(STATUS "    include path: ${VivadoHLS_INCLUDE_DIRS}")
+function (printPackageStatusGstreamer)
+	message(STATUS "GStreamer status:")
+	message(STATUS "    found: ${GSTREAMER_FOUND}")
+	message(STATUS "    include path: ${GSTREAMER_INCLUDE_DIR}")
+	message(STATUS "    libraries: ${GSTREAMER_LIBRARIES}")
 endfunction()
 
 macro (requireOpenCVAndVivadoHLS)
@@ -90,37 +85,3 @@ link_libraries(
 	${OpenCV_LIBS}
 )
 endmacro()
-
-function (compilerDependentVivadoHLSInclude targetName)
-if (${CMAKE_C_COMPILER_ID} STREQUAL "SDSCC")
-	target_include_directories (${targetName} PUBLIC ${VivadoHLS_INCDIR_HLS})
-else (${CMAKE_C_COMPILER_ID} STREQUAL "SDSCC") #native compilation
-	target_include_directories (${targetName} PUBLIC ${VivadoHLS_INCLUDE_DIRS})
-endif (${CMAKE_C_COMPILER_ID} STREQUAL "SDSCC")
-endfunction ()
-
-function (sdxTest componentName componentFolder subdirLevels)
-	capFirstLetter(${componentName} componentNameCap)
-	SET (currentTarget testSDSOC${componentNameCap})
-	message(STATUS "ADDING SDSoC target ${currentTarget}")
-	
-	# set directives and configure compile flags
-	add_definitions(-DHLS_NO_XIL_FPO_LIB) 
-	if (${CMAKE_C_COMPILER_ID} STREQUAL "SDSCC")
-		SET(CompileFlags "-sds-hw sdsoc${componentNameCap} SDSOC${componentNameCap}.cpp -clkid ${SDxClockID} -sds-end")
-	else (${CMAKE_C_COMPILER_ID} STREQUAL "SDSCC") #native compilation
-		SET(CompileFlags "-O3")
-	endif (${CMAKE_C_COMPILER_ID} STREQUAL "SDSCC")
-	
-	add_executable(${currentTarget} src/testSDSOC${componentNameCap}.cpp 
-		${PROJECT_SOURCE_DIR}/${subdirLevels}/${componentFolder}/${componentName}/SDSOCKernel/src/SDSOC${componentNameCap}.cpp)
-	
-	set_target_properties (${currentTarget} PROPERTIES COMPILE_FLAGS ${CompileFlags})	#FLAGS for compile only	
-	
-	target_include_directories (${currentTarget} PUBLIC
-		${PROJECT_SOURCE_DIR}/${subdirLevels}/${componentFolder}/${componentName}/SDSOCKernel/inc
-	)
-	
-	compilerDependentVivadoHLSInclude(${currentTarget})
-	
-endfunction()

@@ -81,12 +81,12 @@ int main ( int argc, char** argv )
 
   /// Declare variables
   Mat src, gray;
-  double alpha=0.2;
+  double alpha = 0.4;
   // Initialize
   initializeSingleImageTest(fileName, src); 
   
   //convert to grayscale
-  cvtColor(src, gray, CV_BGR2GRAY, 1); 
+  cvtColor(src, gray, COLOR_BGR2GRAY, 1); 
   Mat dstSW = Mat::zeros(gray.size(), CV_32FC1); 
   
   if (numberOfIterations > 0) {

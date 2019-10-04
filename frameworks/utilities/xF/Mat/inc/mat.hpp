@@ -49,6 +49,7 @@
 #define __ARM_NEON
 #else
 #include <opencv2/core/utility.hpp>
+#include <opencv2/core/core_c.h>
 #endif
 //#include <opencv2/core/utility.hpp>
 
@@ -68,6 +69,9 @@ public:
 
 	void create(int ndims, const int* sizes, int type);
 	void create(int rows, int cols, int type);
+	
+	void copyFromCvMat(cv::Mat &src); //to enforce version with strict alignment needed by sds++
+	void copyToCvMat(cv::Mat &dst);   //to enforce version with strict alignment needed by sds++
 
 	void deallocate();
 

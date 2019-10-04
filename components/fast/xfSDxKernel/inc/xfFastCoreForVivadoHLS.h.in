@@ -34,12 +34,12 @@
 *
 *     Author: Kristof Denolf <kristof@xilinx.com>
 *             
-*     Date:   201//02/09
+*     Date:   2019/07/04
 *
 *****************************************************************************/
 
-#ifndef _XFSDXFAST_H_
-#define _XFSDXFAST_H_
+#ifndef _XFFASTCOREFORVIVADOHLS_H_
+#define _XFFASTCOREFORVIVADOHLS_H_
   
 #include "common/xf_common.h"
 

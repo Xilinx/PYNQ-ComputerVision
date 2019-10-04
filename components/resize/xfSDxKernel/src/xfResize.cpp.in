@@ -37,6 +37,8 @@
 *
 *****************************************************************************/
 
+#include "xfResizeCoreForVivadoHLS.h" 
+
 ///SDx temporal fix for Clang issue
 #ifdef __SDSCC__
 #undef __ARM_NEON__
@@ -48,13 +50,14 @@
 #include <opencv2/core/core.hpp>
 #endif
 //#include <opencv2/core/core.hpp>
-#include "common/xf_common.h"
-#include <hls_video.h>
-#include "imgproc/xf_resize.hpp" 
+
+//#include "common/xf_common.h"
+//#include <hls_video.h>
+//#include "imgproc/xf_resize.hpp" 
+
 #include <Utils/inc/UtilsForXfOpenCV.h>
 
-#include "xfResizeCoreForVivadoHLS.h"  
-
+ 
 namespace xF {
  
 void resize(cv::Mat &src, cv::Mat &dst, cv::Size dsize, double fx, double fy, int interpolation)

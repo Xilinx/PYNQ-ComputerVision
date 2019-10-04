@@ -58,7 +58,7 @@ static PyObject* pyopencv_cv_equalizeHist(PyObject* , PyObject* args, PyObject* 
         pyopencv_to(pyobj_src, src, ArgInfo("src", 0)) &&
         pyopencv_to(pyobj_dst, dst, ArgInfo("dst", 1)) )
     {
-        ERRWRAP2(xF_equalizeHist(src, dst));
+        ERRWRAP2(xF::equalizeHist(src, dst));
         return pyopencv_from(dst);
     }
     }

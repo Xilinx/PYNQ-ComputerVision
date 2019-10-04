@@ -34,7 +34,7 @@
 #     Date:   2017/12/05
 
 cmake_minimum_required(VERSION 2.8)
-include (rulesForSDxTargets)
+include (rulesForXFCV)
 
 macro (setXfOpenCVDefinitions)
 set(XF_BORDER_CONSTANT  0)
@@ -73,8 +73,16 @@ set(XF_RADIANS 0)
 set(XF_DEGREES 1)
 
 #Threshold
-set(XF_THRESHOLD_TYPE_BINARY 0)
-set(XF_THRESHOLD_TYPE_RANGE 1) 
+set(XF_THRESHOLD_TYPE_BINARY     0)
+set(XF_THRESHOLD_TYPE_BINARY_INV 1)
+set(XF_THRESHOLD_TYPE_TRUNC      2)
+set(XF_THRESHOLD_TYPE_TOZERO     3)
+set(XF_THRESHOLD_TYPE_TOZERO_INV 4)
+ 
+#Structuring Element
+set(XF_SHAPE_RECT		0)
+set(XF_SHAPE_ELLIPSE	1)
+set(XF_SHAPE_CROSS		2)
 
 endmacro()
 
@@ -102,6 +110,11 @@ endif()
 if(NOT DEFINED borderTypeCMakeParam${componentNameCap})
 	set(borderTypeCMakeParam${componentNameCap} ${borderTypeCMakeParam} CACHE STRING "border type")
 endif()
+
+if(NOT DEFINED URAMEnableCMakeParam${componentNameCap})
+	set(URAMEnableCMakeParam${componentNameCap} ${URAMEnableCMakeParam} CACHE STRING "URAM enable")
+endif()
+
 endmacro(setDefaultParameters1In1OutModule) 
 
 macro (setDefaultInstantiationParameters)
@@ -136,6 +149,10 @@ if(NOT DEFINED interpolationTypeCMakeParam)
 	set(interpolationTypeCMakeParam ${XF_INTERPOLATION_BILINEAR})
 endif()
 
+if(NOT DEFINED URAMEnableCMakeParam)
+	set(URAMEnableCMakeParam 0)
+endif()
+
 #filter2D
 set(componentNameCapLocalForRule "Filter2D")
 setDefaultParameters1In1OutModule(${componentNameCapLocalForRule})
@@ -149,12 +166,47 @@ if(NOT DEFINED XSHIFTCMakeParam${componentNameCapLocalForRule})
 endif()
 
 #Dilate 
+
 set(componentNameCapLocalForRule "Dilate")
+
+if(NOT DEFINED borderTypeCMakeParam${componentNameCapLocalForRule})
+	set(borderTypeCMakeParam${componentNameCapLocalForRule} ${XF_BORDER_REPLICATE} CACHE STRING "border type")
+endif()
+
 setDefaultParameters1In1OutModule(${componentNameCapLocalForRule})
+
+if(NOT DEFINED kernelSizeCMakeParam${componentNameCapLocalForRule})
+	set(kernelSizeCMakeParam${componentNameCapLocalForRule} 3 CACHE STRING "kernel size")
+endif()
+
+if(NOT DEFINED kernelShapeCMakeParam${componentNameCapLocalForRule})
+	set(kernelShapeCMakeParam${componentNameCapLocalForRule} ${XF_SHAPE_RECT} CACHE STRING "kernel shape")
+endif()
+
+if(NOT DEFINED iterationsCMakeParam${componentNameCapLocalForRule})
+	set(iterationsCMakeParam${componentNameCapLocalForRule} 1 CACHE STRING "iterations")
+endif()
 
 #Erode 
 set(componentNameCapLocalForRule "Erode")
+
+if(NOT DEFINED borderTypeCMakeParam${componentNameCapLocalForRule})
+	set(borderTypeCMakeParam${componentNameCapLocalForRule} ${XF_BORDER_REPLICATE} CACHE STRING "border type")
+endif()
+
 setDefaultParameters1In1OutModule(${componentNameCapLocalForRule})
+
+if(NOT DEFINED kernelSizeCMakeParam${componentNameCapLocalForRule})
+	set(kernelSizeCMakeParam${componentNameCapLocalForRule} 3 CACHE STRING "kernel size")
+endif()
+
+if(NOT DEFINED kernelShapeCMakeParam${componentNameCapLocalForRule})
+	set(kernelShapeCMakeParam${componentNameCapLocalForRule} ${XF_SHAPE_RECT} CACHE STRING "kernel shape")
+endif()
+
+if(NOT DEFINED iterationsCMakeParam${componentNameCapLocalForRule})
+	set(iterationsCMakeParam${componentNameCapLocalForRule} 1 CACHE STRING "iterations")
+endif()
 
 # boxFilter 
 set(componentNameCapLocalForRule "BoxFilter")
@@ -352,6 +404,10 @@ setDefaultParameters1In1OutModule(${componentNameCapLocalForRule})
 
 
 #Integral
+if(NOT DEFINED dstTypeCMakeParamIntegral)
+	set(dstTypeCMakeParamIntegral ${XF_32UC1} CACHE STRING "Output pixel type")
+endif()
+
 set(componentNameCapLocalForRule "Integral")
 setDefaultParameters1In1OutModule(${componentNameCapLocalForRule})
 
@@ -361,7 +417,7 @@ setDefaultParameters1In1OutModule(${componentNameCapLocalForRule})
 
 #Magnitude
 if(NOT DEFINED normTypeCMakeParamMagnitude)
-	set(normTypeCMakeParamMagnitude ${XF_L1NORM} CACHE STRING "Normalization type")
+	set(normTypeCMakeParamMagnitude ${XF_L2NORM} CACHE STRING "Normalization type")
 endif()
 if(NOT DEFINED srcTypeCMakeParamMagnitude)
 	set(srcTypeCMakeParamMagnitude ${XF_16SC1} CACHE STRING "Input pixel type")
@@ -505,7 +561,7 @@ if(NOT DEFINED interpolationTypeCMakeParam${componentNameCapLocalForRule})
 endif()
 
 if(NOT DEFINED maxDownScaleCMakeParam${componentNameCapLocalForRule})
-	set(maxDownScaleCMakeParam${componentNameCapLocalForRule} 2 CACHE STRING "maximum height")
+	set(maxDownScaleCMakeParam${componentNameCapLocalForRule} 2 CACHE STRING "maximum d")
 endif()
 
 
@@ -534,25 +590,25 @@ function(buildSDxCompilerFlags componentList SDxCompileFlags)
 			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocal}<${borderTypeCMakeParamFilter2D},${kernelSizeCMakeParamFilter2D},${kernelSizeCMakeParamFilter2D},${srcTypeCMakeParamFilter2D},${dstTypeCMakeParamFilter2D},${maxHeightCMakeParamFilter2D},${maxWidthCMakeParamFilter2D},${NPCCMakeParamFilter2D}>\" xf${componentNameLocalCap}CoreForVivadoHLS.cpp -files ${xfOpenCV_INCLUDE_DIRS}/imgproc/xf_custom_convolution.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}")
 		elseif (${componentNameLocal} STREQUAL "dilate")
 			message(STATUS "generating flags for dilate")
-			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocal}<${borderTypeCMakeParamDilate},${srcTypeCMakeParamDilate},${maxHeightCMakeParamDilate},${maxWidthCMakeParamDilate},${NPCCMakeParamDilate}>\" xf${componentNameLocalCap}CoreForVivadoHLS.cpp -files ${xfOpenCV_INCLUDE_DIRS}/imgproc/xf_dilation.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}")
+			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocal}<${borderTypeCMakeParamDilate},${srcTypeCMakeParamDilate},${maxHeightCMakeParamDilate},${maxWidthCMakeParamDilate},${kernelShapeCMakeParamDilate},${kernelSizeCMakeParamDilate},${kernelSizeCMakeParamDilate},${iterationsCMakeParamDilate},${NPCCMakeParamDilate}>\" xf${componentNameLocalCap}CoreForVivadoHLS.cpp -files ${xfOpenCV_INCLUDE_DIRS}/imgproc/xf_dilation.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}")
 		elseif (${componentNameLocal} STREQUAL "erode")
 			message(STATUS "generating flags for erode")
-			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocal}<${borderTypeCMakeParamErode},${srcTypeCMakeParamErode},${maxHeightCMakeParamErode},${maxWidthCMakeParamErode},${NPCCMakeParamErode}>\" xf${componentNameLocalCap}CoreForVivadoHLS.cpp -files ${xfOpenCV_INCLUDE_DIRS}/imgproc/xf_erosion.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}")
+			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocal}<${borderTypeCMakeParamErode},${srcTypeCMakeParamErode},${maxHeightCMakeParamErode},${maxWidthCMakeParamErode},${kernelShapeCMakeParamErode},${kernelSizeCMakeParamErode},${kernelSizeCMakeParamErode},${iterationsCMakeParamErode},${NPCCMakeParamErode}>\" xf${componentNameLocalCap}CoreForVivadoHLS.cpp -files ${xfOpenCV_INCLUDE_DIRS}/imgproc/xf_erosion.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}")
 		elseif (${componentNameLocal} STREQUAL "remap")
 			message(STATUS "generating flags for remap")
-			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocal}<${windowRowsCMakeParamRemap},${interpolationTypeCMakeParamRemap},${srcTypeCMakeParamRemap},${mapTypeCMakeParamRemap},${srcTypeCMakeParamRemap},${maxHeightCMakeParamRemap},${maxWidthCMakeParamRemap},${NPCCMakeParamRemap}>\" xf${componentNameLocalCap}CoreForVivadoHLS.cpp -files ${xfOpenCV_INCLUDE_DIRS}/imgproc/xf_remap.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}")
+			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocal}<${windowRowsCMakeParamRemap},${interpolationTypeCMakeParamRemap},${srcTypeCMakeParamRemap},${mapTypeCMakeParamRemap},${srcTypeCMakeParamRemap},${maxHeightCMakeParamRemap},${maxWidthCMakeParamRemap},${NPCCMakeParamRemap},${URAMEnableCMakeParamRemap}>\" xf${componentNameLocalCap}CoreForVivadoHLS.cpp -files ${xfOpenCV_INCLUDE_DIRS}/imgproc/xf_remap.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}")
 		elseif (${componentNameLocal} STREQUAL "stereoBM")
 			message(STATUS "generating flags for stereoBM")
-			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocalCap}<${blockSizeCMakeParamStereoBM},${numberOfDisparitiesCMakeParamStereoBM},${numberOfDisparityUnitsCMakeParamStereoBM},${srcTypeCMakeParamStereoBM},${disparityTypeCMakeParamStereoBM},${maxHeightCMakeParamStereoBM},${maxWidthCMakeParamStereoBM},${NPCCMakeParamStereoBM}>\" xf${componentNameLocalCap}CoreForVivadoHLS.cpp -files ${xfOpenCV_INCLUDE_DIRS}/imgproc/xf_stereoBM.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}")
+			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocalCap}<${blockSizeCMakeParamStereoBM},${numberOfDisparitiesCMakeParamStereoBM},${numberOfDisparityUnitsCMakeParamStereoBM},${srcTypeCMakeParamStereoBM},${disparityTypeCMakeParamStereoBM},${maxHeightCMakeParamStereoBM},${maxWidthCMakeParamStereoBM},${NPCCMakeParamStereoBM},${URAMEnableCMakeParamStereoBM}>\" xf${componentNameLocalCap}CoreForVivadoHLS.cpp -files ${xfOpenCV_INCLUDE_DIRS}/imgproc/xf_stereoBM.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}")
 		elseif (${componentNameLocal} STREQUAL "initUndistortRectifyMap")
 			message(STATUS "generating flags for initUndistortRectifyMap")
 			SET(SDxCompileFlagsLocal "-sds-hw \"xf::InitUndistortRectifyMapInverse<${cameraMatrixSizeCMakeParamInitUndistortRectifyMap}, ${distortionCoefficientSizeCMakeParamInitUndistortRectifyMap}, ${mapTypeCMakeParamInitUndistortRectifyMap}, ${maxHeightCMakeParamInitUndistortRectifyMap}, ${maxWidthCMakeParamInitUndistortRectifyMap}, ${NPCCMakeParamInitUndistortRectifyMap}>\" xf${componentNameLocalCap}CoreForVivadoHLS.cpp -files ${xfOpenCV_INCLUDE_DIRS}/imgproc/xf_stereo_pipeline.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}")
 		elseif (${componentNameLocal} STREQUAL "calcOpticalFlowDenseNonPyrLK")
 			message(STATUS "generating flags for calcOpticalFlowDenseNonPyrLK")
-			SET(SDxCompileFlagsLocal "-sds-hw \"xf::DenseNonPyrLKOpticalFlow<${windowSizeCMakeParamCalcOpticalFlowDenseNonPyrLK}, ${srcTypeCMakeParamCalcOpticalFlowDenseNonPyrLK}, ${maxHeightCMakeParamCalcOpticalFlowDenseNonPyrLK}, ${maxWidthCMakeParamCalcOpticalFlowDenseNonPyrLK}, ${NPCCMakeParamCalcOpticalFlowDenseNonPyrLK}>\" xf${componentNameLocalCap}CoreForVivadoHLS.cpp -files ${xfOpenCV_INCLUDE_DIRS}/imgproc/xf_dense_npyr_optical_flow.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}")
+			SET(SDxCompileFlagsLocal "-sds-hw \"xf::DenseNonPyrLKOpticalFlow<${windowSizeCMakeParamCalcOpticalFlowDenseNonPyrLK}, ${srcTypeCMakeParamCalcOpticalFlowDenseNonPyrLK}, ${maxHeightCMakeParamCalcOpticalFlowDenseNonPyrLK}, ${maxWidthCMakeParamCalcOpticalFlowDenseNonPyrLK}, ${NPCCMakeParamCalcOpticalFlowDenseNonPyrLK},${URAMEnableCMakeParamCalcOpticalFlowDenseNonPyrLK}>\" xf${componentNameLocalCap}CoreForVivadoHLS.cpp -files ${xfOpenCV_INCLUDE_DIRS}/imgproc/xf_dense_npyr_optical_flow.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}")
 		elseif (${componentNameLocal} STREQUAL "canny")
 			message(STATUS "generating flags for canny")
-			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocalCap}<${apertureSizeCMakeParamCanny},${L2gradientCMakeParamCanny},${srcTypeCMakeParamCanny},${dstIntermedTypeCMakeParamCanny},${maxHeightCMakeParamCanny},${maxWidthCMakeParamCanny},${srcNPCCMakeParamCanny},${dstIntermedNPCCMakeParamCanny}>\" xf${componentNameLocalCap}CoreForVivadoHLS.cpp -files ${xfOpenCV_INCLUDE_DIRS}/imgproc/xf_canny.hpp -clkid ${SDxClockID} -sds-end -sds-hw \"xf::EdgeTracing<${srcIntermedTypeCMakeParamCanny},${dstTypeCMakeParamCanny},${maxHeightCMakeParamCanny},${maxWidthCMakeParamCanny},${srcIntermedNPCCMakeParamCanny},${dstNPCCMakeParamCanny}>\" xf${componentNameLocalCap}CoreForVivadoHLS.cpp -files ${xfOpenCV_INCLUDE_DIRS}/imgproc/xf_edge_tracing.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}")
+			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocalCap}<${apertureSizeCMakeParamCanny},${L2gradientCMakeParamCanny},${srcTypeCMakeParamCanny},${dstIntermedTypeCMakeParamCanny},${maxHeightCMakeParamCanny},${maxWidthCMakeParamCanny},${srcNPCCMakeParamCanny},${dstIntermedNPCCMakeParamCanny},${URAMEnableCMakeParamCanny}>\" xf${componentNameLocalCap}CoreForVivadoHLS.cpp -files ${xfOpenCV_INCLUDE_DIRS}/imgproc/xf_canny.hpp -clkid ${SDxClockID} -sds-end -sds-hw \"xf::EdgeTracing<${srcIntermedTypeCMakeParamCanny},${dstTypeCMakeParamCanny},${maxHeightCMakeParamCanny},${maxWidthCMakeParamCanny},${srcIntermedNPCCMakeParamCanny},${dstNPCCMakeParamCanny},${URAMEnableCMakeParamCanny}>\" xf${componentNameLocalCap}CoreForVivadoHLS.cpp -files ${xfOpenCV_INCLUDE_DIRS}/imgproc/xf_edge_tracing.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}")
 		elseif (${componentNameLocal} STREQUAL "threshold")
 			message(STATUS "generating flags for threshold")
 			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocalCap}<${thresholdTypeCMakeParamThreshold},${srcTypeCMakeParamThreshold},${maxHeightCMakeParamThreshold},${maxWidthCMakeParamThreshold},${NPCCMakeParamThreshold}>\" xf${componentNameLocalCap}CoreForVivadoHLS.cpp -files ${xfOpenCV_INCLUDE_DIRS}/imgproc/xf_threshold.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}")
@@ -561,6 +617,9 @@ function(buildSDxCompilerFlags componentList SDxCompileFlags)
 			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocal}<${srcTypeCMakeParamAbsdiff},${maxHeightCMakeParamAbsdiff},${maxWidthCMakeParamAbsdiff},${NPCCMakeParamAbsdiff}>\" xf${componentNameLocalCap}CoreForVivadoHLS.cpp -files ${xfOpenCV_INCLUDE_DIRS}/core/xf_arithm.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}")
 		elseif (${componentNameLocal} STREQUAL "subtract")
 			message(STATUS "generating flags for subtract")
+			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocal}<${policyTypeCMakeParamSubtract},${srcTypeCMakeParamSubtract},${maxHeightCMakeParamSubtract},${maxWidthCMakeParamSubtract},${NPCCMakeParamSubtract}>\" xf${componentNameLocalCap}CoreForVivadoHLS.cpp -files ${xfOpenCV_INCLUDE_DIRS}/core/xf_arithm.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}")
+		elseif (${componentNameLocal} STREQUAL "add")
+			message(STATUS "generating flags for add")
 			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocal}<${policyTypeCMakeParamSubtract},${srcTypeCMakeParamSubtract},${maxHeightCMakeParamSubtract},${maxWidthCMakeParamSubtract},${NPCCMakeParamSubtract}>\" xf${componentNameLocalCap}CoreForVivadoHLS.cpp -files ${xfOpenCV_INCLUDE_DIRS}/core/xf_arithm.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}")
 		elseif (${componentNameLocal} STREQUAL "bitwise_and")
 			message(STATUS "generating flags for bitwise_and")
@@ -591,7 +650,7 @@ function(buildSDxCompilerFlags componentList SDxCompileFlags)
 			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocal}<${srcTypeCMakeParamAccumulateWeighted},${dstTypeCMakeParamAccumulateWeighted},${maxHeightCMakeParamAccumulateWeighted},${maxWidthCMakeParamAccumulateWeighted},${NPCCMakeParamAccumulateWeighted}>\" xf${componentNameLocalCap}CoreForVivadoHLS.cpp -files ${xfOpenCV_INCLUDE_DIRS}/imgproc/xf_accumulate_weighted.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}")			
 		elseif (${componentNameLocal} STREQUAL "cornerHarris")
 			message(STATUS "generating flags for cornerHarris") 		
-			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocal}<${filterSizeCMakeParamCornerHarris},${blockWidthCMakeParamCornerHarris},${NMSRadiusCMakeParamCornerHarris},${srcTypeCMakeParamCornerHarris},${maxHeightCMakeParamCornerHarris},${maxWidthCMakeParamCornerHarris},${NPCCMakeParamCornerHarris}>\" xf${componentNameLocalCap}CoreForVivadoHLS.cpp -files ${xfOpenCV_INCLUDE_DIRS}/features/xf_harris.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}")		
+			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocal}<${filterSizeCMakeParamCornerHarris},${blockWidthCMakeParamCornerHarris},${NMSRadiusCMakeParamCornerHarris},${srcTypeCMakeParamCornerHarris},${maxHeightCMakeParamCornerHarris},${maxWidthCMakeParamCornerHarris},${NPCCMakeParamCornerHarris},${URAMEnableCMakeParamCornerHarris}>\" xf${componentNameLocalCap}CoreForVivadoHLS.cpp -files ${xfOpenCV_INCLUDE_DIRS}/features/xf_harris.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}")		
 		elseif (${componentNameLocal} STREQUAL "equalizeHist")
 			message(STATUS "generating flags for equalizeHist") 
 			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocal}<${srcTypeCMakeParamEqualizeHist},${maxHeightCMakeParamEqualizeHist},${maxWidthCMakeParamEqualizeHist},${NPCCMakeParamEqualizeHist}>\" xf${componentNameLocalCap}CoreForVivadoHLS.cpp -files ${xfOpenCV_INCLUDE_DIRS}/imgproc/xf_hist_equalize.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}")
@@ -621,7 +680,7 @@ function(buildSDxCompilerFlags componentList SDxCompileFlags)
  			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocal}<${retTypeCMakeParamPhase},${srcTypeCMakeParamPhase},${dstTypeCMakeParamPhase},${maxHeightCMakeParamPhase},${maxWidthCMakeParamPhase},${NPCCMakeParamPhase}>\" xf${componentNameLocalCap}CoreForVivadoHLS.cpp -files ${xfOpenCV_INCLUDE_DIRS}/core/xf_phase.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}")
 		elseif (${componentNameLocal} STREQUAL "pyrDown")
 			message(STATUS "generating flags for pyrDown")   		
-			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocal}<${srcTypeCMakeParamPyrDown},${maxHeightCMakeParamPyrDown},${maxWidthCMakeParamPyrDown},${NPCCMakeParamPyrDown}>\" xf${componentNameLocalCap}CoreForVivadoHLS.cpp -files ${xfOpenCV_INCLUDE_DIRS}/imgproc/xf_pyr_down.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}")
+			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocal}<${srcTypeCMakeParamPyrDown},${maxHeightCMakeParamPyrDown},${maxWidthCMakeParamPyrDown},${NPCCMakeParamPyrDown},${URAMEnableCMakeParamPyrDown}>\" xf${componentNameLocalCap}CoreForVivadoHLS.cpp -files ${xfOpenCV_INCLUDE_DIRS}/imgproc/xf_pyr_down.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}")
  		elseif (${componentNameLocal} STREQUAL "pyrUp")
 			message(STATUS "generating flags for pyrUp")   		
 			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocal}<${srcTypeCMakeParamPyrUp},${maxHeightCMakeParamPyrUp},${maxWidthCMakeParamPyrUp},${NPCCMakeParamPyrUp}>\" xf${componentNameLocalCap}CoreForVivadoHLS.cpp -files ${xfOpenCV_INCLUDE_DIRS}/imgproc/xf_pyr_up.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}")
@@ -633,21 +692,16 @@ function(buildSDxCompilerFlags componentList SDxCompileFlags)
 			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocal}<${interpolationTypeCMakeParamWarpPerspective},${srcTypeCMakeParamWarpPerspective},${maxHeightCMakeParamWarpPerspective},${maxWidthCMakeParamWarpPerspective},${NPCCMakeParamWarpPerspective}>\" xf${componentNameLocalCap}CoreForVivadoHLS.cpp -files ${xfOpenCV_INCLUDE_DIRS}/imgproc/xf_warpperspective.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}")		
  		elseif (${componentNameLocal} STREQUAL "boxFilter")
 			message(STATUS "generating flags for boxFilter") 
-			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocal}<${borderTypeCMakeParamBoxFilter},${kernelSizeCMakeParamBoxFilter},${srcTypeCMakeParamBoxFilter},${maxHeightCMakeParamBoxFilter},${maxWidthCMakeParamBoxFilter},${NPCCMakeParamBoxFilter}>\" xf${componentNameLocalCap}CoreForVivadoHLS.cpp -files ${xfOpenCV_INCLUDE_DIRS}/imgproc/xf_box_filter.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}") 	
+			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocal}<${borderTypeCMakeParamBoxFilter},${kernelSizeCMakeParamBoxFilter},${srcTypeCMakeParamBoxFilter},${maxHeightCMakeParamBoxFilter},${maxWidthCMakeParamBoxFilter},${NPCCMakeParamBoxFilter},${URAMEnableCMakeParamBoxFilter}>\" xf${componentNameLocalCap}CoreForVivadoHLS.cpp -files ${xfOpenCV_INCLUDE_DIRS}/imgproc/xf_box_filter.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}") 	
  		elseif (${componentNameLocal} STREQUAL "split")
 			message(STATUS "generating flags for split") 
 			SET(SDxCompileFlagsLocal "-sds-hw \"xf::extractChannel<${srcTypeCMakeParamSplit},${dstTypeCMakeParamSplit},${maxHeightCMakeParamSplit},${maxWidthCMakeParamSplit},${NPCCMakeParamSplit}>\" xf${componentNameLocalCap}CoreForVivadoHLS.cpp -files ${xfOpenCV_INCLUDE_DIRS}/imgproc/xf_channel_extract.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}") 
 		elseif (${componentNameLocal} STREQUAL "multiply")
 			message(STATUS "generating flags for multiply") 
 			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocal}<${policyTypeCMakeParamMultiply},${srcTypeCMakeParamMultiply},${maxHeightCMakeParamMultiply},${maxWidthCMakeParamMultiply},${NPCCMakeParamMultiply}>\" xf${componentNameLocalCap}CoreForVivadoHLS.cpp -files ${xfOpenCV_INCLUDE_DIRS}/core/xf_arithm.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}")
-	
-elseif (${componentNameLocal} STREQUAL "resize")
+		elseif (${componentNameLocal} STREQUAL "resize")
 			message(STATUS "generating flags for resize")
-			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocal}<${interpolationTypeCMakeParamResize},${srcTypeCMakeParamResize},${srcMaxHeightCMakeParamResize},${srcMaxWidthCMakeParamResize},${dstMaxHeightCMakeParamResize},${dstMaxWidthCMakeParamResize},${NPCCMakeParamResize},${maxDownScaleCMakeParamResize}>\" xf${componentNameLocalCap}CoreForVivadoHLS.cpp -files ${xfOpenCV_INCLUDE_DIRS}/imgproc/xf_resize.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}")
-
- 			
-	else (${CMAKE_C_COMPILER_ID} STREQUAL "SDSCC") #native compilation
-				
+			SET(SDxCompileFlagsLocal "-sds-hw \"xf::${componentNameLocal}<${interpolationTypeCMakeParamResize},${srcTypeCMakeParamResize},${srcMaxHeightCMakeParamResize},${srcMaxWidthCMakeParamResize},${dstMaxHeightCMakeParamResize},${dstMaxWidthCMakeParamResize},${NPCCMakeParamResize},${maxDownScaleCMakeParamResize}>\" xf${componentNameLocalCap}CoreForVivadoHLS.cpp -files ${xfOpenCV_INCLUDE_DIRS}/imgproc/xf_resize.hpp -clkid ${SDxClockID} -sds-end ${SDxCompileFlagsLocal}")				
 		else()
 		endif()
 	endforeach()
@@ -712,6 +766,8 @@ function (createPyOpenCVModulesInOverlayHeaderFile componentList incPath)
 			file(APPEND ${fileName} "\t{\"threshold\", (PyCFunction)pyopencv_cv_threshold, METH_VARARGS | METH_KEYWORDS, \"threshold(src, thresh, maxval, type[, dst]) -> retval\"},\n")
 		elseif (${componentNameLocal} STREQUAL "absdiff")
 			file(APPEND ${fileName} "\t{\"absdiff\", (PyCFunction)pyopencv_cv_absdiff, METH_VARARGS | METH_KEYWORDS, \"absdiff(src1, src2, dst) -> None\"},\n")
+		elseif (${componentNameLocal} STREQUAL "add")
+                        file(APPEND ${fileName} "\t{\"add\", (PyCFunction)pyopencv_cv_add, METH_VARARGS | METH_KEYWORDS, \"add(src1, src2[, dst[, mask[, dtype]]]) -> dst\"},\n")
 		elseif (${componentNameLocal} STREQUAL "subtract")
 			file(APPEND ${fileName} "\t{\"subtract\", (PyCFunction)pyopencv_cv_subtract, METH_VARARGS | METH_KEYWORDS, \"subtract(src1, src2[, dst[, mask[, dtype]]]) -> dst\"},\n")
  		elseif (${componentNameLocal} STREQUAL "bitwise_and")
@@ -759,13 +815,16 @@ function (createPyOpenCVModulesInOverlayHeaderFile componentList incPath)
  		elseif (${componentNameLocal} STREQUAL "LUT")
  			file(APPEND ${fileName} "\t{\"LUT\",(PyCFunction)pyopencv_cv_LUT, METH_VARARGS | METH_KEYWORDS, \"LUT(src, lut[, dst]) -> dst\"},\n") 
  		elseif (${componentNameLocal} STREQUAL "fast")
- 			file(APPEND ${fileName} "\t{\"fast\",(PyCFunction)pyopencv_cv_LUT, METH_VARARGS | METH_KEYWORDS, \"fast(src, lut[, dst]) -> dst\"},\n") 
+			file(APPEND ${fileName} "\t{\"FastFeatureDetector_create\", (PyCFunction)pyopencv_cv_FastFeatureDetector_create, METH_VARARGS | METH_KEYWORDS, \"FastFeatureDetector_create([, threshold[, nonmaxSuppression[, type]]]) -> retval\"},\n")
+			file(APPEND ${fileName} "\t{\"detect\", (PyCFunction)pyopencv_cv_Feature2D_detect, METH_VARARGS | METH_KEYWORDS, \"detect(image[, mask]) -> keypoints\"},\n") 
  		elseif (${componentNameLocal} STREQUAL "cornerHarris")
  			file(APPEND ${fileName} "\t{\"cornerHarris\",(PyCFunction)pyopencv_cv_cornerHarris, METH_VARARGS | METH_KEYWORDS, \"cornerHarris(src, blockSize, ksize, k[, dst[, borderType]]) -> dst\"},\n") 
  		elseif (${componentNameLocal} STREQUAL "calcHist")
  			file(APPEND ${fileName} "\t{\"calcHist\",(PyCFunction)pyopencv_cv_calcHist, METH_VARARGS | METH_KEYWORDS, \"calcHist(images, channels, mask, histSize, ranges[, hist[, accumulate]]) -> hist\"},\n") 
- 			 
- 			
+ 		elseif (${componentNameLocal} STREQUAL "split")	 
+ 			file(APPEND ${fileName} "\t{\"split\", (PyCFunction)pyopencv_cv_split, METH_VARARGS | METH_KEYWORDS, \"split(m[, mv]) -> mv\"},\n")
+		elseif (${componentNameLocal} STREQUAL "warpPerspective")
+			file(APPEND ${fileName} "\t{\"warpPerspective\", (PyCFunction)pyopencv_cv_warpPerspective, METH_VARARGS | METH_KEYWORDS, \"warpPerspective(src, M, dsize[, dst[, flags[, borderMode[, borderValue]]]]) -> dst\"},\n")
  		else()
 		endif()
     endforeach()
@@ -783,6 +842,8 @@ function (createPyOpenCVTypePublishHeaderFile componentList incPath)
 		
 		if (${componentNameLocal} STREQUAL "stereoBM")
 			file(APPEND ${fileName} "PUBLISH_OBJECT(\"${componentNameLocalCap}\", pyopencv_${componentNameLocalCap}_Type);")
+		elseif (${componentNameLocal} STREQUAL "fast")
+			file(APPEND ${fileName} "PUBLISH_OBJECT(\"${componentNameLocalCap}\", pyopencv_FastFeatureDetector_Type);")
 		else()
 		endif()
 		
@@ -793,12 +854,15 @@ endfunction()
 function (createPyOpenCVTypeRegHeaderFile componentList incPath)
 	set(fileName "${incPath}/xilinx_pyopencv_generated_type_reg.h")
 	file(WRITE ${fileName} "// CMake Automatically generated xilinx_pyopencv_generated_type_reg.h.h\n\n")
+	file(APPEND ${fileName} "MKTYPE2(KeyPoint);")
 	
 	foreach(componentNameLocal ${componentList})
 		capFirstLetter(${componentNameLocal} componentNameLocalCap)
 		
 		if (${componentNameLocal} STREQUAL "stereoBM")
 			file(APPEND ${fileName} "MKTYPE2(${componentNameLocalCap});")
+		elseif (${componentNameLocal} STREQUAL "fast")
+			file(APPEND ${fileName} "MKTYPE2(FastFeatureDetector);")
 		else()
 		endif()
 		
@@ -837,10 +901,19 @@ function (createXfOpenCVOverlayWithPythonBindings overlayName subDirLevels compo
 	project(${overlayName})
 	capFirstLetter(${overlayName} overlayNameCap)
 	
-	#add_subdirectory(${PROJECT_SOURCE_DIR}/${subDirLevels}/frameworks/utilities/xF/PynqLib ${CMAKE_CURRENT_BINARY_DIR}/PynqLib)
+	#Enable C++11
+	set(CMAKE_CXX_STANDARD 11)
+	set(CMAKE_CXX_STANDARD_REQUIRED ON)
+	set(CMAKE_CXX_EXTENSIONS OFF)
+	
+	# force static linking of sds_lib
+	if (${CMAKE_C_COMPILER_ID} STREQUAL "SDSCC")
+		add_compile_options(-static-sds)
+	endif(${CMAKE_C_COMPILER_ID} STREQUAL "SDSCC")
 	
 	# Find packages and compile xF::Mat in static lib (with sds++ while generating overlay).
 	requireOpenCVAndVivadoHLS()
+	add_subdirectory(${PROJECT_SOURCE_DIR}/${subDirLevels}/frameworks/utilities/xF/Mat ${CMAKE_CURRENT_BINARY_DIR}/xFMat)
 	find_package(xfOpenCV QUIET)
 
 	message(STATUS "PROJECT_SOURCE_DIR: ${PROJECT_SOURCE_DIR}")
@@ -899,7 +972,9 @@ function (createXfOpenCVOverlayWithPythonBindings overlayName subDirLevels compo
 		)
 		
 		set_target_properties (${currentTarget} PROPERTIES COMPILE_FLAGS ${CompileFlags})	#FLAGS for compile only	
-		#set_target_properties (xFMat PROPERTIES COMPILE_FLAGS "-fpic")
+		if (${CMAKE_C_COMPILER_ID} STREQUAL "SDSCC")
+			set_target_properties (${currentTarget} PROPERTIES LINK_FLAGS "-static-sds")	#FLAGS for link only
+		endif(${CMAKE_C_COMPILER_ID} STREQUAL "SDSCC")
 		
 		compilerDependentVivadoHLSInclude(${currentTarget})
 		
@@ -915,6 +990,7 @@ function (createXfOpenCVOverlayWithPythonBindings overlayName subDirLevels compo
 		#sysrootDependentLibSDSLink(${currentTarget})
 		target_link_libraries(${currentTarget}
 			${OpenCV_LIBS}
+			xFMat
 		)
 		
 	endif (${VivadoHLS_FOUND})
@@ -940,8 +1016,19 @@ function (createXfOpenCVUnitTestPL subDirLevels componentName)
 
 	capFirstLetter(${componentName} componentNameCap)
 
+	#Enable C++11
+	set(CMAKE_CXX_STANDARD 11)
+	set(CMAKE_CXX_STANDARD_REQUIRED ON)
+	set(CMAKE_CXX_EXTENSIONS OFF)
+
 	# Define project name
 	project(Xf${componentName})
+	
+	# force static linking of sds_lib
+	if (${CMAKE_C_COMPILER_ID} STREQUAL "SDSCC")
+		add_compile_options(-static-sds)
+	endif(${CMAKE_C_COMPILER_ID} STREQUAL "SDSCC")
+	#SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static-sds")
 	
 	# Find packages, add subdirectories and setup target independent include folders and libraries 
 	setupForOpenCVUtilsAndHRTimerAndXFMat(${subDirLevels})
@@ -996,18 +1083,22 @@ function (createXfOpenCVUnitTestPL subDirLevels componentName)
 		# set directives and configure compile flags
 		 
 		if ((${CMAKE_C_COMPILER_ID} STREQUAL "SDSCC") AND usePL)
-			buildSDxCompilerFlags("${componentName}" CompileFlags)
+			buildSDxCompilerFlags("${componentName}" CompileFlags )
 			message(STATUS "SDxCompileFlags ${CompileFlags}")
 		else ((${CMAKE_C_COMPILER_ID} STREQUAL "SDSCC") AND usePL) #native compilation
 			SET(CompileFlags "-O3")
 		endif ((${CMAKE_C_COMPILER_ID} STREQUAL "SDSCC") AND usePL)
+		
 		
 		add_executable(${currentTarget} src/testSDxXf${componentNameCap}.cpp 
 			src/xf${componentNameCap}.cpp
 			src/xf${componentNameCap}CoreForVivadoHLS.cpp
 		)
 		
-		set_target_properties (${currentTarget} PROPERTIES COMPILE_FLAGS ${CompileFlags})	#FLAGS for compile only	
+		set_target_properties (${currentTarget} PROPERTIES COMPILE_FLAGS ${CompileFlags})	#FLAGS for compile only
+		if (${CMAKE_C_COMPILER_ID} STREQUAL "SDSCC")
+			set_target_properties (${currentTarget} PROPERTIES LINK_FLAGS "-static-sds")	#FLAGS for link only
+		endif(${CMAKE_C_COMPILER_ID} STREQUAL "SDSCC")
 		
 		target_include_directories (${currentTarget} PUBLIC
 			${PROJECT_SOURCE_DIR}/${subdirLevels}/${componentFolder}/${componentName}/xfSDxKernel/inc

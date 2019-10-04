@@ -63,8 +63,15 @@ int main ( int argc, char** argv )
 	// Declare SW variables
 	int blockSize = 3; 
 	int apertureSize = 3;  
-	double k= 0.14;  
+	double k= 0.14; 
+
 	int thresh =  220;
+	/*if (apertureSize == 3)
+		thresh = 442;
+	else if (apertureSize == 5)
+		thresh = 3109;
+	else if ((apertureSize == 7))
+		thresh = 566;*/
 
   // Command line parsing
 	const String keys =
@@ -124,8 +131,8 @@ int main ( int argc, char** argv )
 	xF::Mat dstHLS_norm_scaled(height, width, CV_8UC1);
 	
 	//convert 3-channel image into 1-channel image
-	cvtColor(srcIn, srcHLS, CV_BGR2GRAY, 1);
-	cvtColor(srcIn, srcInY, CV_BGR2GRAY, 1);
+	cvtColor(srcIn, srcHLS, COLOR_BGR2GRAY, 1);
+	cvtColor(srcIn, srcInY, COLOR_BGR2GRAY, 1);
 
 	// Apply OpenCV reference canny
 	std::cout << "running golden model" << std::endl;
@@ -146,14 +153,18 @@ int main ( int argc, char** argv )
 	std::cout << "Elapsed time over " << numberOfIterations << "PL call(s): " << timer.GetElapsedUs() << " us or " << (float)timer.GetElapsedUs() / (float)numberOfIterations << "us per frame" << std::endl;
 
 	// compare results
-	std::cout << "comparing HLS versus golden" << std::endl;
+	std::cout << "comparing HLS versus golden, note that xfOpenCV applies threshold, so currenlty no comparison done" << std::endl;
+	/*cv::Mat dstHLSInFloat;
+	cv::Mat dstSWWithThreshold = cv::Mat::zeros(dstSW.size(),CV_32F);
 	int numberOfDifferences = 0;
 	double errorPerPixel = 0;
-	//imageCompare(dstHLS, dstSW, numberOfDifferences, errorPerPixel, true, false);
-	std::cout << "number of differences: " << numberOfDifferences << " average L2 error: " << errorPerPixel << std::endl;
+	cv::threshold(dstSW,dstSWWithThreshold,thresh,255,cv::THRESH_BINARY);
+	dstHLS.convertTo(dstHLSInFloat,CV_32F);
+	imageCompare(dstHLSInFloat, dstSWWithThreshold, numberOfDifferences, errorPerPixel, true, false);
+	std::cout << "number of differences: " << numberOfDifferences << " average L1 error: " << errorPerPixel << std::endl;
 	
-	std::cout<< "Number of Harris corners (SW)=" <<countNonZero(dstSW) <<std::endl; 	
-	std::cout<< "Number of Harris corners (HW)=" <<countNonZero(dstHLS) <<std::endl;  
+	std::cout<< "Number of Harris corners (SW)=" <<countNonZero(dstSWWithThreshold) <<std::endl; 	
+	std::cout<< "Number of Harris corners (HW)=" <<countNonZero(dstHLSInFloat) <<std::endl;  */
 	
 	// Normalizing
   	normalize( dstSW, dstSW_norm, 0, 255, NORM_MINMAX, CV_32FC1, Mat() );

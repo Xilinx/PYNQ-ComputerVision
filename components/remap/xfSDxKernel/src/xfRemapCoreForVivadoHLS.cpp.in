@@ -43,5 +43,5 @@
 void xF_remap(xf::Mat<${srcTypeCMakeParamRemap}, ${maxHeightCMakeParamRemap}, ${maxWidthCMakeParamRemap}, ${NPCCMakeParamRemap}>* imgInput, xf::Mat<${srcTypeCMakeParamRemap}, ${maxHeightCMakeParamRemap}, ${maxWidthCMakeParamRemap}, ${NPCCMakeParamRemap}>* imgOutput, xf::Mat<${mapTypeCMakeParamRemap}, ${maxHeightCMakeParamRemap}, ${maxWidthCMakeParamRemap}, ${NPCCMakeParamRemap}>* mapX, xf::Mat<${mapTypeCMakeParamRemap}, ${maxHeightCMakeParamRemap}, ${maxWidthCMakeParamRemap}, ${NPCCMakeParamRemap}>* mapY)
 {	
 	// call xf::remap	
-	xf::remap<${windowRowsCMakeParamRemap},${interpolationTypeCMakeParamRemap},${srcTypeCMakeParamRemap},${mapTypeCMakeParamRemap},${srcTypeCMakeParamRemap},${maxHeightCMakeParamRemap},${maxWidthCMakeParamRemap},${NPCCMakeParamRemap}>(*imgInput,*imgOutput,*mapX,*mapY);
+	xf::remap<${windowRowsCMakeParamRemap},${interpolationTypeCMakeParamRemap},${srcTypeCMakeParamRemap},${mapTypeCMakeParamRemap},${srcTypeCMakeParamRemap},${maxHeightCMakeParamRemap},${maxWidthCMakeParamRemap},${NPCCMakeParamRemap},${URAMEnableCMakeParamRemap}>(*imgInput,*imgOutput,*mapX,*mapY);
 }

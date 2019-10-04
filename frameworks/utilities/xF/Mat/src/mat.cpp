@@ -43,11 +43,17 @@
 
 #include "../inc/mat.hpp"
 
+#if (CV_MAJOR_VERSION < 4)
+namespace cv {
+typedef int AccessFlag;
+}
+#endif
+
 namespace xF {
 class MatAllocator : public cv::MatAllocator
 {
 public:
-    cv::UMatData* allocate(int dims, const int* sizes, int type, void* data0, size_t* step, int /*flags*/, cv::UMatUsageFlags /*usageFlags*/) const
+    cv::UMatData* allocate(int dims, const int* sizes, int type, void* data0, size_t* step, cv::AccessFlag /*flags*/, cv::UMatUsageFlags /*usageFlags*/) const
     {
 		//std::cout << "SDX allocator" << std::endl;
 		size_t total = CV_ELEM_SIZE(type);
@@ -79,7 +85,7 @@ public:
         return u;
     }
 
-    bool allocate(cv::UMatData* u, int /*accessFlags*/, cv::UMatUsageFlags /*usageFlags*/) const
+    bool allocate(cv::UMatData* u, cv::AccessFlag /*accessFlags*/, cv::UMatUsageFlags /*usageFlags*/) const
     {
         if(!u) return false;
         return true;
@@ -232,6 +238,7 @@ cv::MatAllocator* Mat::getStdAllocator()
 	CV_SINGLETON_LAZY_INIT(cv::MatAllocator, new xF::MatAllocator())
 }
 
+
 void Mat::deallocate()
 {
     if(u)
@@ -239,6 +246,7 @@ void Mat::deallocate()
     u = NULL;
 }
 
+#if (CV_MAJOR_VERSION < 4) 
 void Mat::create(int d, const int* _sizes, int _type)
 {
     int i;
@@ -288,7 +296,150 @@ void Mat::create(int d, const int* _sizes, int _type)
     addref();
     finalizeHdr(*this);
 }
+#else
+void Mat::create(int d, const int* _sizes, int _type)
+{
+    int i;
+    CV_Assert(0 <= d && d <= CV_MAX_DIM && _sizes);
+    _type = CV_MAT_TYPE(_type);
 
+    if( data && (d == dims || (d == 1 && dims <= 2)) && _type == type() )
+    {
+        if( d == 2 && rows == _sizes[0] && cols == _sizes[1] )
+            return;
+        for( i = 0; i < d; i++ )
+            if( size[i] != _sizes[i] )
+                break;
+        if( i == d && (d > 1 || size[1] == 1))
+            return;
+    }
 
+    int _sizes_backup[CV_MAX_DIM]; // #5991
+    if (_sizes == (this->size.p))
+    {
+        for(i = 0; i < d; i++ )
+            _sizes_backup[i] = _sizes[i];
+        _sizes = _sizes_backup;
+    }
+
+    release();
+    if( d == 0 )
+        return;
+    flags = (_type & CV_MAT_TYPE_MASK) | MAGIC_VAL;
+    setSize(*this, d, _sizes, 0, true);
+
+    if( total() > 0 )
+    {
+        cv::MatAllocator *a = allocator, *a0 = getDefaultAllocator();
+#ifdef HAVE_TGPU
+        if( !a || a == tegra::getAllocator() )
+            a = tegra::getAllocator(d, _sizes, _type);
+#endif
+        if(!a)
+            a = a0;
+        try
+        {
+            u = a->allocate(dims, size, _type, 0, step.p, cv::ACCESS_RW /* ignored */, cv::USAGE_DEFAULT);
+            CV_Assert(u != 0);
+        }
+        catch (...)
+        {
+            if (a == a0)
+                throw;
+            u = a0->allocate(dims, size, _type, 0, step.p, cv::ACCESS_RW /* ignored */, cv::USAGE_DEFAULT);
+            CV_Assert(u != 0);
+        }
+        CV_Assert( step[dims-1] == (size_t)CV_ELEM_SIZE(flags) );
+    }
+
+    addref();
+    finalizeHdr(*this);
+}
+#endif
+
+template<typename T>
+void deepSlowCopyMatToMat(cv::Mat &src, cv::Mat &dst)
+{
+	for (int i = 0; i < src.rows; i++) {
+		for (int j = 0; j < src.cols; j++) {
+			T *pSrc = src.ptr<T>(i, j);
+			T *pDst = dst.ptr<T>(i, j);
+			for (int k = 0; k < src.channels(); k++) {
+				pDst[k] = pSrc[k];
+			}
+		}
+	}
+}
+
+//to enforce version with strict alignment needed by sds++
+void Mat::copyFromCvMat(cv::Mat &src) {
+
+	if( src.empty() )
+    {
+        this->release();
+        return;
+    }
+	
+	switch (src.depth()) {
+		case CV_8U:
+			deepSlowCopyMatToMat<uchar>(src, *this);
+			break;
+		case CV_8S:
+			deepSlowCopyMatToMat<char>(src, *this);
+		case CV_16U:
+			deepSlowCopyMatToMat<ushort>(src, *this);
+			break;
+		case CV_16S:
+			deepSlowCopyMatToMat<short>(src, *this);
+			break;
+		case CV_32S:
+			deepSlowCopyMatToMat<int>(src, *this);
+			break;
+		case CV_32F:
+			deepSlowCopyMatToMat<float>(src, *this);
+			break;
+		case CV_64F:
+			deepSlowCopyMatToMat<double>(src, *this);
+			break;
+		default:
+			std::cerr << "unexpected CV type" << std::endl;		
+	}
+	
+}
+
+//to enforce version with strict alignment needed by sds++
+void Mat::copyToCvMat(cv::Mat &dst) {   
+
+	if( this->empty() )
+    {
+        dst.release();
+        return;
+    }
+	
+	switch (this->depth()) {
+		case CV_8U:
+			deepSlowCopyMatToMat<uchar>(*this, dst);
+			break;
+		case CV_8S:
+			deepSlowCopyMatToMat<char>(*this, dst);
+		case CV_16U:
+			deepSlowCopyMatToMat<ushort>(*this, dst);
+			break;
+		case CV_16S:
+			deepSlowCopyMatToMat<short>(*this, dst);
+			break;
+		case CV_32S:
+			deepSlowCopyMatToMat<int>(*this, dst);
+			break;
+		case CV_32F:
+			deepSlowCopyMatToMat<float>(*this, dst);
+			break;
+		case CV_64F:
+			deepSlowCopyMatToMat<double>(*this, dst);
+			break;
+		default:
+			std::cerr << "unexpected CV type" << std::endl;		
+	}
+}
 
 } //xF

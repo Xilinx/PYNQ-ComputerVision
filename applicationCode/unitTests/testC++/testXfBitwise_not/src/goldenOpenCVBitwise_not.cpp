@@ -86,7 +86,7 @@ int main ( int argc, char** argv )
   initializeSingleImageTest(fileName, src); 
   
   //convert to grayscale
-  cvtColor(src, gray, CV_BGR2GRAY, 1); 
+  cvtColor(src, gray, COLOR_BGR2GRAY, 1); 
   
   if (numberOfIterations > 0) {
     HRTimer timer;

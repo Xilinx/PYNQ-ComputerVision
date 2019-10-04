@@ -43,7 +43,7 @@
 
 #include "xfSDxAdd.h"
 
-static PyObject* pyopencv_cv_subtract(PyObject* , PyObject* args, PyObject* kw)
+static PyObject* pyopencv_cv_add(PyObject* , PyObject* args, PyObject* kw)
 {
     using namespace cv;
 

@@ -42,11 +42,11 @@
    
 void xF_minMaxLoc(
 	xf::Mat<${srcTypeCMakeParamMinMaxLoc}, ${maxHeightCMakeParamMinMaxLoc}, ${maxWidthCMakeParamMinMaxLoc}, ${NPCCMakeParamMinMaxLoc}>* imgInput,
-	int32_t max_value, int32_t min_value, uint16_t max_locx, uint16_t max_locy, uint16_t min_locx, uint16_t min_locy)
+	int32_t *min_value, int32_t *max_value, uint16_t *min_locx, uint16_t *min_locy, uint16_t *max_locx, uint16_t *max_locy)
 { 
 	
 	// call xf::minMaxLoc
-	xf::minMaxLoc<${srcTypeCMakeParamMinMaxLoc},${maxHeightCMakeParamMinMaxLoc},${maxWidthCMakeParamMinMaxLoc},${NPCCMakeParamMinMaxLoc}>(*imgInput, &min_value, &max_value, &min_locx, &min_locy, &max_locx, &max_locy);
+	xf::minMaxLoc<${srcTypeCMakeParamMinMaxLoc},${maxHeightCMakeParamMinMaxLoc},${maxWidthCMakeParamMinMaxLoc},${NPCCMakeParamMinMaxLoc}>(*imgInput, min_value, max_value, min_locx, min_locy, max_locx, max_locy);
 	 
 	return;
 	 

@@ -30,17 +30,36 @@
 #
 ###############################################################################
 
+# cmake needs this line
+cmake_minimum_required(VERSION 2.8)
+
 # Define library name
 SET (libraryName xFMat)
+SET (SDS_SHARED_LIB "libsds_lib.so")
 
 # Find OpenCV, you may need to set OpenCV_DIR variable
 find_package(OpenCV REQUIRED)
 
 add_library(${libraryName} src/mat.cpp inc/mat.hpp)
 
-set_target_properties (${libraryName} PROPERTIES COMPILE_FLAGS "-O3")
+#compilerDependentVivadoHLSInclude(${libraryName})
+set_target_properties (${libraryName} PROPERTIES COMPILE_FLAGS "-O3 -fPIC")
 
 target_include_directories (${libraryName} PUBLIC
 	${CMAKE_CURRENT_SOURCE_DIR}/..
 	${OpenCV_INCLUDE_DIRS}
 	)
+
+#lines 54-64 are outdated? Need to test to confirm
+find_path(SDS_SHARED_LIBPATH ${SDS_SHARED_LIB} PATHS ${CMAKE_LIBRARY_PATH})
+
+if (${SDS_SHARED_LIBPATH} STREQUAL "SDS_SHARED_LIBPATH-NOTFOUND")
+	message(STATUS "WARNING: ${SDS_SHARED_LIB} not found") 
+else (${SDS_SHARED_LIBPATH} STREQUAL "SDS_SHARED_LIBPATH-NOTFOUND")
+	target_link_libraries (${libraryName} 
+		${SDS_SHARED_LIBPATH}/${SDS_SHARED_LIB}
+	)
+	message(STATUS "${SDS_SHARED_LIB} found. Adding as link library.") 
+endif (${SDS_SHARED_LIBPATH} STREQUAL "SDS_SHARED_LIBPATH-NOTFOUND")
+message(STATUS "SDS_SHARED_LIBPATH: ${SDS_SHARED_LIBPATH}")
+

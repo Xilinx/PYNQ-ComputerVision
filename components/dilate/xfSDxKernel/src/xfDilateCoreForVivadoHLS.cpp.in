@@ -42,10 +42,10 @@
 #include "imgproc/xf_dilation.hpp" 
 
 
-void xF_dilate(xf::Mat<${srcTypeCMakeParamDilate}, ${maxHeightCMakeParamDilate}, ${maxWidthCMakeParamDilate}, ${NPCCMakeParamDilate}>* imgInput, xf::Mat<${srcTypeCMakeParamDilate}, ${maxHeightCMakeParamDilate}, ${maxWidthCMakeParamDilate}, ${NPCCMakeParamDilate}>* imgOutput)
+void xF_dilate(xf::Mat<${srcTypeCMakeParamDilate}, ${maxHeightCMakeParamDilate}, ${maxWidthCMakeParamDilate}, ${NPCCMakeParamDilate}>* imgInput, xf::Mat<${srcTypeCMakeParamDilate}, ${maxHeightCMakeParamDilate}, ${maxWidthCMakeParamDilate}, ${NPCCMakeParamDilate}>* imgOutput, xfkernelType kernelWindow[])
 {
 	// call xf::dilate
-	xf::dilate<${borderTypeCMakeParamDilate},${srcTypeCMakeParamDilate},${maxHeightCMakeParamDilate},${maxWidthCMakeParamDilate},${NPCCMakeParamDilate}>(*imgInput,*imgOutput);
+	xf::dilate<${borderTypeCMakeParamDilate},${srcTypeCMakeParamDilate},${maxHeightCMakeParamDilate},${maxWidthCMakeParamDilate},${kernelShapeCMakeParamDilate},${kernelSizeCMakeParamDilate},${kernelSizeCMakeParamDilate},${iterationsCMakeParamDilate},${NPCCMakeParamDilate}>(*imgInput,*imgOutput, kernelWindow);
 	
 	return;
 }

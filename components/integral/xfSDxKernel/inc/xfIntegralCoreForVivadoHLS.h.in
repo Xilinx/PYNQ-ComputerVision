@@ -46,6 +46,6 @@
  
 void xF_integral(
 xf::Mat<${srcTypeCMakeParamIntegral}, ${maxHeightCMakeParamIntegral}, ${maxWidthCMakeParamIntegral}, ${NPCCMakeParamIntegral}>* imgInput, 
-xf::Mat<${srcTypeCMakeParamIntegral}, ${maxHeightCMakeParamIntegral}, ${maxWidthCMakeParamIntegral}, ${NPCCMakeParamIntegral}>* imgOutput);
+xf::Mat<${dstTypeCMakeParamIntegral}, ${maxHeightCMakeParamIntegral}, ${maxWidthCMakeParamIntegral}, ${NPCCMakeParamIntegral}>* imgOutput);
 
 #endif

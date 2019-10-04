@@ -108,8 +108,8 @@ int main ( int argc, char** argv )
   initializeSingleImageTest(fileName1, prevImg);
   initializeSingleImageTest(fileName2, nextImg);
  
-  cvtColor(prevImg, prevImgGray, CV_BGR2GRAY, 1);
-  cvtColor(nextImg, nextImgGray, CV_BGR2GRAY, 1);
+  cvtColor(prevImg, prevImgGray, COLOR_BGR2GRAY, 1);
+  cvtColor(nextImg, nextImgGray, COLOR_BGR2GRAY, 1);
   
   
   // Initialize arguments for Fast detector

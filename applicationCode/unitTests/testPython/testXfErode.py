@@ -73,22 +73,21 @@ xFdst  = mem_manager.cma_array((height,width),np.uint8) #allocated physically co
 print("Start SW loop")
 startSW=time.time()
 for i in range(numberOfIterations):
-    cv2.erode(imgY,kernelD,dst=dstSW,iterations=1) #erode on ARM
+    cv2.erode(imgY,kernelD,dst=dstSW,iterations=1,borderType=cv2.BORDER_REPLICATE) #erode on ARM
 stopSW=time.time()
 
 
 print("Start HW loop")
 startPL=time.time()
 for i in range(numberOfIterations):
-    xv2.erode(xFimgY,kernelVoid,dst=xFdst,borderType=cv2.BORDER_CONSTANT) #erode offloaded to PL, working on physically continuous numpy arrays
+    xv2.erode(xFimgY,kernelD,dst=xFdst,borderType=cv2.BORDER_REPLICATE) #erode offloaded to PL, working on physically continuous numpy arrays
 stopPL=time.time()
     
 print("SW frames per second: ", ((numberOfIterations) / (stopSW - startSW)))
 print("PL frames per second: ", ((numberOfIterations) / (stopPL - startPL)))
 
 print("Checking SW and HW results match")
-numberOfDifferences=0
-errorPerPixel = 0.0
-cvu.imageCompare(xFdst,dstSW,numberOfDifferences,errorPerPixel,True,False,0.0)
+numberOfDifferences,errorPerPixel = cvu.imageCompare(xFdst,dstSW,True,False,0.0)
+print("number of differences: "+str(numberOfDifferences)+", average L1 error: "+str(errorPerPixel))
 
 print("Done")

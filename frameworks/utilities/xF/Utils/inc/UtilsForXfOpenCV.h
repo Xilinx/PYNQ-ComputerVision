@@ -51,9 +51,10 @@
 #else
 #include <opencv2/core/core.hpp>
 #endif
+#include <opencv2/imgproc/imgproc.hpp>
 
 #include <hls_video.h> // TODO needed for HLS_USRTYPE1?
-#include "imgproc/xf_custom_convolution.hpp"
+#include "imgproc/xf_custom_convolution.hpp" //TODO: CHECK why this is included
 
 template<int type, int channels> struct TypeAndChannels     { static const int xf_typeName = -1; };
 template<> struct TypeAndChannels<XF_8UP,1>   { static const int xf_typeName = XF_8UC1; };
@@ -75,6 +76,22 @@ template<> struct xfDepth2cvDepth<XF_32FP> {static const int cvDepth = CV_32F; }
 //template<> struct xfDepth2cvDepth<XF_64FP> {static const int cvDepth = CV_64F; };
 
 #define XF_XFDEPTH2CVDEPTH(d) xfDepth2cvDepth<d>::cvDepth
+
+template<int xfStructuringElement> struct xfStructuringElement2cvStructuringElement {static const int cvStructuringElement = -1; };
+template<> struct xfStructuringElement2cvStructuringElement<XF_SHAPE_RECT> {static const int cvStructuringElement = cv::MORPH_RECT; };
+template<> struct xfStructuringElement2cvStructuringElement<XF_SHAPE_ELLIPSE> {static const int cvStructuringElement = cv::MORPH_ELLIPSE ; };
+template<> struct xfStructuringElement2cvStructuringElement<XF_SHAPE_CROSS> {static const int cvStructuringElement = cv::MORPH_CROSS  ; };
+
+#define XF_XFSTRUCTURINGELEMENT2CVSTRUCTURINGELEMENT(s) xfStructuringElement2cvStructuringElement<s>::cvStructuringElement
+
+template<int xfThresholdType> struct xfThresholdType2cvThresholdType {static const int cvThresholdType = -1; };
+template<> struct xfThresholdType2cvThresholdType<XF_THRESHOLD_TYPE_BINARY> {static const int cvThresholdType = cv::THRESH_BINARY ; };
+template<> struct xfThresholdType2cvThresholdType<XF_THRESHOLD_TYPE_BINARY_INV> {static const int cvThresholdType = cv::THRESH_BINARY_INV ; };
+template<> struct xfThresholdType2cvThresholdType<XF_THRESHOLD_TYPE_TRUNC> {static const int cvThresholdType = cv::THRESH_TRUNC ; };
+template<> struct xfThresholdType2cvThresholdType<XF_THRESHOLD_TYPE_TOZERO> {static const int cvThresholdType = cv::THRESH_TOZERO ; };
+template<> struct xfThresholdType2cvThresholdType<XF_THRESHOLD_TYPE_TOZERO_INV> {static const int cvThresholdType = cv::THRESH_TOZERO_INV ; };
+
+#define XF_XFTHRESHOLDTYPE2CVTHRESHOLDTYPE(t) xfThresholdType2cvThresholdType<t>::cvThresholdType
 	
 template<int srcTypeTP, int maxHeightTP, int maxWidthTP, int NPCTP>
 void cvToXfSource(cv::Mat &src, xf::Mat<srcTypeTP, maxHeightTP, maxWidthTP, NPCTP>* &imgInput)
@@ -204,6 +221,49 @@ bool cvToXfDisparity(cv::Mat &disparity, xf::Mat<disparityTypeTP, maxHeightTP, m
 	return dstPostConversion;
 }
 
+template<typename T, int dstTypeTP, int maxHeightTP, int maxWidthTP, int NPCTP>
+void deepSlowConvert32UToCvMat(xf::Mat<dstTypeTP, maxHeightTP, maxWidthTP, NPCTP>* &imgInput, cv::Mat &dst)
+{
+	const int channels = 1; 
+	
+	for (int i = 0; i < imgInput->rows; i++) {
+		for (int j = 0; j < imgInput->cols; j++) {
+			T *pDst = dst.ptr<T>(i, j);
+			for (int k = 0; k < channels; k++) {
+				pDst[k] = (T) imgInput->data[(i*imgInput->cols+j)*channels + k];
+			}
+		}
+	}
+}
+
+template<int dstTypeTP, int maxHeightTP, int maxWidthTP, int NPCTP>
+void xf32UToCvConversion(xf::Mat<dstTypeTP, maxHeightTP, maxWidthTP, NPCTP>* &imgInput, cv::Mat &dst)
+{
+	switch (dst.depth()) {
+	case CV_8U:
+		deepSlowConvert32UToCvMat<uchar>(imgInput, dst);
+		break;
+	case CV_8S:
+		deepSlowConvert32UToCvMat<char>(imgInput, dst);
+	case CV_16U:
+		deepSlowConvert32UToCvMat<ushort>(imgInput, dst);
+		break;
+	case CV_16S:
+		deepSlowConvert32UToCvMat<short>(imgInput, dst);
+		break;
+	case CV_32S:
+		deepSlowConvert32UToCvMat<int>(imgInput, dst);
+		break;
+	case CV_32F:
+		deepSlowConvert32UToCvMat<float>(imgInput, dst);
+		break;
+	case CV_64F:
+		deepSlowConvert32UToCvMat<double>(imgInput, dst);
+		break;
+	default:
+		std::cerr << "unexpected CV type" << std::endl;
+	}
+}
 
 // Performs depth conversion on dst buffer
 // User should check if this is needed outside of this function

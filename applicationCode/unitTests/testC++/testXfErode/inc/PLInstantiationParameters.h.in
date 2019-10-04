@@ -41,7 +41,14 @@
 #define _TESTERODE_PLINSTANTIATIONPARAMETERS_H_
 
 //PL instantiation parameters
-// hard code kernelSize to 3 since xfOpenCV fixed the kernelSize and the structuring element
-#define kernelSizeErodeD 	3
+#define borderTypeErodeD	${borderTypeCMakeParamErode}
+#define kernelSizeErodeD 	${kernelSizeCMakeParamErode}
+#define kernelShapeErodeD 	${kernelShapeCMakeParamErode}
+#define iterationsErodeD 	${iterationsCMakeParamErode}
+#define maxWidthErodeD 	${maxWidthCMakeParamErode}
+#define maxHeightErodeD 	${maxHeightCMakeParamErode}
+#define srcTypeErodeD  	${srcTypeCMakeParamErode}
+#define dstTypeErodeD 		${dstTypeCMakeParamErode}
+#define NPCErodeD			${NPCCMakeParamErode}
 
 #endif

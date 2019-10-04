@@ -123,10 +123,12 @@ int main ( int argc, char** argv )
 	xF::Mat dstHLS(height, width, CV_8UC1);
 	 	
 	//convert 3-channel image into 1-channel image
-	cvtColor(src1, src1HLS, CV_BGR2GRAY, 1);	
-	cvtColor(src2, src2HLS, CV_BGR2GRAY, 1);
-	cvtColor(src1, src1InY, CV_BGR2GRAY, 1);	
-	cvtColor(src2, src2InY, CV_BGR2GRAY, 1);
+	cvtColor(src1, src1InY, COLOR_BGR2GRAY, 1);	
+	cvtColor(src2, src2InY, COLOR_BGR2GRAY, 1);
+	//cvtColor(src1, src1HLS, COLOR_BGR2GRAY, 1);	
+	//cvtColor(src2, src2HLS, COLOR_BGR2GRAY, 1);
+	src1HLS.copyFromCvMat(src1InY);
+	src2HLS.copyFromCvMat(src2InY);
 
 	// Apply OpenCV reference subtract
 	std::cout << "running golden model" << std::endl;
@@ -152,7 +154,7 @@ int main ( int argc, char** argv )
 	int numberOfDifferences = 0;
 	double errorPerPixel = 0;
 	imageCompare(dstHLS, dstSW, numberOfDifferences, errorPerPixel, true, false);
-	std::cout << "number of differences: " << numberOfDifferences << " average L2 error: " << errorPerPixel << std::endl;
+	std::cout << "number of differences: " << numberOfDifferences << " average L1 error: " << errorPerPixel << std::endl;
 
 	//write back images in files
 	if (writeSWResult)

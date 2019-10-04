@@ -46,7 +46,6 @@
 #include <opencv2/highgui/highgui.hpp>
  
 #include "xfSDxPhase.h"
-#include <Utils/inc/UtilsForXfOpenCV.h>
 //include xF::mat prototype
 #include <Mat/inc/mat.hpp>
 #include <HRTimer.h>
@@ -113,7 +112,7 @@ int main ( int argc, char** argv )
 	int height = srcIn.size().height;
 
 	//convert 3-channel image into 1-channel image
-	cvtColor(srcIn, grayIn, CV_BGR2GRAY, 1);	   
+	cvtColor(srcIn, grayIn, COLOR_BGR2GRAY, 1);	   
   	
 	//Sobel variables
 	Mat gx,gy;
@@ -152,13 +151,15 @@ int main ( int argc, char** argv )
 	timer.StopTimer();	
 	std::cout << "Elapsed time over " << numberOfIterations << "PL call(s): " << timer.GetElapsedUs() << " us or " << (float)timer.GetElapsedUs() / (float)numberOfIterations << "us per frame" << std::endl;
 	
-	dstHLS.convertTo(dstHLS, CV_32F);	
+	//dstHLS.convertTo(dstHLS, CV_32F);	
 	// compare results
 	std::cout << "comparing HLS versus golden" << std::endl;
+	cv::Mat dstHLSInFloat(dstHLS.size(),CV_32F);
+	fixedPointToCvConversion(dstHLS,dstHLSInFloat,angleInDegrees?6:12); //xfOpenCV used 12.4 fixed point for radians and 10.6 fixed foint for degrees.
 	int numberOfDifferences = 0;
 	double errorPerPixel = 0;
-	imageCompare(dstHLS, dstSW, numberOfDifferences, errorPerPixel, true, false);
-	std::cout << "number of differences: " << numberOfDifferences << " average L2 error: " << errorPerPixel << std::endl;
+	imageCompare(dstHLSInFloat, dstSW, numberOfDifferences, errorPerPixel, true, false);
+	std::cout << "number of differences: " << numberOfDifferences << " average L1 error: " << errorPerPixel << std::endl;
 
 	//write back images in files
 	if (writeSWResult)

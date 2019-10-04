@@ -41,8 +41,6 @@
 #ifndef PYOPENCV_CV_STEREOBM
 #define PYOPENCV_CV_STEREOBM
 
-#include <iostream>
-
 #include "xfSDxStereoBM.h"
 
 struct pyopencv_StereoBM_t
@@ -93,8 +91,6 @@ static PyObject* pyopencv_cv_StereoBM_create(PyObject* , PyObject* args, PyObjec
     int numDisparities=0;
     int blockSize=21;
     Ptr<xF::StereoBM> retval;
-	
-	std::cout << "creating xF stereo bm object" << std::endl;
 
     const char* keywords[] = { "numDisparities", "blockSize", NULL };
     if( PyArg_ParseTupleAndKeywords(args, kw, "|ii:StereoBM_create", (char**)keywords, &numDisparities, &blockSize) )
@@ -110,8 +106,6 @@ static PyObject* pyopencv_cv_StereoBM_create(PyObject* , PyObject* args, PyObjec
 static PyObject* pyopencv_cv_StereoMatcher_compute(PyObject* self, PyObject* args, PyObject* kw)
 {
     using namespace cv;
-	
-	std::cout << "calling xF stereo BM python binding" << std::endl;
 
     xF::StereoBM* _self_ = NULL;
     if(PyObject_TypeCheck(self, &pyopencv_StereoBM_Type))

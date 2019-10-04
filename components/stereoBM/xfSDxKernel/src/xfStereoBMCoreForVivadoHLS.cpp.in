@@ -47,7 +47,7 @@ void xF_stereoBMCompute(xf::Mat<${srcTypeCMakeParamStereoBM}, ${maxHeightCMakePa
 	std::cout << "imgInputDisparity xf ptr: " << imgInputDisparity->data << std::endl;
 	
 	// call xf::StereoBM
-	xf::StereoBM<${blockSizeCMakeParamStereoBM},${numberOfDisparitiesCMakeParamStereoBM},${numberOfDisparityUnitsCMakeParamStereoBM},${srcTypeCMakeParamStereoBM},${disparityTypeCMakeParamStereoBM},${maxHeightCMakeParamStereoBM},${maxWidthCMakeParamStereoBM},${NPCCMakeParamStereoBM}>(*imgInputLeft, *imgInputRight, *imgInputDisparity, xfsbmstate);
+	xf::StereoBM<${blockSizeCMakeParamStereoBM},${numberOfDisparitiesCMakeParamStereoBM},${numberOfDisparityUnitsCMakeParamStereoBM},${srcTypeCMakeParamStereoBM},${disparityTypeCMakeParamStereoBM},${maxHeightCMakeParamStereoBM},${maxWidthCMakeParamStereoBM},${NPCCMakeParamStereoBM},${URAMEnableCMakeParamStereoBM}>(*imgInputLeft, *imgInputRight, *imgInputDisparity, xfsbmstate);
 	
 	return;
 }

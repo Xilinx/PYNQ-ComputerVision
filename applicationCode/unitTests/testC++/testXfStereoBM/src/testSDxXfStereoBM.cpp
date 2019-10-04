@@ -131,10 +131,10 @@ int main ( int argc, char** argv )
 	//cv::Mat srcIn16; srcIn.convertTo(srcIn16,CV_16U);
 	
 	//convert 3-channel image into 1-channel image
-	cvtColor(srcLeft, leftHLS, CV_BGR2GRAY, 1);
-	cvtColor(srcRight, rightHLS, CV_BGR2GRAY, 1);
-	cvtColor(srcLeft, srcLeftY, CV_BGR2GRAY, 1);
-	cvtColor(srcRight, srcRightY, CV_BGR2GRAY, 1);
+	cvtColor(srcLeft, leftHLS, COLOR_BGR2GRAY, 1);
+	cvtColor(srcRight, rightHLS, COLOR_BGR2GRAY, 1);
+	cvtColor(srcLeft, srcLeftY, COLOR_BGR2GRAY, 1);
+	cvtColor(srcRight, srcRightY, COLOR_BGR2GRAY, 1);
 
 	// Apply OpenCV reference stereoBM
 	std::cout << "running golden model" << std::endl;
@@ -170,11 +170,14 @@ int main ( int argc, char** argv )
 	int numberOfDifferences = 0;
 	double errorPerPixel = 0;
 	
-	Mat tmpMatSW;
-	disparitySW.convertTo(tmpMatSW,CV_16U);
+	cv::Mat disparitySWInFloat(disparitySW.size(),CV_32F);
+	fixedPointToCvConversion(disparitySW,disparitySWInFloat,4); //OPenCV uses fixed point 12.4 format
 	
-	imageCompare(disparityHLS, tmpMatSW, numberOfDifferences, errorPerPixel, true, false);
-	std::cout << "number of differences: " << numberOfDifferences << " average L2 error: " << errorPerPixel << std::endl;
+	cv::Mat disparityHLSInFloat(disparityHLS.size(),CV_32F);
+	fixedPointToCvConversion(disparityHLS,disparityHLSInFloat,4); // xfOpenCV uses fixed point 12.4 format
+	
+	imageCompare(disparityHLSInFloat, disparitySWInFloat, numberOfDifferences, errorPerPixel, true, false);
+	std::cout << "number of differences: " << numberOfDifferences << " average L1 error: " << errorPerPixel << std::endl;
 
 	//write back images in files
 	if (writeSWResult)
@@ -188,10 +191,10 @@ int main ( int argc, char** argv )
 		imshow("Input right", rightHLS);
 		
 		double minVal; double maxVal;
-		minMaxLoc(tmpMatSW, &minVal, &maxVal);
+		minMaxLoc(disparitySW, &minVal, &maxVal);
 		
 		Mat tmpShowDisparitySW, showDisparitySW;
-		tmpMatSW.convertTo(tmpShowDisparitySW,CV_8U,255.0/maxVal); // use maxVal for nicer colors instead of (numberOfDisparitiesD*16.0) disparity in 16U is 12.4 format, so we need *16
+		disparitySW.convertTo(tmpShowDisparitySW,CV_8U,255.0/maxVal); // use maxVal for nicer colors instead of (numberOfDisparitiesD*16.0) disparity in 16U is 12.4 format, so we need *16
 		applyColorMap(tmpShowDisparitySW,showDisparitySW,COLORMAP_JET); 		
 		imshow("Processed (SW)", showDisparitySW);
 		

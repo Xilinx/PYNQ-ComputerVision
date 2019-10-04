@@ -38,7 +38,7 @@
 cmake_minimum_required(VERSION 2.8)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/../../../../frameworks/cmakeModules/cmakeModulesXilinx ${CMAKE_CURRENT_SOURCE_DIR}/../../../../frameworks/cmakeModules)
-include(rulesForSDxXfOpenCV)
+include(rulesForXfOpenCV)
 SET(componentName remap)
 
 add_subdirectory(${PROJECT_SOURCE_DIR}/../../../../frameworks/utilities/makeMapForRemap ${CMAKE_CURRENT_BINARY_DIR}/makeMapForRemap)

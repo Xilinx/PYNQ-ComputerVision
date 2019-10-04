@@ -153,13 +153,13 @@ int main ( int argc, char** argv )
 	int numberOfDifferences = 0;
 	double errorPerPixel = 0;
 	imageCompare( channelsHLS[0], channels[0], numberOfDifferences, errorPerPixel, true, false);
-	std::cout << "number of differences in channel[0]: " << numberOfDifferences << " average L2 error: " << errorPerPixel << std::endl;
+	std::cout << "number of differences in channel[0]: " << numberOfDifferences << " average L1 error: " << errorPerPixel << std::endl;
 	imageCompare( channelsHLS[1], channels[1], numberOfDifferences, errorPerPixel, true, false);
-	std::cout << "number of differences in channel[1]: " << numberOfDifferences << " average L2 error: " << errorPerPixel << std::endl;
+	std::cout << "number of differences in channel[1]: " << numberOfDifferences << " average L1 error: " << errorPerPixel << std::endl;
 	imageCompare( channelsHLS[2], channels[2], numberOfDifferences, errorPerPixel, true, false);
-	std::cout << "number of differences in channel[2]: " << numberOfDifferences << " average L2 error: " << errorPerPixel << std::endl;
+	std::cout << "number of differences in channel[2]: " << numberOfDifferences << " average L1 error: " << errorPerPixel << std::endl;
 	imageCompare( channelsHLS[3], channels[3], numberOfDifferences, errorPerPixel, true, false);
-	std::cout << "number of differences in channel[3]: " << numberOfDifferences << " average L2 error: " << errorPerPixel << std::endl;
+	std::cout << "number of differences in channel[3]: " << numberOfDifferences << " average L1 error: " << errorPerPixel << std::endl;
 	 
 	//write back images in files
 	if (writeSWResult)

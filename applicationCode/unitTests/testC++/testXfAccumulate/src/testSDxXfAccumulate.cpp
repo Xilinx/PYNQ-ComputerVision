@@ -107,7 +107,7 @@ int main ( int argc, char** argv )
  	initializeSingleImageTest(fileName, src); 
  	
   	//convert to grayscale
-  	cvtColor(src, gray, CV_BGR2GRAY, 1); 
+  	cvtColor(src, gray, COLOR_BGR2GRAY, 1); 
   	Mat dstSW = Mat::zeros(gray.size(), CV_32FC1);
   	
 	int width = src.size().width;
@@ -118,7 +118,7 @@ int main ( int argc, char** argv )
 	xF::Mat dstHLS(height, width, CV_16UC1); //XF_16UC1 	
 	
 	//convert 3-channel image into 1-channel image
-	cvtColor(src, srcHLS, CV_BGR2GRAY, 1);
+	cvtColor(src, srcHLS, COLOR_BGR2GRAY, 1);
 		
 	// Apply OpenCV reference accumulate 
 	std::cout << "running golden model" << std::endl;
@@ -146,7 +146,7 @@ int main ( int argc, char** argv )
 	int numberOfDifferences = 0;
 	double errorPerPixel = 0;
 	imageCompare(dstHLS, dstSW, numberOfDifferences, errorPerPixel, true, false);
-	std::cout << "number of differences: " << numberOfDifferences << " average L2 error: " << errorPerPixel << std::endl;
+	std::cout << "number of differences: " << numberOfDifferences << " average L1 error: " << errorPerPixel << std::endl;
 
 	//write back images in files
 	if (writeSWResult)

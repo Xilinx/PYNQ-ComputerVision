@@ -90,7 +90,7 @@ int main ( int argc, char** argv )
 
   	// Initialize
   	initializeSingleImageTest(fileName, src);
-	cv::cvtColor(src, gray, CV_BGR2GRAY);
+	cv::cvtColor(src, gray, COLOR_BGR2GRAY);
 	
   	// Initialize arguments for Harris detector 
 	
